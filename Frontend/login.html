@@ -924,7 +924,7 @@
             });
             
             // ==================== STUDENT LOGIN (Demo) ====================
-            studentLoginBtn.addEventListener('click', function() {
+            /* studentLoginBtn.addEventListener('click', function() {
                 const username = document.getElementById('student-username').value;
                 const password = document.getElementById('student-password').value;
                 const errorElement = document.getElementById('student-error');
@@ -947,7 +947,7 @@
                     errorElement.textContent = 'Invalid student credentials. Use student@amc.edu / student123 for demo';
                     errorElement.style.display = 'block';
                 }
-            });
+            }); */
             
             // ==================== STAFF LOGIN (Demo) ====================
             staffLoginBtn.addEventListener('click', function() {
@@ -1234,59 +1234,77 @@
             // Run setup check on page load
             checkInitialSetup();
             
+            // ==================== STUDENT LOGIN ====================
+            studentLoginBtn.addEventListener('click', async function() {
+                const email = document.getElementById('student-username').value;
+                const password = document.getElementById('student-password').value;
+                const errorElement = document.getElementById('student-error');
+
+                errorElement.style.display = 'none';
+
+                if (!email || !password) {
+                    errorElement.textContent = 'Please enter both email and password';
+                    errorElement.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    // Show loading state
+                    studentLoginBtn.textContent = 'Logging in...';
+                    studentLoginBtn.disabled = true;
+
+                    // Backend API call for student login
+                    const response = await fetch(`${API_BASE_URL}/api/students/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Store user data in localStorage
+                        localStorage.setItem('userType', 'student');
+                        localStorage.setItem('username', data.student.name);
+                        localStorage.setItem('email', data.student.email);
+                        localStorage.setItem('studentId', data.student._id);
+
+                        console.log('Student login successful:', data.student);
+
+                        // Redirect to student dashboard
+                        window.location.href = DASHBOARD_URLS.student;
+                    } else {
+                        errorElement.textContent = data.message || 'Invalid student credentials';
+                        errorElement.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    errorElement.textContent = 'Network error. Please try again.';
+                    errorElement.style.display = 'block';
+                } finally {
+                    // Reset button state
+                    studentLoginBtn.textContent = 'Login';
+                    studentLoginBtn.disabled = false;
+                }
+            });
+
             // ==================== DEMO CREDENTIALS ====================
             console.log('Demo credentials for testing:');
             console.log('Admin: Use "Create New Account" to create first admin');
             console.log('Faculty: faculty@amc.edu / faculty123');
             console.log('Student: student@amc.edu / student123');
             console.log('Staff: staff@amc.edu / staff123');
-            
+
             // ==================== DEBUG INFO ====================
             console.log('Debug endpoints:');
             console.log('Check setup: GET ' + API_BASE_URL + '/admin/check/setup');
             console.log('List admins: GET ' + API_BASE_URL + '/admin/list/all');
             console.log('Reset data (dev only): DELETE ' + API_BASE_URL + '/admin/reset-data');
-            
-
-            
-
-            // CRUD Operations for Students
-            async function createAdmin(adminData) {
-                const response = await fetch(`http://localhost:3000/api/admin`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(adminData),
-                });
-
-                if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || "Failed to create adnin");
-                }
-
-                return response.json();
-            }
-
-            // Handler for button click
-            document.getElementById('submit-admin-create-account').addEventListener('click', async function(e) {
-                e.preventDefault();
-
-                // Collect admin data from form fields
-                const adminData = {
-                    accountType: document.getElementById('admin-account-type').value,
-                    username: document.getElementById('admin-create-username').value,
-                    email: document.getElementById('admin-create-email').value,
-                    password: document.getElementById('admin-create-password').value,
-                    confirmPassword: document.getElementById('admin-create-confirm-password').value,
-                    };
-
-                try {
-                    const result = await createAdmin(adminData);
-                    alert('Account created!');
-                    // Optionally, close modal or redirect
-                } catch (err) {
-                    alert('Error: ' + err.message);
-                }
-            });
         });
     </script>
     
