@@ -382,6 +382,38 @@ app.get("/api/students/search", async (req, res) => {
   }
 });
 
+// student login
+// Student Login Route
+app.post('/api/students/login', async (req, res) => {
+  try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+          return res.status(400).json({ message: 'Email and password are required' });
+      }
+
+      const student = await Student.findOne({ email });
+      if (!student) {
+          logger.warn('Login attempt with invalid email:', { email });
+          return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      if (student.password !== password) {
+          logger.warn('Login attempt with invalid password:', { email });
+          return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      // Remove password from response
+      const { password: _, ...studentData } = student.toObject();
+      logger.info('Student logged in successfully:', { studentId: student._id, email });
+      res.json({ message: 'Login successful', student: studentData });
+  } catch (error) {
+      logger.error('Error during student login:', error);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+
+
 //Admin endpoints
 
 app.post("/api/admin", async (req, res) => {
