@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMC Engineering College - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg,#030945,#030945, #bb8105);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: rgb(232, 235, 53);
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(24, 23, 23, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .login-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .login-options {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .login-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .faculty-card {
+            border-top: 5px solid #3498db;
+        }
+        
+        .student-card {
+            border-top: 5px solid #2ecc71;
+        }
+        
+        .admin-card {
+            border-top: 5px solid #e74c3c;
+        }
+        
+        .staff-card {
+            border-top: 5px solid #f39c12;
+        }
+        
+        .icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+        
+        .faculty-icon {
+            color: #3498db;
+        }
+        
+        .student-icon {
+            color: #2ecc71;
+        }
+        
+        .admin-icon {
+            color: #e74c3c;
+        }
+        
+        .staff-icon {
+            color: #f39c12;
+        }
+        
+        .login-card h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .login-card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .faculty-btn {
+            background: #3498db;
+        }
+        
+        .student-btn {
+            background: #2ecc71;
+        }
+        
+        .admin-btn {
+            background: #e74c3c;
+        }
+        
+        .staff-btn {
+            background: #f39c12;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .login-form-container {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .login-submit {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        .login-submit:hover {
+            background: #2980b9;
+        }
+        
+        .back-btn {
+            background: #95a5a6;
+            margin-top: 15px;
+        }
+        
+        .back-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+        }
+        
+        .additional-options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .option-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .option-link:hover {
+            color: #2980b9;
+            background-color: #f5f5f5;
+        }
+        
+        .left-option {
+            text-align: left;
+        }
+        
+        .center-option {
+            text-align: center;
+        }
+        
+        .right-option {
+            text-align: right;
+        }
+        
+        .create-account-link {
+            font-size: 1.1rem !important;
+            font-weight: 700 !important;
+            color: #e74c3c !important;
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+            padding: 8px 15px;
+        }
+        
+        .create-account-link:hover {
+            color: #c0392b !important;
+            background-color: #fdf2f2;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalFadeIn 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .modal h3 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .cancel-btn {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .cancel-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .submit-btn {
+            background: #3498db;
+            color: white;
+        }
+        
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+        
+        .password-change-email {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .email-verification-status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .email-verification-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .email-verification-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .password-request-info {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .status-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .info-message {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .warning-message {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .admin-create-account-link {
+            color: #e74c3c !important;
+            font-weight: 700 !important;
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+        }
+        
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #3498db;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .name-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            border-left: 4px solid #6c757d;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .suggestions {
+            background: #e8f4fc;
+            border-left: 4px solid #17a2b8;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: #0c5460;
+        }
+        
+        @media (max-width: 768px) {
+            .login-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .additional-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .left-option, .center-option, .right-option {
+                text-align: center;
+            }
+            
+            .create-account-link {
+                margin-top: 15px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+            }
+            
+            .name-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AMC Engineering College</h1>
+            <p>Please select your login option</p>
+        </div>
+        
+        <div class="login-options">
+            <div class="login-card faculty-card" id="faculty-card">
+                <div class="icon faculty-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h2>Faculty Login</h2>
+                <p>Access faculty dashboard and resources</p>
+                <button class="btn faculty-btn">Login as Faculty</button>
+            </div>
+            
+            <div class="login-card student-card" id="student-card">
+                <div class="icon student-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h2>Student Login</h2>
+                <p>Access student portal and courses</p>
+                <button class="btn student-btn">Login as Student</button>
+            </div>
+            
+            <div class="login-card admin-card" id="admin-card">
+                <div class="icon admin-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h2>Admin Login</h2>
+                <p>Administrator access and management</p>
+                <button class="btn admin-btn">Login as Admin</button>
+            </div>
+            
+            <div class="login-card staff-card" id="staff-card">
+                <div class="icon staff-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h2>Staff Login</h2>
+                <p>Non-teaching staff access</p>
+                <button class="btn staff-btn">Login as Staff</button>
+            </div>
+        </div>
+        
+        <!-- Faculty Login Form -->
+        <div class="login-form-container" id="faculty-login-form">
+            <div class="login-form">
+                <h2>Faculty Login</h2>
+                <div class="error-message" id="faculty-error"></div>
+                <div class="form-group">
+                    <label for="faculty-username">Email</label>
+                    <input type="text" id="faculty-username" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="faculty-password">Password</label>
+                    <input type="password" id="faculty-password" placeholder="Enter your password">
+                </div>
+                
+                <div class="additional-options">
+                    <a href="#" class="option-link left-option" id="forgot-password-link">Forgot Password</a>
+                </div>
+                
+                <button class="login-submit" id="faculty-login-btn">Login</button>
+                <button class="login-submit back-btn" id="back-from-faculty">Back</button>
+            </div>
+        </div>
+        
+        <!-- Student Login Form -->
+        <div class="login-form-container" id="student-login-form">
+            <div class="login-form">
+                <h2>Student Login</h2>
+                <div class="error-message" id="student-error"></div>
+                <div class="form-group">
+                    <label for="student-username">Email</label>
+                    <input type="text" id="student-username" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="student-password">Password</label>
+                    <input type="password" id="student-password" placeholder="Enter your password">
+                </div>
+                <button class="login-submit" id="student-login-btn">Login</button>
+                <button class="login-submit back-btn" id="back-from-student">Back</button>
+            </div>
+        </div>
+        
+        <!-- Admin Login Form -->
+        <div class="login-form-container" id="admin-login-form">
+            <div class="login-form">
+                <h2>Admin Login</h2>
+                <div class="error-message" id="admin-error"></div>
+                <div class="password-change-email">
+                    <p><strong>Note:</strong> For first-time setup, use "Create New Account" to create your first admin account.</p>
+                </div>
+                <div class="form-group">
+                    <label for="admin-email">Email</label>
+                    <input type="email" id="admin-email" placeholder="Enter admin email">
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Password</label>
+                    <input type="password" id="admin-password" placeholder="Enter admin password">
+                </div>
+                
+                <div class="additional-options">
+                    <a href="#" class="option-link left-option" id="admin-forgot-password">Forgot Password</a>
+                    <a href="#" class="option-link right-option admin-create-account-link" id="admin-create-account">Create New Account</a>
+                </div>
+                
+                <button class="login-submit" id="admin-login-btn">Login</button>
+                <button class="login-submit back-btn" id="back-from-admin">Back</button>
+            </div>
+        </div>
+        
+        <!-- Staff Login Form -->
+        <div class="login-form-container" id="staff-login-form">
+            <div class="login-form">
+                <h2>Staff Login</h2>
+                <div class="error-message" id="staff-error"></div>
+                <div class="form-group">
+                    <label for="staff-username">Email</label>
+                    <input type="text" id="staff-username" placeholder="Enter your staff email">
+                </div>
+                <div class="form-group">
+                    <label for="staff-password">Password</label>
+                    <input type="password" id="staff-password" placeholder="Enter provided password">
+                </div>
+                
+                <button class="login-submit" id="staff-login-btn">Login</button>
+                <button class="login-submit back-btn" id="back-from-staff">Back</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2025 AMC Engineering College. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- Simple Admin Create Account Modal -->
+    <div class="modal" id="admin-create-account-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-admin-create-account">&times;</span>
+            <h3>Create New Admin Account</h3>
+            
+            <div class="password-change-email">
+                <p><strong>Note:</strong> The first admin account will be created as SuperAdmin. Subsequent accounts can be Admin or Staff.</p>
+            </div>
+            
+            <div class="form-section">
+                <div class="form-section-title">Account Information</div>
+                
+                <div class="form-group">
+                    <label for="admin-account-type">Account Type</label>
+                    <select id="admin-account-type">
+                        <option value="">Select Account Type</option>
+                        <option value="SuperAdmin">Super Admin</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Staff">Staff</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-create-username">Username</label>
+                    <input type="text" id="admin-create-username" placeholder="Enter username (min 3 characters)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-create-email">Email Address</label>
+                    <input type="email" id="admin-create-email" placeholder="Enter email address">
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-create-password">Password</label>
+                    <input type="password" id="admin-create-password" placeholder="Enter password (min 6 characters)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-create-confirm-password">Confirm Password</label>
+                    <input type="password" id="admin-create-confirm-password" placeholder="Confirm password">
+                </div>
+            </div>
+            
+            <div id="create-account-status"></div>
+            
+            <div class="debug-options" style="margin-top: 15px;">
+                <button id="check-existing-admins" class="modal-btn" style="background: #6c757d; width: 100%; margin-bottom: 10px;">Check Existing Admins</button>
+                <button id="suggest-username" class="modal-btn" style="background: #17a2b8; width: 100%;">Suggest Available Username</button>
+            </div>
+            
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button class="modal-btn cancel-btn" id="cancel-admin-create-account">Cancel</button>
+                <button class="modal-btn submit-btn" id="submit-admin-create-account">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple Forgot Password Modal -->
+    <div class="modal" id="forgot-password-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-forgot-password">&times;</span>
+            <h3>Reset Your Password</h3>
+            
+            <div class="form-group">
+                <label for="reset-email">Email Address</label>
+                <input type="email" id="reset-email" placeholder="Enter your registered email">
+            </div>
+            
+            <div class="password-change-email">
+                <p>Contact system administrator for password reset. This feature will be implemented soon.</p>
+            </div>
+            
+            <div id="forgot-password-status"></div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn cancel-btn" id="cancel-forgot-password">Cancel</button>
+                <button class="modal-btn submit-btn" id="submit-forgot-password">Submit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Backend API base URL
+        const API_BASE_URL = "http://localhost:3000"; // Remove /api from the end
+        
+        // Dashboard URLs
+        const DASHBOARD_URLS = {
+            faculty: 'file:///C:/Users/Admin/Desktop/ERP1/ERP/frontend/faculty%20dashboard.html',
+            student: 'file:///C:/Users/Admin/Desktop/ERP1/ERP/frontend/Student%20dashboard.html',
+            admin: 'file:///C:/Users/Admin/Desktop/ERP1/ERP/frontend/DASHBOARD%20.HTML',
+            staff: 'file:///C:/Users/Admin/Desktop/ERP1/ERP/frontend/DASHBOARD%20.HTML'
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // ==================== DOM ELEMENTS ====================
+            const adminCard = document.getElementById('admin-card');
+            const facultyCard = document.getElementById('faculty-card');
+            const studentCard = document.getElementById('student-card');
+            const staffCard = document.getElementById('staff-card');
+            
+            const adminLoginForm = document.getElementById('admin-login-form');
+            const facultyLoginForm = document.getElementById('faculty-login-form');
+            const studentLoginForm = document.getElementById('student-login-form');
+            const staffLoginForm = document.getElementById('staff-login-form');
+            
+            const backFromAdmin = document.getElementById('back-from-admin');
+            const backFromFaculty = document.getElementById('back-from-faculty');
+            const backFromStudent = document.getElementById('back-from-student');
+            const backFromStaff = document.getElementById('back-from-staff');
+            
+            const adminLoginBtn = document.getElementById('admin-login-btn');
+            const facultyLoginBtn = document.getElementById('faculty-login-btn');
+            const studentLoginBtn = document.getElementById('student-login-btn');
+            const staffLoginBtn = document.getElementById('staff-login-btn');
+            
+            const adminCreateAccount = document.getElementById('admin-create-account');
+            const adminForgotPassword = document.getElementById('admin-forgot-password');
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            
+            const adminCreateAccountModal = document.getElementById('admin-create-account-modal');
+            const forgotPasswordModal = document.getElementById('forgot-password-modal');
+            
+            const closeAdminCreateAccount = document.getElementById('close-admin-create-account');
+            const cancelAdminCreateAccount = document.getElementById('cancel-admin-create-account');
+            const submitAdminCreateAccount = document.getElementById('submit-admin-create-account');
+            const checkExistingAdmins = document.getElementById('check-existing-admins');
+            const suggestUsername = document.getElementById('suggest-username');
+            
+            const closeForgotPassword = document.getElementById('close-forgot-password');
+            const cancelForgotPassword = document.getElementById('cancel-forgot-password');
+            const submitForgotPassword = document.getElementById('submit-forgot-password');
+            
+            const createAccountStatus = document.getElementById('create-account-status');
+            const forgotPasswordStatus = document.getElementById('forgot-password-status');
+            
+            // ==================== LOGIN FORM NAVIGATION ====================
+            adminCard.addEventListener('click', function() {
+                document.querySelector('.login-options').style.display = 'none';
+                adminLoginForm.style.display = 'block';
+                document.getElementById('admin-error').style.display = 'none';
+            });
+            
+            facultyCard.addEventListener('click', function() {
+                document.querySelector('.login-options').style.display = 'none';
+                facultyLoginForm.style.display = 'block';
+                document.getElementById('faculty-error').style.display = 'none';
+            });
+            
+            studentCard.addEventListener('click', function() {
+                document.querySelector('.login-options').style.display = 'none';
+                studentLoginForm.style.display = 'block';
+                document.getElementById('student-error').style.display = 'none';
+            });
+            
+            staffCard.addEventListener('click', function() {
+                document.querySelector('.login-options').style.display = 'none';
+                staffLoginForm.style.display = 'block';
+                document.getElementById('staff-error').style.display = 'none';
+            });
+            
+            // Back buttons
+            backFromAdmin.addEventListener('click', function() {
+                adminLoginForm.style.display = 'none';
+                document.querySelector('.login-options').style.display = 'grid';
+            });
+            
+            backFromFaculty.addEventListener('click', function() {
+                facultyLoginForm.style.display = 'none';
+                document.querySelector('.login-options').style.display = 'grid';
+            });
+            
+            backFromStudent.addEventListener('click', function() {
+                studentLoginForm.style.display = 'none';
+                document.querySelector('.login-options').style.display = 'grid';
+            });
+            
+            backFromStaff.addEventListener('click', function() {
+                staffLoginForm.style.display = 'none';
+                document.querySelector('.login-options').style.display = 'grid';
+            });
+            
+            // ==================== ADMIN LOGIN ====================
+            adminLoginBtn.addEventListener('click', async function() {
+                const email = document.getElementById('admin-email').value;
+                const password = document.getElementById('admin-password').value;
+                const errorElement = document.getElementById('admin-error');
+                
+                errorElement.style.display = 'none';
+                
+                if (!email || !password) {
+                    errorElement.textContent = 'Please enter both email and password';
+                    errorElement.style.display = 'block';
+                    return;
+                }
+                
+                try {
+                    // Show loading state
+                    adminLoginBtn.textContent = 'Logging in...';
+                    adminLoginBtn.disabled = true;
+                    
+                    // Backend API call for admin login
+                    const response = await fetch(`${API_BASE_URL}/admin/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        // Store user data in localStorage
+                        localStorage.setItem('userType', 'admin');
+                        localStorage.setItem('username', data.user.username);
+                        localStorage.setItem('email', data.user.email);
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('adminRole', data.user.accountType);
+                        localStorage.setItem('adminId', data.user._id);
+                        
+                        console.log('Login successful:', data.user);
+                        
+                        // Redirect to admin dashboard
+                        window.location.href = DASHBOARD_URLS.admin;
+                    } else {
+                        errorElement.textContent = data.message || 'Invalid admin credentials';
+                        errorElement.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    errorElement.textContent = 'Network error. Please try again.';
+                    errorElement.style.display = 'block';
+                } finally {
+                    // Reset button state
+                    adminLoginBtn.textContent = 'Login';
+                    adminLoginBtn.disabled = false;
+                }
+            });
+            
+            // ==================== FACULTY LOGIN (Demo) ====================
+            facultyLoginBtn.addEventListener('click', function() {
+                const username = document.getElementById('faculty-username').value;
+                const password = document.getElementById('faculty-password').value;
+                const errorElement = document.getElementById('faculty-error');
+                
+                errorElement.style.display = 'none';
+                
+                if (!username || !password) {
+                    errorElement.textContent = 'Please enter both email and password';
+                    errorElement.style.display = 'block';
+                    return;
+                }
+                
+                // Demo faculty login
+                if (username === 'faculty@amc.edu' && password === 'faculty123') {
+                    localStorage.setItem('userType', 'faculty');
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('token', 'demo_faculty_token');
+                    window.location.href = DASHBOARD_URLS.faculty;
+                } else {
+                    errorElement.textContent = 'Invalid faculty credentials. Use faculty@amc.edu / faculty123 for demo';
+                    errorElement.style.display = 'block';
+                }
+            });
+            
+            // ==================== STUDENT LOGIN (Demo) ====================
+            studentLoginBtn.addEventListener('click', function() {
+                const username = document.getElementById('student-username').value;
+                const password = document.getElementById('student-password').value;
+                const errorElement = document.getElementById('student-error');
+                
+                errorElement.style.display = 'none';
+                
+                if (!username || !password) {
+                    errorElement.textContent = 'Please enter both email and password';
+                    errorElement.style.display = 'block';
+                    return;
+                }
+                
+                // Demo student login
+                if (username === 'student@amc.edu' && password === 'student123') {
+                    localStorage.setItem('userType', 'student');
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('token', 'demo_student_token');
+                    window.location.href = DASHBOARD_URLS.student;
+                } else {
+                    errorElement.textContent = 'Invalid student credentials. Use student@amc.edu / student123 for demo';
+                    errorElement.style.display = 'block';
+                }
+            });
+            
+            // ==================== STAFF LOGIN (Demo) ====================
+            staffLoginBtn.addEventListener('click', function() {
+                const username = document.getElementById('staff-username').value;
+                const password = document.getElementById('staff-password').value;
+                const errorElement = document.getElementById('staff-error');
+                
+                errorElement.style.display = 'none';
+                
+                if (!username || !password) {
+                    errorElement.textContent = 'Please enter both email and password';
+                    errorElement.style.display = 'block';
+                    return;
+                }
+                
+                // Demo staff login
+                if (username === 'staff@amc.edu' && password === 'staff123') {
+                    localStorage.setItem('userType', 'staff');
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('token', 'demo_staff_token');
+                    window.location.href = DASHBOARD_URLS.staff;
+                } else {
+                    errorElement.textContent = 'Invalid staff credentials. Use staff@amc.edu / staff123 for demo';
+                    errorElement.style.display = 'block';
+                }
+            });
+            
+            // ==================== ADMIN CREATE ACCOUNT MODAL ====================
+            adminCreateAccount.addEventListener('click', function(e) {
+                e.preventDefault();
+                adminCreateAccountModal.style.display = 'flex';
+                
+                // Reset form
+                document.getElementById('admin-account-type').value = '';
+                document.getElementById('admin-create-username').value = '';
+                document.getElementById('admin-create-email').value = '';
+                document.getElementById('admin-create-password').value = '';
+                document.getElementById('admin-create-confirm-password').value = '';
+                
+                createAccountStatus.innerHTML = '';
+            });
+            
+            closeAdminCreateAccount.addEventListener('click', function() {
+                adminCreateAccountModal.style.display = 'none';
+            });
+            
+            cancelAdminCreateAccount.addEventListener('click', function() {
+                adminCreateAccountModal.style.display = 'none';
+            });
+            
+            // Check existing admins
+            checkExistingAdmins.addEventListener('click', async function() {
+                try {
+                    createAccountStatus.innerHTML = '<div class="info-message">Checking existing admins...</div>';
+                    
+                    const response = await fetch(`${API_BASE_URL}/admin/list/all`);
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        let html = '<div class="debug-info"><strong>Existing Admins (' + data.count + '):</strong><br>';
+                        
+                        if (data.count === 0) {
+                            html += 'No admin accounts found. You can create the first one.';
+                        } else {
+                            data.admins.forEach(admin => {
+                                html += '• ' + admin.username + ' (' + admin.email + ') - ' + admin.accountType;
+                                if (admin.isActive === false) html += ' [INACTIVE]';
+                                html += '<br>';
+                            });
+                        }
+                        
+                        html += '</div>';
+                        createAccountStatus.innerHTML = html;
+                    } else {
+                        createAccountStatus.innerHTML = '<div class="error-message">Failed to load existing admins</div>';
+                    }
+                } catch (error) {
+                    console.error('Error checking admins:', error);
+                    createAccountStatus.innerHTML = '<div class="error-message">Network error. Please try again.</div>';
+                }
+            });
+            
+            // Suggest available username
+            suggestUsername.addEventListener('click', function() {
+                const baseUsername = document.getElementById('admin-create-username').value || 'admin';
+                
+                if (baseUsername.length < 3) {
+                    createAccountStatus.innerHTML = '<div class="error-message">Please enter a base username first (min 3 characters)</div>';
+                    return;
+                }
+                
+                // Generate suggestions
+                const suggestions = [
+                    baseUsername + '1',
+                    baseUsername + '2',
+                    baseUsername + '2025',
+                    baseUsername + '_admin',
+                    'admin_' + baseUsername,
+                    baseUsername + Math.floor(Math.random() * 1000)
+                ];
+                
+                let html = '<div class="suggestions"><strong>Suggested Usernames:</strong><br>';
+                suggestions.forEach(suggestion => {
+                    html += '• ' + suggestion + '<br>';
+                });
+                html += '<br>Try one of these or create your own unique username.</div>';
+                
+                createAccountStatus.innerHTML = html;
+            });
+            
+            submitAdminCreateAccount.addEventListener('click', async function() {
+                const accountType = document.getElementById('admin-account-type').value;
+                const username = document.getElementById('admin-create-username').value;
+                const email = document.getElementById('admin-create-email').value;
+                const password = document.getElementById('admin-create-password').value;
+                const confirmPassword = document.getElementById('admin-create-confirm-password').value;
+                
+                // Basic validation
+                if (!accountType || !username || !email || !password || !confirmPassword) {
+                    createAccountStatus.innerHTML = '<div class="error-message">Please fill in all fields</div>';
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    createAccountStatus.innerHTML = '<div class="error-message">Passwords do not match</div>';
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    createAccountStatus.innerHTML = '<div class="error-message">Password must be at least 6 characters long</div>';
+                    return;
+                }
+                
+                if (username.length < 3) {
+                    createAccountStatus.innerHTML = '<div class="error-message">Username must be at least 3 characters long</div>';
+                    return;
+                }
+                
+                const adminData = {
+                    accountType: accountType,
+                    username: username,
+                    email: email,
+                    password: password
+                };
+                
+                try {
+                    // Show loading state
+                    submitAdminCreateAccount.textContent = 'Creating...';
+                    submitAdminCreateAccount.disabled = true;
+                    
+                    // Backend API call to create admin account
+                    const response = await fetch(`${API_BASE_URL}/admin`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(adminData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        createAccountStatus.innerHTML = '<div class="success-message">' + 
+                            data.message + '<br>Username: ' + username + '<br>Email: ' + email + 
+                            '<br>Account Type: ' + data.admin.accountType + '</div>';
+                        
+                        // Clear form and auto-fill login form after successful creation
+                        setTimeout(() => {
+                            adminCreateAccountModal.style.display = 'none';
+                            document.getElementById('admin-email').value = email;
+                            document.getElementById('admin-password').value = password;
+                            
+                            // Show success message
+                            const errorElement = document.getElementById('admin-error');
+                            errorElement.textContent = 'Account created successfully! You can now login.';
+                            errorElement.style.backgroundColor = '#d4edda';
+                            errorElement.style.color = '#155724';
+                            errorElement.style.borderColor = '#c3e6cb';
+                            errorElement.style.display = 'block';
+                        }, 2000);
+                    } else {
+                        // Handle duplicate username/email error
+                        let errorMessage = data.message || 'Failed to create account';
+                        
+                        // Add suggestions for duplicate username
+                        if (errorMessage.includes('username') && errorMessage.includes('already exists')) {
+                            errorMessage += '<br><br><div class="suggestions"><strong>Suggestions:</strong><br>';
+                            errorMessage += '• Try adding numbers: ' + username + '1, ' + username + '2, ' + username + '2025<br>';
+                            errorMessage += '• Try adding suffix: ' + username + '_admin, admin_' + username + '<br>';
+                            errorMessage += '• Use a completely different username</div>';
+                        }
+                        
+                        // Add suggestions for duplicate email
+                        if (errorMessage.includes('email') && errorMessage.includes('already exists')) {
+                            errorMessage += '<br><br><div class="suggestions"><strong>Suggestions:</strong><br>';
+                            errorMessage += '• Use a different email address<br>';
+                            errorMessage += '• Try adding +admin: ' + email.replace('@', '+admin@') + '<br>';
+                            errorMessage += '• Use your institutional email</div>';
+                        }
+                        
+                        createAccountStatus.innerHTML = '<div class="error-message">' + errorMessage + '</div>';
+                    }
+                } catch (error) {
+                    console.error('Create admin error:', error);
+                    createAccountStatus.innerHTML = '<div class="error-message">Network error. Please try again.</div>';
+                } finally {
+                    // Reset button state
+                    submitAdminCreateAccount.textContent = 'Create Account';
+                    submitAdminCreateAccount.disabled = false;
+                }
+            });
+            
+            // ==================== FORGOT PASSWORD MODAL ====================
+            adminForgotPassword.addEventListener('click', function(e) {
+                e.preventDefault();
+                forgotPasswordModal.style.display = 'flex';
+                document.getElementById('reset-email').value = '';
+                forgotPasswordStatus.innerHTML = '';
+            });
+            
+            forgotPasswordLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                forgotPasswordModal.style.display = 'flex';
+                document.getElementById('reset-email').value = '';
+                forgotPasswordStatus.innerHTML = '';
+            });
+            
+            closeForgotPassword.addEventListener('click', function() {
+                forgotPasswordModal.style.display = 'none';
+            });
+            
+            cancelForgotPassword.addEventListener('click', function() {
+                forgotPasswordModal.style.display = 'none';
+            });
+            
+            submitForgotPassword.addEventListener('click', function() {
+                const email = document.getElementById('reset-email').value;
+                
+                if (!email) {
+                    forgotPasswordStatus.innerHTML = '<div class="error-message">Please enter your email address</div>';
+                    return;
+                }
+                
+                forgotPasswordStatus.innerHTML = '<div class="info-message">Password reset feature coming soon. Contact system administrator for assistance.</div>';
+                
+                setTimeout(() => {
+                    forgotPasswordModal.style.display = 'none';
+                }, 3000);
+            });
+            
+            // ==================== MODAL CLOSE HANDLERS ====================
+            window.addEventListener('click', function(e) {
+                if (e.target === adminCreateAccountModal) {
+                    adminCreateAccountModal.style.display = 'none';
+                }
+                if (e.target === forgotPasswordModal) {
+                    forgotPasswordModal.style.display = 'none';
+                }
+            });
+            
+            // ==================== INITIAL SETUP CHECK ====================
+            async function checkInitialSetup() {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin/check/setup`);
+                    const data = await response.json();
+                    
+                    if (data.success && !data.hasAdmin) {
+                        console.log('No admin accounts found. Please create the first admin account.');
+                        // Show a helpful message
+                        const errorElement = document.getElementById('admin-error');
+                        errorElement.textContent = 'No admin accounts found. Click "Create New Account" to create the first admin.';
+                        errorElement.style.backgroundColor = '#fff3cd';
+                        errorElement.style.color = '#856404';
+                        errorElement.style.borderColor = '#ffeaa7';
+                        errorElement.style.display = 'block';
+                    } else if (data.success && data.hasAdmin) {
+                        console.log('Admin accounts exist. Total:', data.totalAdmins);
+                    }
+                } catch (error) {
+                    console.error('Error checking setup:', error);
+                }
+            }
+            
+            // Run setup check on page load
+            checkInitialSetup();
+            
+            // ==================== DEMO CREDENTIALS ====================
+            console.log('Demo credentials for testing:');
+            console.log('Admin: Use "Create New Account" to create first admin');
+            console.log('Faculty: faculty@amc.edu / faculty123');
+            console.log('Student: student@amc.edu / student123');
+            console.log('Staff: staff@amc.edu / staff123');
+            
+            // ==================== DEBUG INFO ====================
+            console.log('Debug endpoints:');
+            console.log('Check setup: GET ' + API_BASE_URL + '/admin/check/setup');
+            console.log('List admins: GET ' + API_BASE_URL + '/admin/list/all');
+            console.log('Reset data (dev only): DELETE ' + API_BASE_URL + '/admin/reset-data');
+            
+
+            
+
+            // CRUD Operations for Students
+            async function createAdmin(adminData) {
+                const response = await fetch(`http://localhost:3000/api/admin`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(adminData),
+                });
+
+                if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Failed to create adnin");
+                }
+
+                return response.json();
+            }
+
+            // Handler for button click
+            document.getElementById('submit-admin-create-account').addEventListener('click', async function(e) {
+                e.preventDefault();
+
+                // Collect admin data from form fields
+                const adminData = {
+                    accountType: document.getElementById('admin-account-type').value,
+                    username: document.getElementById('admin-create-username').value,
+                    email: document.getElementById('admin-create-email').value,
+                    password: document.getElementById('admin-create-password').value,
+                    confirmPassword: document.getElementById('admin-create-confirm-password').value,
+                    };
+
+                try {
+                    const result = await createAdmin(adminData);
+                    alert('Account created!');
+                    // Optionally, close modal or redirect
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            });
+        });
+    </script>
+    
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

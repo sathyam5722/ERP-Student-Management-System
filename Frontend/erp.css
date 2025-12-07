@@ -1,0 +1,161 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: #f6f6f6;
+    color: #222;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background: #2c2f7c;
+    color: white;
+    align-items: center;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+}
+
+.login-btn {
+    padding: 8px 16px;
+    background: #ffd700;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* HERO */
+/* .hero {
+    background: url(".//amc-engineering-college2-gallery-image-191.jpg") center/cover fixed no-repeat;
+    height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+} */
+
+/* .hero-content {
+    color: white;
+    backdrop-filter: blur(6px);
+    padding: 20px;
+    border-radius: 10px;
+} */
+.hero {
+    position: relative;
+    height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* Background video styling */
+.bg-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    filter: brightness(100%); /* darkens for text readability */
+}
+
+/* Hero text */
+.hero-content {
+    /* z-index: 2; */
+    color: #fff;
+    backdrop-filter: blur(3px);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.cta-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: none;
+    background: #ffd700;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* FEATURES */
+.section-title {
+    text-align: center;
+    margin: 40px 0;
+    font-size: 32px;
+    color: #2c2f7c;
+}
+
+.features-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.feature-card {
+    background: white;
+    width: 250px;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0px 2px 10px #bfbfbf;
+    transition: .3s;
+}
+
+.feature-card:hover {
+    transform: scale(1.05);
+}
+
+/* MODULES */
+.module-grid {
+    width: 80%;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px;
+}
+
+.module {
+    background: #2c2f7c;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    transition: .3s;
+}
+
+.module:hover {
+    background: #ffd700;
+    color: black;
+    transform: translateY(-6px);
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    background: #222;
+    color: white;
+    padding: 20px 0;
+    margin-top: 40px;
+}
