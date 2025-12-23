@@ -742,10 +742,10 @@
         
         // Dashboard URLs
         const DASHBOARD_URLS = {
-            faculty: 'file:///C:/Users/Admin/Desktop/ERP1/ERP/frontend/faculty%20dashboard.html',
-            student: 'file:///C:/Users/Admin/Desktop/ERP1/ERP/frontend/Student%20dashboard.html',
-            admin: 'file:///C:/Users/Admin/Desktop/ERP1/ERP/frontend/DASHBOARD%20.HTML',
-            staff: 'file:///C:/Users/Admin/Desktop/ERP1/ERP/frontend/DASHBOARD%20.HTML'
+            faculty: './faculty dashboard.html',
+            student: './Student dashboard.html',
+            admin: './dashboard.html',
+            staff: './dashboard.html'
         };
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1305,6 +1305,44 @@
             console.log('Check setup: GET ' + API_BASE_URL + '/admin/check/setup');
             console.log('List admins: GET ' + API_BASE_URL + '/admin/list/all');
             console.log('Reset data (dev only): DELETE ' + API_BASE_URL + '/admin/reset-data');
+
+            // CRUD Operations for Admin
+            async function createAdmin(adminData) {
+                const response = await fetch(`${API_BASE_URL}/api/admin`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(adminData),
+                });
+
+                if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Failed to create adnin");
+                }
+
+                return response.json();
+            }
+
+            // Handler for button click
+            document.getElementById('submit-admin-create-account').addEventListener('click', async function(e) {
+                e.preventDefault();
+
+                // Collect admin data from form fields
+                const adminData = {
+                    accountType: document.getElementById('admin-account-type').value,
+                    username: document.getElementById('admin-create-username').value,
+                    email: document.getElementById('admin-create-email').value,
+                    password: document.getElementById('admin-create-password').value,
+                    confirmPassword: document.getElementById('admin-create-confirm-password').value,
+                    };
+
+                try {
+                    const result = await createAdmin(adminData);
+                    alert('Account created!');
+                    // Optionally, close modal or redirect
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            });
         });
     </script>
     

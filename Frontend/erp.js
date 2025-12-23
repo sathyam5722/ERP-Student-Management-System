@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
             button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
             setTimeout(() => {
                 // Redirect to next page (replace with actual URL or file path)
-                window.location.href = "file:///C:/Users/Admin/Desktop/ERP1/ERP/Front%20End/index2.html"; 
+                window.location.href = "file:///C:/Users/Admin/Desktop/Student%20Management%20app/Frontend/index2.html"; 
                 // e.g., '/cta-portal' or 'https://example.com/cta'//
             }, 1000);
         });
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
             setTimeout(() => {
                 // Redirect to login page
-                window.location.href = "file:///C:/Users/Admin/Desktop/ERP1/ERP/Front%20End/login.html"; // Use relative path
+                window.location.href = "file:///C:/Users/Admin/Desktop/Student%20Management%20app/Frontend/login.html"; // Use relative path
             }, 1000);
         });
     }

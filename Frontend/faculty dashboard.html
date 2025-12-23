@@ -1,0 +1,2555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - AMC Engineering</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --success: #00b09b;
+            --warning: #ff9a00;
+            --danger: #ff416c;
+            --info: #00c9ff;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --purple: #8e2de2;
+            --teal: #00b4db;
+            --orange: #ff7e5f;
+            --pink: #ff6b6b;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-header p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .sidebar-menu a:hover::before {
+            left: 100%;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left: 4px solid #ffd700;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu i {
+            margin-right: 12px;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: var(--dark);
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .user-info:hover {
+            transform: translateY(-3px);
+        }
+
+        .user-info img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 3px solid var(--primary);
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            transition: all 0.4s;
+            overflow: hidden;
+            background: white;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-bottom: none;
+            padding: 18px 25px;
+            border-radius: 15px 15px 0 0 !important;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            text-align: center;
+            padding: 25px 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stats-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-card h3 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .stats-card p {
+            color: #6c757d;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .table th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 12px 15px;
+            border-color: #f1f3f4;
+            text-align: center;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(106, 17, 203, 0.05);
+        }
+
+        /* Form Styles */
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25);
+        }
+
+        .btn {
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(106, 17, 203, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00d2a4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #ffb347);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #ff4b7d);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #00a8ff);
+        }
+
+        /* Tabs */
+        .nav-tabs {
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 12px 25px;
+            border-radius: 10px 10px 0 0;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background: rgba(106, 17, 203, 0.1);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--primary);
+            background: rgba(106, 17, 203, 0.05);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .bg-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+        }
+
+        .bg-success {
+            background: linear-gradient(135deg, var(--success), #00d2a4) !important;
+        }
+
+        .bg-warning {
+            background: linear-gradient(135deg, var(--warning), #ffb347) !important;
+        }
+
+        .bg-danger {
+            background: linear-gradient(135deg, var(--danger), #ff4b7d) !important;
+        }
+
+        .bg-info {
+            background: linear-gradient(135deg, var(--info), #00a8ff) !important;
+        }
+
+        /* Attendance Status */
+        .attendance-present {
+            color: var(--success);
+        }
+
+        .attendance-absent {
+            color: var(--danger);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                overflow: hidden;
+            }
+
+            .sidebar-header h3, .sidebar-header p, .sidebar-menu span {
+                display: none;
+            }
+
+            .sidebar-menu i {
+                margin-right: 0;
+                font-size: 1.3rem;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .action-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .action-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .action-card h5 {
+            margin: 0;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* Section Animation */
+        .section {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Gradient Backgrounds for Cards */
+        .card-stats-1 {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: white;
+        }
+
+        .card-stats-2 {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            color: white;
+        }
+
+        .card-stats-3 {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: white;
+        }
+
+        .card-stats-4 {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: white;
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            padding: 5px 8px;
+            border-radius: 50%;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        /* Progress Bars */
+        .progress {
+            height: 10px;
+            border-radius: 10px;
+            background-color: #e9ecef;
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        /* Faculty Card Styles */
+        .faculty-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .faculty-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .faculty-card.selected {
+            border-left: 5px solid var(--success);
+            background: rgba(0, 180, 219, 0.05);
+        }
+
+        .faculty-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+        }
+
+        /* Selection Card Styles */
+        .selection-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .selection-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .selection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .selection-card.selected {
+            border-color: var(--success);
+            background: rgba(0, 180, 219, 0.1);
+        }
+
+        .selection-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Subject Card Styles */
+        .subject-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .subject-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .subject-card.selected {
+            border-left-color: var(--success);
+            background: rgba(0, 180, 219, 0.1);
+        }
+
+        .subject-card.blocked {
+            border-left-color: var(--danger);
+            background: rgba(255, 65, 108, 0.1);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .subject-card h5 {
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .subject-card p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation Controls */
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, var(--warning), #ffb347);
+        }
+
+        /* Progress Indicator */
+        .progress-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .progress-indicator::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+        }
+
+        .step-circle.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .step-label.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Allocation Summary */
+        .allocation-summary {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Subject Grid */
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Ensure proper column alignment */
+        .allocations-table-container {
+            overflow-x: auto;
+        }
+
+        .allocations-table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .allocations-table th:nth-child(1),
+        .allocations-table td:nth-child(1) {
+            width: 15%;
+        }
+
+        .allocations-table th:nth-child(2),
+        .allocations-table td:nth-child(2) {
+            width: 25%;
+        }
+
+        .allocations-table th:nth-child(3),
+        .allocations-table td:nth-child(3) {
+            width: 20%;
+        }
+
+        .allocations-table th:nth-child(4),
+        .allocations-table td:nth-child(4) {
+            width: 20%;
+        }
+
+        .allocations-table th:nth-child(5),
+        .allocations-table td:nth-child(5) {
+            width: 10%;
+        }
+
+        .allocations-table th:nth-child(6),
+        .allocations-table td:nth-child(6) {
+            width: 10%;
+        }
+
+        /* Student List Styles */
+        .student-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+        }
+
+        /* Assignment Styles */
+        .assignment-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .assignment-card.late {
+            border-left-color: var(--danger);
+        }
+
+        .assignment-card.submitted {
+            border-left-color: var(--success);
+        }
+
+        .assignment-card.pending {
+            border-left-color: var(--warning);
+        }
+
+        /* Profile Styles */
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary);
+            margin: 0 auto 20px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>AMC Engineering</h3>
+            <p>Faculty Dashboard</p>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li><a href="#" class="active" onclick="showSection('dashboard')"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" onclick="showSection('attendance')"><i class="fas fa-calendar-check"></i> <span>Attendance</span></a></li>
+                <li><a href="#" onclick="showSection('internal-marks')"><i class="fas fa-chart-bar"></i> <span>Internal Marks</span></a></li>
+                <li><a href="#" onclick="showSection('assignments')"><i class="fas fa-tasks"></i> <span>Assignments</span></a></li>
+                <li><a href="#" onclick="showSection('student-details')"><i class="fas fa-user-graduate"></i> <span>Student Details</span></a></li>
+                <li><a href="#" onclick="showSection('regulations')"><i class="fas fa-book"></i> <span>Regulations</span></a></li>
+                <li><a href="#" onclick="showSection('profile')"><i class="fas fa-user-cog"></i> <span>Profile Settings</span></a></li>
+                <li><a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1 id="page-title">Dashboard</h1>
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=Dr.+Ramesh+Kumar&background=6a11cb&color=fff" alt="Faculty">
+                <div>
+                    <h6 class="mb-0">Dr. Ramesh Kumar</h6>
+                    <small class="text-muted">Professor - Computer Science</small>
+                </div>
+                <span class="notification-badge">3</span>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section">
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="action-card" onclick="showSection('attendance')">
+                    <i class="fas fa-calendar-plus"></i>
+                    <h5>Mark Attendance</h5>
+                </div>
+                <div class="action-card" onclick="showSection('internal-marks')">
+                    <i class="fas fa-edit"></i>
+                    <h5>Enter Marks</h5>
+                </div>
+                <div class="action-card" onclick="showSection('assignments')">
+                    <i class="fas fa-tasks"></i>
+                    <h5>Assignments</h5>
+                </div>
+                <div class="action-card" onclick="showSection('student-details')">
+                    <i class="fas fa-user-edit"></i>
+                    <h5>Update Students</h5>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="dashboard-grid">
+                <div class="card card-stats-1">
+                    <div class="stats-card">
+                        <i class="fas fa-users"></i>
+                        <h3>142</h3>
+                        <p>Total Students</p>
+                        <div class="progress mt-3">
+                            <div class="progress-bar" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card-stats-2">
+                    <div class="stats-card">
+                        <i class="fas fa-book-open"></i>
+                        <h3>6</h3>
+                        <p>Subjects</p>
+                        <div class="progress mt-3">
+                            <div class="progress-bar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card-stats-3">
+                    <div class="stats-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>87%</h3>
+                        <p>Average Attendance</p>
+                        <div class="progress mt-3">
+                            <div class="progress-bar" style="width: 87%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card-stats-4">
+                    <div class="stats-card">
+                        <i class="fas fa-clipboard-check"></i>
+                        <h3>24</h3>
+                        <p>Pending Assignments</p>
+                        <div class="progress mt-3">
+                            <div class="progress-bar" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Recent Activity -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Attendance Overview</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="attendanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Recent Activity</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
+                                    <div>
+                                        <h6 class="mb-1">Marked Attendance</h6>
+                                        <small class="text-muted">CS301 - 2 hours ago</small>
+                                    </div>
+                                    <span class="badge bg-primary">Today</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
+                                    <div>
+                                        <h6 class="mb-1">Uploaded Assignment</h6>
+                                        <small class="text-muted">DSA Lab - 5 hours ago</small>
+                                    </div>
+                                    <span class="badge bg-primary">Today</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
+                                    <div>
+                                        <h6 class="mb-1">Updated Marks</h6>
+                                        <small class="text-muted">Internal Test 1 - Yesterday</small>
+                                    </div>
+                                    <span class="badge bg-secondary">Yesterday</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
+                                    <div>
+                                        <h6 class="mb-1">Added Student</h6>
+                                        <small class="text-muted">AM24M0101 - 2 days ago</small>
+                                    </div>
+                                    <span class="badge bg-secondary">2 days</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Deadlines -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Upcoming Deadlines</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h6 class="mb-0">Binary Search Tree Implementation</h6>
+                                    <small class="text-muted">Data Structures</small>
+                                </div>
+                                <span class="badge bg-warning">3 days</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">SQL Queries Practice</h6>
+                                    <small class="text-muted">Database Systems</small>
+                                </div>
+                                <span class="badge bg-danger">1 day</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Section -->
+        <div id="attendance" class="section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Attendance Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label">Select Subject</label>
+                            <select class="form-select">
+                                <option selected>Select Subject</option>
+                                <option>Data Structures (CS301)</option>
+                                <option>Database Systems (CS302)</option>
+                                <option>Operating Systems (CS303)</option>
+                                <option>Computer Networks (CS304)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Select Date</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Select Section</label>
+                            <select class="form-select">
+                                <option selected>Select Section</option>
+                                <option>Section A</option>
+                                <option>Section B</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Attendance Status</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>AM24M0101</td>
+                                    <td>Rahul Sharma</td>
+                                    <td>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="attendance1" id="present1" checked>
+                                            <label class="form-check-label attendance-present" for="present1">Present</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="attendance1" id="absent1">
+                                            <label class="form-check-label attendance-absent" for="absent1">Absent</label>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="form-control" placeholder="Remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>AM24M0102</td>
+                                    <td>Priya Patel</td>
+                                    <td>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="attendance2" id="present2" checked>
+                                            <label class="form-check-label attendance-present" for="present2">Present</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="attendance2" id="absent2">
+                                            <label class="form-check-label attendance-absent" for="absent2">Absent</label>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="form-control" placeholder="Remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>AM24M0103</td>
+                                    <td>Amit Kumar</td>
+                                    <td>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="attendance3" id="present3">
+                                            <label class="form-check-label attendance-present" for="present3">Present</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="attendance3" id="absent3" checked>
+                                            <label class="form-check-label attendance-absent" for="absent3">Absent</label>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="form-control" placeholder="Medical Leave"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button class="btn btn-success"><i class="fas fa-save me-2"></i>Save Attendance</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Summary -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Attendance Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <canvas id="attendanceSummaryChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Subject</th>
+                                            <th>Total Classes</th>
+                                            <th>Present</th>
+                                            <th>Attendance %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Data Structures</td>
+                                            <td>45</td>
+                                            <td>39</td>
+                                            <td>86.7%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Database Systems</td>
+                                            <td>40</td>
+                                            <td>36</td>
+                                            <td>90.0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Operating Systems</td>
+                                            <td>42</td>
+                                            <td>35</td>
+                                            <td>83.3%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Internal Marks Section -->
+        <div id="internal-marks" class="section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Internal Marks Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label">Select Subject</label>
+                            <select class="form-select">
+                                <option selected>Select Subject</option>
+                                <option>Data Structures (CS301)</option>
+                                <option>Database Systems (CS302)</option>
+                                <option>Operating Systems (CS303)</option>
+                                <option>Computer Networks (CS304)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Select Test</label>
+                            <select class="form-select">
+                                <option selected>Select Test</option>
+                                <option>Internal Test 1</option>
+                                <option>Internal Test 2</option>
+                                <option>Assignment 1</option>
+                                <option>Lab Evaluation</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Select Section</label>
+                            <select class="form-select">
+                                <option selected>Select Section</option>
+                                <option>Section A</option>
+                                <option>Section B</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Marks (Out of 25)</th>
+                                    <th>Grade</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>AM24M0101</td>
+                                    <td>Rahul Sharma</td>
+                                    <td><input type="number" class="form-control" value="22"></td>
+                                    <td><span class="badge bg-success">A</span></td>
+                                    <td><input type="text" class="form-control" placeholder="Excellent"></td>
+                                </tr>
+                                <tr>
+                                    <td>AM24M0102</td>
+                                    <td>Priya Patel</td>
+                                    <td><input type="number" class="form-control" value="20"></td>
+                                    <td><span class="badge bg-success">A</span></td>
+                                    <td><input type="text" class="form-control" placeholder="Good"></td>
+                                </tr>
+                                <tr>
+                                    <td>AM24M0103</td>
+                                    <td>Amit Kumar</td>
+                                    <td><input type="number" class="form-control" value="15"></td>
+                                    <td><span class="badge bg-warning">C</span></td>
+                                    <td><input type="text" class="form-control" placeholder="Needs Improvement"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button class="btn btn-success"><i class="fas fa-save me-2"></i>Save Marks</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Marks Distribution -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Marks Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <canvas id="marksDistributionChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Grade</th>
+                                            <th>Range</th>
+                                            <th>No. of Students</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge bg-success">A</span></td>
+                                            <td>21-25</td>
+                                            <td>18</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-info">B</span></td>
+                                            <td>16-20</td>
+                                            <td>22</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-warning">C</span></td>
+                                            <td>11-15</td>
+                                            <td>8</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-danger">D</span></td>
+                                            <td>0-10</td>
+                                            <td>2</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments Section -->
+        <div id="assignments" class="section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Assignments Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-4">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAssignmentModal">
+                            <i class="fas fa-plus me-2"></i>Create New Assignment
+                        </button>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-primary active">All</button>
+                            <button class="btn btn-outline-primary">Pending</button>
+                            <button class="btn btn-outline-primary">Submitted</button>
+                            <button class="btn btn-outline-primary">Graded</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="assignment-card pending">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="mb-0">Binary Search Tree Implementation</h5>
+                                    <span class="badge bg-warning">Pending</span>
+                                </div>
+                                <p class="text-muted mb-2">Data Structures - Section A</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Due: 15 Dec 2023</small>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary me-1">View</button>
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="assignment-card submitted">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="mb-0">SQL Queries Practice</h5>
+                                    <span class="badge bg-success">Submitted</span>
+                                </div>
+                                <p class="text-muted mb-2">Database Systems - Section B</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Due: 10 Dec 2023</small>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary me-1">Grade</button>
+                                        <button class="btn btn-sm btn-outline-info">Download</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="assignment-card late">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="mb-0">Process Scheduling Algorithms</h5>
+                                    <span class="badge bg-danger">Late</span>
+                                </div>
+                                <p class="text-muted mb-2">Operating Systems - Section A</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Due: 5 Dec 2023</small>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary me-1">View</button>
+                                        <button class="btn btn-sm btn-outline-warning">Remind</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignment Statistics -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Assignment Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="chart-container">
+                                <canvas id="assignmentStatsChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <h3>24</h3>
+                                <p>Total Assignments</p>
+                            </div>
+                            <div class="stats-card mt-3">
+                                <h3>18</h3>
+                                <p>Submitted</p>
+                            </div>
+                            <div class="stats-card mt-3">
+                                <h3>6</h3>
+                                <p>Pending</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Details Section -->
+        <div id="student-details" class="section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Student Details Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search students...">
+                                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option selected>All Sections</option>
+                                <option>Section A</option>
+                                <option>Section B</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option selected>All Years</option>
+                                <option>1st Year</option>
+                                <option>2nd Year</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="student-card">
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="https://ui-avatars.com/api/?name=Rahul+Sharma&background=6a11cb&color=fff" alt="Student" class="student-avatar me-3">
+                                    <div>
+                                        <h6 class="mb-0">Rahul Sharma</h6>
+                                        <small class="text-muted">AM24M0101</small>
+                                    </div>
+                                </div>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <h6 class="mb-0">85%</h6>
+                                        <small class="text-muted">Attendance</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="mb-0">78%</h6>
+                                        <small class="text-muted">Marks</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="mb-0">12</h6>
+                                        <small class="text-muted">Assignments</small>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-primary w-100">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="student-card">
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="https://ui-avatars.com/api/?name=Priya+Patel&background=2575fc&color=fff" alt="Student" class="student-avatar me-3">
+                                    <div>
+                                        <h6 class="mb-0">Priya Patel</h6>
+                                        <small class="text-muted">AM24M0102</small>
+                                    </div>
+                                </div>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <h6 class="mb-0">92%</h6>
+                                        <small class="text-muted">Attendance</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="mb-0">85%</h6>
+                                        <small class="text-muted">Marks</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="mb-0">15</h6>
+                                        <small class="text-muted">Assignments</small>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-primary w-100">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="student-card">
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="https://ui-avatars.com/api/?name=Amit+Kumar&background=00b09b&color=fff" alt="Student" class="student-avatar me-3">
+                                    <div>
+                                        <h6 class="mb-0">Amit Kumar</h6>
+                                        <small class="text-muted">AM24M0103</small>
+                                    </div>
+                                </div>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <h6 class="mb-0">76%</h6>
+                                        <small class="text-muted">Attendance</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="mb-0">68%</h6>
+                                        <small class="text-muted">Marks</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="mb-0">8</h6>
+                                        <small class="text-muted">Assignments</small>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-primary w-100">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Regulations Section -->
+        <div id="regulations" class="section" style="display: none;">
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-step">
+                    <div class="step-circle active">1</div>
+                    <div class="step-label active">Select Faculty</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Select Year</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Select Semester</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Select Section</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle">5</div>
+                    <div class="step-label">Allocate Subjects</div>
+                </div>
+            </div>
+
+            <!-- Step 1: Faculty Selection -->
+            <div id="faculty-selection-step" class="step-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Select Faculty</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="faculty-list">
+                            <!-- Faculty cards will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Year Selection -->
+            <div id="year-selection-step" class="step-content" style="display: none;">
+                <div class="navigation-controls">
+                    <button class="btn back-button" onclick="backToFacultySelection()">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Faculty
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Select Academic Year for <span id="selected-faculty-name"></span></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="selection-card" onclick="selectYear(1)">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <h4>1st Year</h4>
+                                    <p class="text-muted">Semesters 1 & 2</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="selection-card" onclick="selectYear(2)">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <h4>2nd Year</h4>
+                                    <p class="text-muted">Semesters 3 & 4</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Semester Selection -->
+            <div id="semester-selection-step" class="step-content" style="display: none;">
+                <div class="navigation-controls">
+                    <button class="btn back-button" onclick="backToYearSelection()">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Year
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Select Semester for <span id="selected-year-name"></span></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="semester-list">
+                            <!-- Semester cards will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Section Selection -->
+            <div id="section-selection-step" class="step-content" style="display: none;">
+                <div class="navigation-controls">
+                    <button class="btn back-button" onclick="backToSemesterSelection()">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Semester
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Select Section for <span id="selected-semester-name"></span></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="selection-card" onclick="selectSection('A')">
+                                    <i class="fas fa-users"></i>
+                                    <h4>Section A</h4>
+                                    <p class="text-muted">Approx. 70 students</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="selection-card" onclick="selectSection('B')">
+                                    <i class="fas fa-user-friends"></i>
+                                    <h4>Section B</h4>
+                                    <p class="text-muted">Approx. 70 students</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Subject Allocation -->
+            <div id="subject-allocation-step" class="step-content" style="display: none;">
+                <div class="navigation-controls">
+                    <button class="btn back-button" onclick="backToSectionSelection()">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Section
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Allocate Subjects for <span id="selected-section-name"></span></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Select subjects to allocate to the faculty. Subjects already allocated to other faculty will be blocked.
+                        </div>
+                        <div class="subject-grid" id="subject-list">
+                            <!-- Subject cards will be dynamically generated -->
+                        </div>
+                        <div class="mt-4 text-center">
+                            <button class="btn btn-success" onclick="saveSubjectAllocation()">
+                                <i class="fas fa-save me-2"></i>Save Allocation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Allocations Table - Only shows allocated subjects -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Current Subject Allocations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="allocation-summary">
+                        <div class="row">
+                            <div class="col-md-3 text-center">
+                                <h4 id="total-allocations">0</h4>
+                                <p class="mb-0">Total Allocations</p>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <h4 id="faculty-count">0</h4>
+                                <p class="mb-0">Faculty Involved</p>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <h4 id="subjects-count">0</h4>
+                                <p class="mb-0">Subjects Allocated</p>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <h4 id="sections-count">0</h4>
+                                <p class="mb-0">Sections Covered</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="allocations-table-container">
+                        <table class="table table-hover allocations-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject Code</th>
+                                    <th>Subject Name</th>
+                                    <th>Assigned Faculty</th>
+                                    <th>Year & Semester</th>
+                                    <th>Section</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allocations-table">
+                                <!-- Only allocated subjects will appear here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Empty state when no allocations exist -->
+                    <div id="empty-allocations" class="empty-state" style="display: none;">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h4>No Subject Allocations Yet</h4>
+                        <p>Start by allocating subjects to faculty using the workflow above.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profile" class="section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Profile Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img src="https://ui-avatars.com/api/?name=Dr.+Ramesh+Kumar&background=6a11cb&color=fff&size=150" alt="Profile" class="profile-avatar">
+                            <div class="mt-3">
+                                <button class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-camera me-1"></i>Change Photo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <form>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" class="form-control" value="Ramesh">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" value="Kumar">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" value="ramesh.kumar@amc.edu">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone</label>
+                                        <input type="tel" class="form-control" value="+91 9876543210">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Department</label>
+                                        <input type="text" class="form-control" value="Computer Science">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Designation</label>
+                                        <input type="text" class="form-control" value="Professor">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Bio</label>
+                                    <textarea class="form-control" rows="4">Experienced professor with 15+ years in Computer Science education. Specialized in Data Structures and Algorithms.</textarea>
+                                </div>
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Update Profile
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Security Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Current Password</label>
+                                <input type="password" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">New Password</label>
+                                <input type="password" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control">
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-primary">
+                                <i class="fas fa-lock me-2"></i>Change Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Assignment Modal -->
+    <div class="modal fade" id="createAssignmentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Assignment Title</label>
+                                <input type="text" class="form-control" placeholder="Enter assignment title">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Subject</label>
+                                <select class="form-select">
+                                    <option selected>Select Subject</option>
+                                    <option>Data Structures</option>
+                                    <option>Database Systems</option>
+                                    <option>Operating Systems</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Due Date</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Section</label>
+                                <select class="form-select">
+                                    <option selected>Select Section</option>
+                                    <option>Section A</option>
+                                    <option>Section B</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Instructions</label>
+                            <textarea class="form-control" rows="4" placeholder="Enter assignment instructions"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Attachment</label>
+                            <input type="file" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Create Assignment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Data storage
+        const facultyData = [
+            { id: 1, name: "Dr. Ramesh Kumar", department: "Computer Science", email: "ramesh.kumar@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Ramesh+Kumar&background=6a11cb&color=fff" },
+            { id: 2, name: "Prof. Sunita Sharma", department: "Computer Science", email: "sunita.sharma@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Sunita+Sharma&background=2575fc&color=fff" },
+            { id: 3, name: "Dr. Vikram Patel", department: "Information Science", email: "vikram.patel@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Vikram+Patel&background=00b09b&color=fff" },
+            { id: 4, name: "Prof. Anjali Singh", department: "Electronics", email: "anjali.singh@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Anjali+Singh&background=ff9a00&color=fff" },
+            { id: 5, name: "Dr. Rajesh Verma", department: "Mechanical", email: "rajesh.verma@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Rajesh+Verma&background=ff416c&color=fff" },
+            { id: 6, name: "Prof. Priya Nair", department: "Civil", email: "priya.nair@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Priya+Nair&background=00c9ff&color=fff" },
+            { id: 7, name: "Dr. Amit Joshi", department: "Computer Science", email: "amit.joshi@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Amit+Joshi&background=8e2de2&color=fff" },
+            { id: 8, name: "Prof. Neha Gupta", department: "Information Science", email: "neha.gupta@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Neha+Gupta&background=ff7e5f&color=fff" },
+            { id: 9, name: "Dr. Sanjay Reddy", department: "Electronics", email: "sanjay.reddy@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Sanjay+Reddy&background=00b4db&color=fff" },
+            { id: 10, name: "Prof. Meera Iyer", department: "Mechanical", email: "meera.iyer@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Meera+Iyer&background=ff6b6b&color=fff" }
+        ];
+
+        const subjectData = {
+            1: [ // Semester 1
+                { id: 101, code: "MATH101", name: "Engineering Mathematics I", credits: 4 },
+                { id: 102, code: "PHY101", name: "Engineering Physics", credits: 4 },
+                { id: 103, code: "CHE101", name: "Engineering Chemistry", credits: 3 },
+                { id: 104, code: "CSE101", name: "Programming in C", credits: 3 },
+                { id: 105, code: "MEC101", name: "Engineering Mechanics", credits: 3 }
+            ],
+            2: [ // Semester 2
+                { id: 201, code: "MATH102", name: "Engineering Mathematics II", credits: 4 },
+                { id: 202, code: "EEE102", name: "Basic Electrical Engineering", credits: 4 },
+                { id: 203, code: "CSE102", name: "Data Structures", credits: 3 },
+                { id: 204, code: "CSE103", name: "Digital Electronics", credits: 3 },
+                { id: 205, code: "MEC102", name: "Engineering Drawing", credits: 3 }
+            ],
+            3: [ // Semester 3
+                { id: 301, code: "MATH201", name: "Discrete Mathematics", credits: 4 },
+                { id: 302, code: "CSE201", name: "Object Oriented Programming", credits: 4 },
+                { id: 303, code: "CSE202", name: "Computer Organization", credits: 3 },
+                { id: 304, code: "CSE203", name: "Database Management Systems", credits: 3 },
+                { id: 305, code: "CSE204", name: "Operating Systems", credits: 3 }
+            ],
+            4: [ // Semester 4
+                { id: 401, code: "CSE205", name: "Design and Analysis of Algorithms", credits: 4 },
+                { id: 402, code: "CSE206", name: "Software Engineering", credits: 4 },
+                { id: 403, code: "CSE207", name: "Computer Networks", credits: 3 },
+                { id: 404, code: "CSE208", name: "Microprocessors", credits: 3 },
+                { id: 405, code: "CSE209", name: "Theory of Computation", credits: 3 }
+            ]
+        };
+
+        const semesterData = {
+            1: [
+                { id: 1, name: "Semester 1", year: 1 },
+                { id: 2, name: "Semester 2", year: 1 }
+            ],
+            2: [
+                { id: 3, name: "Semester 3", year: 2 },
+                { id: 4, name: "Semester 4", year: 2 }
+            ]
+        };
+
+        let subjectAllocations = {};
+        let currentSelection = {
+            facultyId: null,
+            year: null,
+            semester: null,
+            section: null
+        };
+
+        // Initialize data
+        function initializeData() {
+            // Load from localStorage or use empty object
+            const savedAllocations = localStorage.getItem('subjectAllocations');
+            subjectAllocations = savedAllocations ? JSON.parse(savedAllocations) : {};
+            
+            // Clean up any unknown allocations
+            cleanUnknownAllocations();
+            
+            renderFacultyList();
+            renderAllocationsTable();
+            updateAllocationSummary();
+        }
+
+        // Clean up unknown allocations
+        function cleanUnknownAllocations() {
+            let hasChanges = false;
+            
+            // Remove allocations with invalid subject IDs
+            Object.keys(subjectAllocations).forEach(key => {
+                const allocation = subjectAllocations[key];
+                const subject = getAllSubjectById(allocation.subjectId);
+                
+                // If subject is unknown, remove the allocation
+                if (subject.code === 'Unknown') {
+                    delete subjectAllocations[key];
+                    hasChanges = true;
+                }
+            });
+            
+            // Save if changes were made
+            if (hasChanges) {
+                localStorage.setItem('subjectAllocations', JSON.stringify(subjectAllocations));
+            }
+        }
+
+        // Render faculty list
+        function renderFacultyList() {
+            const facultyList = document.getElementById('faculty-list');
+            facultyList.innerHTML = '';
+
+            facultyData.forEach(faculty => {
+                const assignedSubjects = Object.values(subjectAllocations).filter(allocation => 
+                    allocation.facultyId === faculty.id
+                ).length;
+
+                const facultyCard = document.createElement('div');
+                facultyCard.className = 'col-md-6 col-lg-4';
+                facultyCard.innerHTML = `
+                    <div class="faculty-card" onclick="selectFaculty(${faculty.id})">
+                        <div class="d-flex align-items-center">
+                            <img src="${faculty.avatar}" alt="${faculty.name}" class="faculty-avatar me-3">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">${faculty.name}</h5>
+                                <p class="text-muted mb-1">${faculty.department}</p>
+                                <p class="text-muted mb-0">${faculty.email}</p>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-primary">Assigned Subjects: ${assignedSubjects}</span>
+                        </div>
+                    </div>
+                `;
+                facultyList.appendChild(facultyCard);
+            });
+        }
+
+        // Render allocations table - Only shows allocated subjects
+        function renderAllocationsTable() {
+            const allocationsTable = document.getElementById('allocations-table');
+            const emptyState = document.getElementById('empty-allocations');
+            
+            allocationsTable.innerHTML = '';
+
+            // Get all allocations and display them
+            const allocations = Object.values(subjectAllocations);
+            
+            if (allocations.length === 0) {
+                emptyState.style.display = 'block';
+                document.querySelector('.allocations-table-container').style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                document.querySelector('.allocations-table-container').style.display = 'block';
+                
+                allocations.forEach(allocation => {
+                    const faculty = facultyData.find(f => f.id === allocation.facultyId);
+                    const subject = getAllSubjectById(allocation.subjectId);
+                    const semesterName = `Year ${Math.ceil(allocation.semester/2)} - Semester ${allocation.semester}`;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${subject.code}</strong></td>
+                        <td>${subject.name}</td>
+                        <td>${faculty ? faculty.name : 'Unknown'}</td>
+                        <td>${semesterName}</td>
+                        <td>Section ${allocation.section}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="removeAllocation('${allocation.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    allocationsTable.appendChild(row);
+                });
+            }
+        }
+
+        // Update allocation summary
+        function updateAllocationSummary() {
+            const allocations = Object.values(subjectAllocations);
+            
+            document.getElementById('total-allocations').textContent = allocations.length;
+            
+            // Count unique faculty
+            const facultyIds = [...new Set(allocations.map(a => a.facultyId))];
+            document.getElementById('faculty-count').textContent = facultyIds.length;
+            
+            // Count unique subjects
+            const subjectIds = [...new Set(allocations.map(a => a.subjectId))];
+            document.getElementById('subjects-count').textContent = subjectIds.length;
+            
+            // Count unique sections
+            const sections = [...new Set(allocations.map(a => `${a.semester}-${a.section}`))];
+            document.getElementById('sections-count').textContent = sections.length;
+        }
+
+        // Helper function to get subject by ID from all semesters
+        function getAllSubjectById(subjectId) {
+            for (const semester in subjectData) {
+                const subject = subjectData[semester].find(s => s.id === subjectId);
+                if (subject) return subject;
+            }
+            return { code: 'Unknown', name: 'Unknown Subject' };
+        }
+
+        // Select faculty
+        function selectFaculty(facultyId) {
+            currentSelection.facultyId = facultyId;
+            const faculty = facultyData.find(f => f.id === facultyId);
+            
+            document.getElementById('selected-faculty-name').textContent = faculty.name;
+            updateProgressIndicator(2);
+            showStep('year-selection-step');
+        }
+
+        // Select year
+        function selectYear(year) {
+            currentSelection.year = year;
+            
+            document.getElementById('selected-year-name').textContent = `Year ${year}`;
+            updateProgressIndicator(3);
+            
+            // Render semester cards
+            const semesterList = document.getElementById('semester-list');
+            semesterList.innerHTML = '';
+            
+            semesterData[year].forEach(semester => {
+                const semesterCard = document.createElement('div');
+                semesterCard.className = 'col-md-6 mb-4';
+                semesterCard.innerHTML = `
+                    <div class="selection-card" onclick="selectSemester(${semester.id})">
+                        <i class="fas fa-book-open"></i>
+                        <h4>${semester.name}</h4>
+                        <p class="text-muted">Year ${year}</p>
+                    </div>
+                `;
+                semesterList.appendChild(semesterCard);
+            });
+            
+            showStep('semester-selection-step');
+        }
+
+        // Select semester
+        function selectSemester(semesterId) {
+            currentSelection.semester = semesterId;
+            
+            const semester = getAllSemesters().find(s => s.id === semesterId);
+            document.getElementById('selected-semester-name').textContent = `${semester.name} (Year ${semester.year})`;
+            updateProgressIndicator(4);
+            showStep('section-selection-step');
+        }
+
+        // Select section
+        function selectSection(section) {
+            currentSelection.section = section;
+            
+            const semester = getAllSemesters().find(s => s.id === currentSelection.semester);
+            document.getElementById('selected-section-name').textContent = `${semester.name}, Section ${section} (Year ${semester.year})`;
+            updateProgressIndicator(5);
+            
+            // Render subject list
+            renderSubjectList();
+            showStep('subject-allocation-step');
+        }
+
+        // Render subject list for allocation
+        function renderSubjectList() {
+            const subjectList = document.getElementById('subject-list');
+            subjectList.innerHTML = '';
+
+            const subjects = subjectData[currentSelection.semester] || [];
+            
+            subjects.forEach(subject => {
+                // Check if subject is already allocated to another faculty for this semester and section
+                const isAllocated = Object.values(subjectAllocations).some(allocation => 
+                    allocation.subjectId === subject.id && 
+                    allocation.semester === currentSelection.semester && 
+                    allocation.section === currentSelection.section &&
+                    allocation.facultyId !== currentSelection.facultyId
+                );
+                
+                // Check if subject is allocated to current faculty
+                const isAllocatedToCurrent = Object.values(subjectAllocations).some(allocation => 
+                    allocation.subjectId === subject.id && 
+                    allocation.semester === currentSelection.semester && 
+                    allocation.section === currentSelection.section &&
+                    allocation.facultyId === currentSelection.facultyId
+                );
+
+                const subjectCard = document.createElement('div');
+                subjectCard.className = `subject-card ${isAllocatedToCurrent ? 'selected' : ''} ${isAllocated ? 'blocked' : ''}`;
+                
+                if (!isAllocated) {
+                    subjectCard.onclick = () => toggleSubjectSelection(subject.id);
+                }
+
+                subjectCard.innerHTML = `
+                    <h5 class="mb-2">${subject.code} - ${subject.name}</h5>
+                    <p class="mb-2">${subject.credits} Credits</p>
+                    ${isAllocated ? 
+                        '<div class="mt-2"><span class="badge bg-danger">Already Assigned to Another Faculty</span></div>' : 
+                        ''
+                    }
+                    ${isAllocatedToCurrent ? 
+                        '<div class="mt-2"><span class="badge bg-success">Currently Assigned to You</span></div>' : 
+                        ''
+                    }
+                `;
+
+                subjectList.appendChild(subjectCard);
+            });
+        }
+
+        // Toggle subject selection
+        function toggleSubjectSelection(subjectId) {
+            const existingAllocationKey = Object.keys(subjectAllocations).find(key => 
+                subjectAllocations[key].subjectId === subjectId && 
+                subjectAllocations[key].semester === currentSelection.semester && 
+                subjectAllocations[key].section === currentSelection.section &&
+                subjectAllocations[key].facultyId === currentSelection.facultyId
+            );
+
+            if (existingAllocationKey) {
+                // Remove allocation
+                delete subjectAllocations[existingAllocationKey];
+            } else {
+                // Add allocation with unique ID
+                const allocationId = `alloc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                subjectAllocations[allocationId] = {
+                    id: allocationId,
+                    subjectId: subjectId,
+                    semester: currentSelection.semester,
+                    section: currentSelection.section,
+                    facultyId: currentSelection.facultyId,
+                    assignedAt: new Date().toISOString()
+                };
+            }
+
+            // Save to localStorage
+            localStorage.setItem('subjectAllocations', JSON.stringify(subjectAllocations));
+            
+            renderSubjectList();
+        }
+
+        // Remove allocation
+        function removeAllocation(allocationId) {
+            if (confirm('Are you sure you want to remove this subject allocation?')) {
+                delete subjectAllocations[allocationId];
+                localStorage.setItem('subjectAllocations', JSON.stringify(subjectAllocations));
+                renderAllocationsTable();
+                renderFacultyList();
+                updateAllocationSummary();
+                
+                // If we're currently in the subject allocation step, refresh the subject list
+                if (document.getElementById('subject-allocation-step').style.display !== 'none') {
+                    renderSubjectList();
+                }
+            }
+        }
+
+        // Save subject allocation
+        function saveSubjectAllocation() {
+            // Allocation is already saved when toggling subjects
+            alert('Subject allocation saved successfully!');
+            resetSelection();
+            renderFacultyList();
+            renderAllocationsTable();
+            updateAllocationSummary();
+        }
+
+        // Helper function to get all semesters
+        function getAllSemesters() {
+            return [...semesterData[1], ...semesterData[2]];
+        }
+
+        // Navigation functions
+        function backToFacultySelection() {
+            updateProgressIndicator(1);
+            showStep('faculty-selection-step');
+        }
+
+        function backToYearSelection() {
+            updateProgressIndicator(2);
+            showStep('year-selection-step');
+        }
+
+        function backToSemesterSelection() {
+            updateProgressIndicator(3);
+            showStep('semester-selection-step');
+        }
+
+        function backToSectionSelection() {
+            updateProgressIndicator(4);
+            showStep('section-selection-step');
+        }
+
+        // Show/hide steps
+        function showStep(stepId) {
+            document.querySelectorAll('.step-content').forEach(step => {
+                step.style.display = 'none';
+            });
+            document.getElementById(stepId).style.display = 'block';
+        }
+
+        // Update progress indicator
+        function updateProgressIndicator(activeStep) {
+            const steps = document.querySelectorAll('.progress-step');
+            steps.forEach((step, index) => {
+                const circle = step.querySelector('.step-circle');
+                const label = step.querySelector('.step-label');
+                
+                if (index < activeStep) {
+                    circle.classList.add('active');
+                    label.classList.add('active');
+                } else {
+                    circle.classList.remove('active');
+                    label.classList.remove('active');
+                }
+            });
+        }
+
+        // Reset selection
+        function resetSelection() {
+            currentSelection = {
+                facultyId: null,
+                year: null,
+                semester: null,
+                section: null
+            };
+            updateProgressIndicator(1);
+            showStep('faculty-selection-step');
+        }
+
+        // Show/hide sections
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).style.display = 'block';
+            
+            // Update active menu item
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update page title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'attendance': 'Attendance Management',
+                'internal-marks': 'Internal Marks',
+                'assignments': 'Assignments Management',
+                'student-details': 'Student Details',
+                'regulations': 'Faculty Subject Allocation',
+                'profile': 'Profile Settings'
+            };
+            document.getElementById('page-title').textContent = titles[sectionId];
+            
+            // Initialize faculty data if needed
+            if (sectionId === 'regulations') {
+                initializeData();
+            }
+            
+            // Initialize charts if needed
+            if (sectionId === 'dashboard') {
+                initializeCharts();
+            }
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Attendance Chart
+            const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+            new Chart(attendanceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Present (%)',
+                        data: [85, 78, 92, 88, 76, 95],
+                        backgroundColor: [
+                            'rgba(106, 17, 203, 0.7)',
+                            'rgba(37, 117, 252, 0.7)',
+                            'rgba(0, 180, 219, 0.7)',
+                            'rgba(0, 201, 255, 0.7)',
+                            'rgba(142, 45, 226, 0.7)',
+                            'rgba(255, 126, 95, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(106, 17, 203, 1)',
+                            'rgba(37, 117, 252, 1)',
+                            'rgba(0, 180, 219, 1)',
+                            'rgba(0, 201, 255, 1)',
+                            'rgba(142, 45, 226, 1)',
+                            'rgba(255, 126, 95, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Attendance Summary Chart
+            const attendanceSummaryCtx = document.getElementById('attendanceSummaryChart').getContext('2d');
+            new Chart(attendanceSummaryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Present', 'Absent'],
+                    datasets: [{
+                        data: [85, 15],
+                        backgroundColor: [
+                            'rgba(0, 180, 219, 0.8)',
+                            'rgba(255, 65, 108, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(0, 180, 219, 1)',
+                            'rgba(255, 65, 108, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Marks Distribution Chart
+            const marksDistributionCtx = document.getElementById('marksDistributionChart').getContext('2d');
+            new Chart(marksDistributionCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['A (21-25)', 'B (16-20)', 'C (11-15)', 'D (0-10)'],
+                    datasets: [{
+                        data: [18, 22, 8, 2],
+                        backgroundColor: [
+                            'rgba(0, 180, 219, 0.8)',
+                            'rgba(0, 201, 255, 0.8)',
+                            'rgba(255, 154, 0, 0.8)',
+                            'rgba(255, 65, 108, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(0, 180, 219, 1)',
+                            'rgba(0, 201, 255, 1)',
+                            'rgba(255, 154, 0, 1)',
+                            'rgba(255, 65, 108, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Assignment Stats Chart
+            const assignmentStatsCtx = document.getElementById('assignmentStatsChart').getContext('2d');
+            new Chart(assignmentStatsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                    datasets: [{
+                        label: 'Assignments Created',
+                        data: [3, 5, 2, 4, 6, 4],
+                        borderColor: 'rgba(106, 17, 203, 1)',
+                        backgroundColor: 'rgba(106, 17, 203, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Assignments Submitted',
+                        data: [2, 3, 1, 3, 5, 4],
+                        borderColor: 'rgba(0, 180, 219, 1)',
+                        backgroundColor: 'rgba(0, 180, 219, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+            initializeCharts();
+        });
+    </script>
+</body>
+</html>
