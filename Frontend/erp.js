@@ -1,94 +1,79 @@
-// // Smooth scroll animation
-// document.querySelectorAll('.nav-links a').forEach(link => {
-//     link.addEventListener('click', e => {
-//         e.preventDefault();
-//         let target = document.querySelector(e.target.getAttribute('href'));
-//         target.scrollIntoView({ behavior: "smooth" });
-//     });
-// });
+// Login button functionality kept safe
+document.addEventListener("DOMContentLoaded", () => {
+    const loginBtn = document.getElementById("login-btn");
+    const menuToggle = document.getElementById("menu-toggle");
+    const navLinks = document.querySelector(".nav-links");
+    const counters = document.querySelectorAll(".counter");
+    const reveals = document.querySelectorAll(".reveal");
 
-// // Button animation
-// const button = document.querySelector(".cta-btn");
-// button.addEventListener("click", () => {
-//     alert("Welcome to the College ERP System!");
-// });
-// Initialize everything on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap tooltips (from previous code)
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    // Smooth scroll animation (your existing code)
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', e => {
-            e.preventDefault();
-            let target = document.querySelector(e.target.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: "smooth" });
-            }
-        });
-    });
-
-    // Button animation and redirect (your existing code, updated to redirect instead of alert)
-    const button = document.querySelector(".cta-btn");
-    if (button) {  // Check if the button exists to avoid errors
-        button.addEventListener("click", () => {
-            // Simulate loading (for UX, like the other buttons)
-            button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
-            setTimeout(() => {
-                // Redirect to next page (replace with actual URL or file path)
-                window.location.href = "file:///C:/Users/Admin/Desktop/Student%20Management%20app/Frontend/index2.html"; 
-                // e.g., '/cta-portal' or 'https://example.com/cta'//
-            }, 1000);
+    // Login button - do not change existing functionality unless you want to add redirect later
+    if (loginBtn) {
+        loginBtn.addEventListener("click", () => {
+            console.log("Login button clicked");
         });
     }
 
-    // AMCEC and AMCDC button handlers (from previous updates)
-    document.getElementById('amcec-btn').addEventListener('click', function() {
-        // Simulate loading
-        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
-        setTimeout(() => {
-            // Redirect to next page
-            window.location.href = 'amcec.html'; // Customize as needed
-        }, 1000);
-    });
-
-    document.getElementById('amcdc-btn').addEventListener('click', function() {
-        // Simulate loading
-        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
-        setTimeout(() => {
-            // Redirect to next page
-            window.location.href = 'amcdc.html'; // Customize as needed
-        }, 1000);
-    });
-
-    // Optional: Add fade-in animation on scroll or load (from previous code)
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-fade-in');
-            }
-        });
-    });
-    observer.observe(document.querySelector('.welcome-card'));
-});
-document.addEventListener('DOMContentLoaded', function() {
-    // ... your existing code ...
-
-    // Login button handler
-    const loginBtn = document.querySelector('.login-btn');
-    if (loginBtn && loginBtn.tagName === 'BUTTON') {  // Check if it's a button element
-        loginBtn.addEventListener('click', function() {
-            // Simulate loading
-            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
-            setTimeout(() => {
-                // Redirect to login page
-                window.location.href = "file:///C:/Users/Admin/Desktop/Student%20Management%20app/Frontend/login.html"; // Use relative path
-            }, 1000);
+    // Mobile menu toggle
+    if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+            navLinks.classList.toggle("show");
         });
     }
 
-    // ... rest of your existing code ...
+    // Reveal on scroll
+    const revealOnScroll = () => {
+        reveals.forEach((element) => {
+            const windowHeight = window.innerHeight;
+            const elementTop = element.getBoundingClientRect().top;
+            const elementVisible = 100;
+
+            if (elementTop < windowHeight - elementVisible) {
+                element.classList.add("active");
+            }
+        });
+    };
+
+    window.addEventListener("scroll", revealOnScroll);
+    revealOnScroll();
+
+    // Counter animation
+    let counterStarted = false;
+
+    const runCounters = () => {
+        const heroStats = document.querySelector(".hero-stats");
+        if (!heroStats) return;
+
+        const rect = heroStats.getBoundingClientRect();
+        if (rect.top < window.innerHeight && !counterStarted) {
+            counterStarted = true;
+
+            counters.forEach((counter) => {
+                const target = +counter.getAttribute("data-target");
+                let count = 0;
+                const increment = Math.ceil(target / 100);
+
+                const updateCounter = () => {
+                    count += increment;
+                    if (count < target) {
+                        counter.innerText = count;
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+
+                updateCounter();
+            });
+        }
+    };
+
+    window.addEventListener("scroll", runCounters);
+    runCounters();
+
+    // Close mobile menu after clicking any nav link
+    document.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", () => {
+            navLinks.classList.remove("show");
+        });
+    });
 });

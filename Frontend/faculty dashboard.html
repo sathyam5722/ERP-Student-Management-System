@@ -15,7 +15,7 @@
     <style>
         :root {
             --primary: #6a11cb;
-            --secondary: #2575fc;
+            --secondary: #041a3f;
             --success: #00b09b;
             --warning: #ff9a00;
             --danger: #ff416c;
@@ -902,7 +902,7 @@
                 <li><a href="#" onclick="showSection('student-details')"><i class="fas fa-user-graduate"></i> <span>Student Details</span></a></li>
                 <li><a href="#" onclick="showSection('regulations')"><i class="fas fa-book"></i> <span>Regulations</span></a></li>
                 <li><a href="#" onclick="showSection('profile')"><i class="fas fa-user-cog"></i> <span>Profile Settings</span></a></li>
-                <li><a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+                <li><a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
             </ul>
         </div>
     </div>
@@ -913,10 +913,10 @@
         <div class="header">
             <h1 id="page-title">Dashboard</h1>
             <div class="user-info">
-                <img src="https://ui-avatars.com/api/?name=Dr.+Ramesh+Kumar&background=6a11cb&color=fff" alt="Faculty">
+                <img id="loggedInUserAvatar" src="https://ui-avatars.com/api/?name=Faculty&background=6a11cb&color=fff" alt="Faculty">
                 <div>
-                    <h6 class="mb-0">Dr. Ramesh Kumar</h6>
-                    <small class="text-muted">Professor - Computer Science</small>
+                    <h6 class="mb-0" id="loggedInUserName">Faculty User</h6>
+                    <small class="text-muted" id="loggedInUserRole">Faculty Dashboard</small>
                 </div>
                 <span class="notification-badge">3</span>
             </div>
@@ -1785,7 +1785,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            <img src="https://ui-avatars.com/api/?name=Dr.+Ramesh+Kumar&background=6a11cb&color=fff&size=150" alt="Profile" class="profile-avatar">
+                            <img id="profileAvatar" src="https://ui-avatars.com/api/?name=Faculty&background=6a11cb&color=fff&size=150" alt="Profile" class="profile-avatar">
                             <div class="mt-3">
                                 <button class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-camera me-1"></i>Change Photo
@@ -1797,17 +1797,17 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">First Name</label>
-                                        <input type="text" class="form-control" value="Ramesh">
+                                        <input type="text" class="form-control" id="profileFirstName" value="">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Last Name</label>
-                                        <input type="text" class="form-control" value="Kumar">
+                                        <input type="text" class="form-control" id="profileLastName" value="">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" value="ramesh.kumar@amc.edu">
+                                        <input type="email" class="form-control" id="profileEmail" value="">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Phone</label>
@@ -1817,16 +1817,16 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Department</label>
-                                        <input type="text" class="form-control" value="Computer Science">
+                                        <input type="text" class="form-control" id="profileDepartment" value="">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Designation</label>
-                                        <input type="text" class="form-control" value="Professor">
+                                        <input type="text" class="form-control" id="profileDesignation" value="">
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Bio</label>
-                                    <textarea class="form-control" rows="4">Experienced professor with 15+ years in Computer Science education. Specialized in Data Structures and Algorithms.</textarea>
+                                    <textarea class="form-control" id="profileBio" rows="4">Experienced faculty member.</textarea>
                                 </div>
                                 <div class="text-end">
                                     <button type="button" class="btn btn-primary">
@@ -2551,5 +2551,129 @@
             initializeCharts();
         });
     </script>
+
+    <script>
+        const SESSION_STORAGE_KEY = "collegeErpLoggedInUser";
+
+        function getLoggedInUser() {
+            try {
+                return JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || sessionStorage.getItem(SESSION_STORAGE_KEY) || "null");
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function saveLoggedInUser(userData, useSession = false) {
+            const storage = useSession ? sessionStorage : localStorage;
+            storage.setItem(SESSION_STORAGE_KEY, JSON.stringify(userData));
+        }
+
+        function clearLoggedInUser() {
+            localStorage.removeItem(SESSION_STORAGE_KEY);
+            sessionStorage.removeItem(SESSION_STORAGE_KEY);
+        }
+
+        function toTitleCase(value) {
+            return String(value || "")
+                .replace(/[_-]+/g, " ")
+                .replace(/\s+/g, " ")
+                .trim()
+                .replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+        function buildAvatarUrl(name, size = 150) {
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "User")}&background=6a11cb&color=fff&size=${size}`;
+        }
+
+        function splitName(fullName) {
+            const cleanName = String(fullName || "").trim();
+            if (!cleanName) {
+                return { firstName: "", lastName: "" };
+            }
+            const parts = cleanName.split(/\s+/);
+            return {
+                firstName: parts[0] || "",
+                lastName: parts.slice(1).join(" ")
+            };
+        }
+
+        function resolveDisplayName(user) {
+            return user.name || user.username || user.fullName || user.email || "User";
+        }
+
+        function resolveRoleText(user) {
+            const role = toTitleCase(user.role || user.accountType || "Faculty");
+            const department = user.department ? ` - ${user.department}` : "";
+            const designation = user.designation ? `${user.designation}${department}` : `${role}${department}`;
+            return designation || role;
+        }
+
+        function applyLoggedInUserToDashboard() {
+            const user = getLoggedInUser();
+
+            if (!user) {
+                window.location.href = "login-dynamic.html";
+                return;
+            }
+
+            const displayName = resolveDisplayName(user);
+            const roleText = resolveRoleText(user);
+            const avatarSmall = buildAvatarUrl(displayName, 128);
+            const avatarLarge = buildAvatarUrl(displayName, 150);
+            const nameParts = splitName(displayName);
+
+            const nameElement = document.getElementById("loggedInUserName");
+            const roleElement = document.getElementById("loggedInUserRole");
+            const smallAvatarElement = document.getElementById("loggedInUserAvatar");
+            const largeAvatarElement = document.getElementById("profileAvatar");
+
+            if (nameElement) nameElement.textContent = displayName;
+            if (roleElement) roleElement.textContent = roleText;
+            if (smallAvatarElement) {
+                smallAvatarElement.src = avatarSmall;
+                smallAvatarElement.alt = displayName;
+            }
+            if (largeAvatarElement) {
+                largeAvatarElement.src = avatarLarge;
+                largeAvatarElement.alt = displayName;
+            }
+
+            const firstNameInput = document.getElementById("profileFirstName");
+            const lastNameInput = document.getElementById("profileLastName");
+            const emailInput = document.getElementById("profileEmail");
+            const departmentInput = document.getElementById("profileDepartment");
+            const designationInput = document.getElementById("profileDesignation");
+            const bioInput = document.getElementById("profileBio");
+
+            if (firstNameInput) firstNameInput.value = user.firstName || nameParts.firstName;
+            if (lastNameInput) lastNameInput.value = user.lastName || nameParts.lastName;
+            if (emailInput) emailInput.value = user.email || "";
+            if (departmentInput) departmentInput.value = user.department || "";
+            if (designationInput) designationInput.value = user.designation || toTitleCase(user.role || user.accountType || "Faculty");
+            if (bioInput && user.bio) bioInput.value = user.bio;
+
+            const pageTitle = document.title;
+            if (pageTitle && !pageTitle.includes(displayName)) {
+                document.title = `${displayName} - Faculty Dashboard`;
+            }
+        }
+
+        function setupLogout() {
+            const logoutLink = document.getElementById("logoutLink");
+            if (!logoutLink) return;
+
+            logoutLink.addEventListener("click", function (event) {
+                event.preventDefault();
+                clearLoggedInUser();
+                window.location.href = "login.html";
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            applyLoggedInUserToDashboard();
+            setupLogout();
+        });
+    </script>
+
 </body>
 </html>

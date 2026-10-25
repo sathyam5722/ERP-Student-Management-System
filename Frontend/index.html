@@ -17,46 +17,91 @@
                 <li><a href="#features">Features</a></li>
                 <li><a href="#modules">Modules</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><button class="login-btn" id="login-btn">Login</button></li>
+                
+                <!-- UPDATED LOGIN BUTTON -->
+                <li>
+                    <button class="login-btn" id="login-btn"
+                        onclick="window.location.href='./index2.html'">
+                        Login
+                    </button>
+                </li>
             </ul>
+
+
+            <div class="menu-toggle" id="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </nav>
     </header>
 
     <!-- HERO SECTION -->
-    <!-- <section class="hero"> -->
-        <!-- <img src=".//amc-engineering-college2-gallery-image-191.jpg" alt="AMC College Building" class="background-image"> -->
-        <!-- <div class="hero-content">
-            <h1>Smart Campus Automation</h1>
-            <p>Manage academic records, attendance, communication, and campus workflow efficiently.</p>
-            <button class="cta-btn">Get Started</button>
-        </div>
-    </section> -->
-    <section class="hero">
+    <section class="hero" id="Home">
         <video autoplay loop muted playsinline class="bg-video">
             <source src="./Drive/video/My most beautiful drone shot – Cinematic FPV on an empty beach.mp4" type="video/mp4">
         </video>
-    
-        <div class="hero-content">
+
+        <div class="hero-overlay"></div>
+        <div class="floating-shapes">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="hero-content reveal">
+            <span class="hero-badge">Smart • Secure • Modern</span>
             <h1>Smart Campus Automation</h1>
             <p>Manage academic records, attendance, communication, and campus workflow efficiently.</p>
-            <button class="cta-btn">Get Started</button>
+
+            <div class="hero-buttons">
+                <button class="cta-btn"
+                onclick="window.location.href='./index2.html'">
+                Get Started
+            </button>
+                <a href="#features" class="secondary-btn">Explore Features</a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <h3 class="counter" data-target="5000">0</h3>
+                    <p>Students Managed</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="counter" data-target="120">0</h3>
+                    <p>Faculty Records</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="counter" data-target="24">0</h3>
+                    <p>Support Access</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span></span>
         </div>
     </section>
-    
 
     <!-- FEATURES -->
     <section id="features">
-        <h2 class="section-title">Why College ERP?</h2>
+        <h2 class="section-title reveal">Why College ERP?</h2>
+        <p class="section-subtitle reveal">A complete platform to simplify and improve daily campus operations.</p>
+
         <div class="features-container">
-            <div class="feature-card">
+            <div class="feature-card reveal">
+                <div class="feature-icon">⚙️</div>
                 <h3>Automation</h3>
                 <p>Reduce manual paperwork through automated workflows.</p>
             </div>
-            <div class="feature-card">
+            <div class="feature-card reveal">
+                <div class="feature-icon">🔐</div>
                 <h3>Security</h3>
                 <p>Role-based access ensuring student data safety.</p>
             </div>
-            <div class="feature-card">
+            <div class="feature-card reveal">
+                <div class="feature-icon">✨</div>
                 <h3>User Friendly</h3>
                 <p>Intuitive dashboards and simple navigation.</p>
             </div>
@@ -65,19 +110,21 @@
 
     <!-- MODULES -->
     <section id="modules">
-        <h2 class="section-title">Modules Included</h2>
+        <h2 class="section-title reveal">Modules Included</h2>
+        <p class="section-subtitle reveal">Everything needed to run a college system in one place.</p>
+
         <div class="module-grid">
-            <div class="module">Student Management</div>
-            <div class="module">Attendance</div>
-            <div class="module">Faculty Records</div>
-            <div class="module">Time Tables</div>
-            <div class="module">Examination</div>
-            <div class="module">Fees Tracking</div>
+            <div class="module reveal">Student Management</div>
+            <div class="module reveal">Attendance</div>
+            <div class="module reveal">Faculty Records</div>
+            <div class="module reveal">Time Tables</div>
+            <div class="module reveal">Examination</div>
+            <div class="module reveal">Fees Tracking</div>
         </div>
     </section>
 
     <!-- CONTACT -->
-    <footer id="contact">
+    <footer id="contact" class="reveal">
         <h3>Contact Us</h3>
         <p>Email: support@collegeerp.com</p>
         <p>© 2025 College ERP System</p>
