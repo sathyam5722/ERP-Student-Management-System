@@ -27,7 +27,7 @@ const { ACCOUNT_KINDS, signToken, findAccount, authenticate, optionalAuth, allow
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "1mb" })); // profile photos are sent as small data: URLs
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
@@ -108,13 +108,14 @@ Object.entries(LOGIN_PATHS).forEach(([kind, route]) => {
 
 // Fields each kind of user may change on their own profile.
 const SELF_EDITABLE = {
-  student: ["name", "email", "phone", "address", "fatherPhone", "motherPhone"],
-  faculty: ["name", "email", "phone", "designation", "bio"],
-  staff: ["name", "email", "phone"],
-  admin: ["name", "username", "email"],
-  hod: ["name", "email", "phone"],
-  principal: ["name", "email", "phone"],
+  student: ["name", "email", "phone", "address", "fatherPhone", "motherPhone", "photo"],
+  faculty: ["name", "email", "phone", "designation", "bio", "photo"],
+  staff: ["name", "email", "phone", "photo"],
+  admin: ["name", "username", "email", "photo"],
+  hod: ["name", "email", "phone", "photo"],
+  principal: ["name", "email", "phone", "photo"],
 };
+const PHOTO_RX = /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/;
 
 app.get("/api/auth/me", authenticate, (req, res) => {
   res.json({ role: req.role, kind: req.kind, user: req.user.toJSON() });
@@ -125,6 +126,10 @@ app.patch(
   authenticate,
   ah(async (req, res) => {
     const updates = pick(req.body, SELF_EDITABLE[req.kind]);
+    if (updates.photo !== undefined && updates.photo !== "") {
+      if (!PHOTO_RX.test(updates.photo)) return res.status(400).json({ message: "Photo must be a PNG, JPEG or WebP image" });
+      if (updates.photo.length > 400000) return res.status(400).json({ message: "Photo is too large (max about 300 KB)" });
+    }
     if (updates.email) {
       const Model = ACCOUNT_KINDS[req.kind].model;
       const clash = await Model.findOne({ email: ciExact(updates.email), _id: { $ne: req.user._id } });

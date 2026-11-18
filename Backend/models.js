@@ -68,6 +68,7 @@ const Student = mongoose.model(
         motherName: String,
         motherPhone: String,
         status: statusField,
+        photo: String, // small data: URL set from the profile page
         password: { type: String, default: "student123" },
       },
       opts,
@@ -90,6 +91,7 @@ const Faculty = mongoose.model(
         phone: String,
         bio: String,
         status: statusField,
+        photo: String, // small data: URL set from the profile page
         password: { type: String, default: "faculty123" },
       },
       opts,
@@ -111,6 +113,7 @@ const Staff = mongoose.model(
         enrollmentDate: Date,
         phone: String,
         isActive: { type: Boolean, default: true },
+        photo: String, // small data: URL set from the profile page
         password: { type: String, default: "staff123" },
       },
       opts,
@@ -129,6 +132,7 @@ const Admin = mongoose.model(
         email: { type: String, required: true, unique: true, trim: true },
         password: { type: String, required: true },
         isActive: { type: Boolean, default: true },
+        photo: String,
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
       },
       opts,
@@ -149,6 +153,7 @@ const Hod = mongoose.model(
         appointedDate: Date,
         phone: String,
         status: statusField,
+        photo: String, // small data: URL set from the profile page
         password: { type: String, default: "hod123" },
       },
       opts,
@@ -168,6 +173,7 @@ const Principal = mongoose.model(
         appointedDate: Date,
         phone: String,
         status: statusField,
+        photo: String, // small data: URL set from the profile page
         password: { type: String, default: "principal123" },
       },
       opts,
@@ -402,7 +408,7 @@ const Leave = mongoose.model(
   "Leave",
   new mongoose.Schema(
     {
-      applicantKind: { type: String, enum: ["faculty", "hod", "staff"], required: true },
+      applicantKind: { type: String, enum: ["faculty", "hod", "staff", "student"], required: true },
       applicant: { type: ObjectId, required: true },
       applicantName: String,
       applicantTitle: String, // e.g. "Assistant Professor"
@@ -476,7 +482,26 @@ const Research = mongoose.model(
   ),
 );
 
+// A user who forgot their password asks the admin to set a new one.
+const PasswordRequest = mongoose.model(
+  "PasswordRequest",
+  new mongoose.Schema(
+    {
+      kind: { type: String, enum: ["student", "faculty", "staff", "admin", "hod", "principal"], required: true },
+      account: { type: ObjectId, required: true },
+      name: String,
+      email: String,
+      department: String,
+      status: { type: String, enum: ["pending", "done", "dismissed"], default: "pending" },
+      resolvedByName: String,
+      resolvedAt: Date,
+    },
+    opts,
+  ),
+);
+
 module.exports = {
+  PasswordRequest,
   Event,
   Announcement,
   Exam,

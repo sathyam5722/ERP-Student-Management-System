@@ -527,7 +527,7 @@
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo"><i class="fas fa-graduation-cap"></i><span class="logo-text">EduManager</span>
+        <div class="logo"><i class="fas fa-graduation-cap"></i><span class="logo-text">AMC ERP</span>
             <!-- <h3>AMC Engineering</h3>
             <p>Student Portal</p> -->
         </div>
@@ -544,6 +544,7 @@
                 <li><a href="#" data-section="payment-history" onclick="showSection('payment-history', this)"><i class="fas fa-history"></i> <span>Payment History</span></a></li>
                 <li><a href="#" data-section="library" onclick="showSection('library', this)"><i class="fas fa-book-open"></i> <span>Library</span></a></li>
                 <li><a href="#" data-section="events" onclick="showSection('events', this)"><i class="fas fa-calendar"></i> <span>College Events</span></a></li>
+                <li><a href="#" data-section="leave" onclick="showSection('leave', this)"><i class="fas fa-plane-departure"></i> <span>Leave</span></a></li>
                 <li><a href="#" data-section="notices" onclick="showSection('notices', this)"><i class="fas fa-bullhorn"></i> <span>Notices</span></a></li>
                 <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
             </ul>
@@ -681,10 +682,11 @@
                             <img id="profileAvatar" src="https://ui-avatars.com/api/?name=Student&background=3498db&color=fff&size=150"
                                  alt="Profile" class="profile-avatar">
                             <div class="mt-3">
-                                <button class="btn btn-outline-primary" disabled>
+                                <button class="btn btn-outline-primary" onclick="changePhoto()">
                                     <i class="fas fa-camera me-2"></i>Change Photo
                                 </button>
-                                <small class="d-block text-muted mt-2">Contact admin to change photo</small>
+                                <button class="btn btn-link text-danger btn-sm d-none" id="removePhotoBtn" onclick="removePhoto()">Remove photo</button>
+                                <small class="d-block text-muted mt-2">PNG or JPEG, square photos look best</small>
                             </div>
                             <div class="mt-4">
                                 <h6><i class="fas fa-id-card me-2"></i><span id="profileStudentId">—</span></h6>
@@ -1067,6 +1069,39 @@
             </div>
         </div>
 
+        <!-- Leave Section -->
+        <div id="leave" class="section" style="display: none;">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Apply for Leave</h5></div>
+                        <div class="card-body">
+                            <div class="mb-3"><label class="form-label">Leave Type</label>
+                                <select class="form-select" id="leaveType">
+                                    <option value="sick">Sick</option><option value="academic">Academic (event / competition)</option>
+                                    <option value="emergency">Emergency</option><option value="casual">Personal</option><option value="other">Other</option>
+                                </select></div>
+                            <div class="row mb-3">
+                                <div class="col-6"><label class="form-label">From</label><input type="date" class="form-control" id="leaveFrom"></div>
+                                <div class="col-6"><label class="form-label">To</label><input type="date" class="form-control" id="leaveTo"></div>
+                            </div>
+                            <div class="mb-3"><label class="form-label">Reason</label><textarea class="form-control" rows="3" id="leaveReason"></textarea></div>
+                            <button class="btn btn-primary w-100" onclick="applyLeave()"><i class="fas fa-paper-plane me-2"></i>Send to HOD</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">My Leave Requests</h5></div>
+                        <div class="card-body"><div class="table-responsive"><table class="table table-hover">
+                            <thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Status</th><th>Note</th><th></th></tr></thead>
+                            <tbody id="leaveTableBody"></tbody>
+                        </table></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Notices Section -->
         <div id="notices" class="section" style="display: none;">
             <div class="card">
@@ -1141,6 +1176,7 @@
                 'library': 'Digital Library',
                 'events': 'College Events',
                 'assignments': 'My Assignments',
+                'leave': 'Leave',
                 'notices': 'Notice Board'
             };
             document.getElementById('page-title').textContent = titles[sectionId];
@@ -1162,6 +1198,8 @@
                 loadAssignments();
             } else if (sectionId === 'notices') {
                 loadNotices();
+            } else if (sectionId === 'leave') {
+                loadLeaves();
             } else if (sectionId === 'dashboard') {
                 loadOverview();
                 loadActivity();
@@ -1233,7 +1271,8 @@
                 ? `Year ${Math.ceil(user.semester / 2)}, Semester ${user.semester}${user.section ? `, Section ${user.section}` : ''}`
                 : 'Semester not set');
             setText('profileEmailText', user.email || '—');
-            document.getElementById('profileAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3498db&color=fff&size=150`;
+            document.getElementById('profileAvatar').src = ErpAuth.avatarUrl(user, 150, '3498db');
+            document.getElementById('removePhotoBtn').classList.toggle('d-none', !user.photo);
             document.querySelectorAll('.js-semester-label').forEach((el) => {
                 el.textContent = user.semester ? ` - Semester ${user.semester}` : '';
             });
@@ -1398,6 +1437,64 @@
             });
         }
 
+        // ===== Profile photo =====
+        async function changePhoto() {
+            try {
+                const user = await ErpAuth.changePhoto();
+                if (!user) return;
+                applyLoggedInStudent();
+                fillProfile(user);
+                showNotification('Profile photo updated', 'success');
+            } catch (error) {
+                showNotification(error.message, 'warning');
+            }
+        }
+
+        async function removePhoto() {
+            if (!confirm('Remove your profile photo?')) return;
+            try {
+                const user = await ErpAuth.removePhoto();
+                applyLoggedInStudent();
+                fillProfile(user);
+            } catch (error) {
+                showNotification(error.message, 'warning');
+            }
+        }
+
+        // ===== Leave =====
+        async function loadLeaves() {
+            const tbody = document.getElementById('leaveTableBody');
+            try {
+                const list = await ErpAuth.api('/api/leaves/mine');
+                const badge = { pending: 'bg-warning', approved: 'bg-success', rejected: 'bg-danger' };
+                tbody.innerHTML = list.length
+                    ? list.map((l) => `<tr><td class="text-capitalize">${escapeHtml(l.type)}</td><td>${fmtDate(l.from)} → ${fmtDate(l.to)}</td><td>${l.days}</td>
+                        <td><span class="badge ${badge[l.status]}">${l.status}</span></td><td class="small">${escapeHtml(l.reviewNote || (l.reviewerName ? 'by ' + l.reviewerName : ''))}</td>
+                        <td>${l.status === 'pending' ? `<button class="btn btn-sm btn-outline-danger" onclick="cancelLeave('${l._id}')">Cancel</button>` : ''}</td></tr>`).join('')
+                    : '<tr><td colspan="6" class="text-center text-muted">No leave requests yet.</td></tr>';
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-danger">${escapeHtml(error.message)}</td></tr>`;
+            }
+        }
+
+        async function applyLeave() {
+            const body = { type: document.getElementById('leaveType').value, from: document.getElementById('leaveFrom').value, to: document.getElementById('leaveTo').value, reason: document.getElementById('leaveReason').value.trim() };
+            if (!body.from || !body.to || !body.reason) return showNotification('Fill in the dates and a reason', 'warning');
+            try {
+                await ErpAuth.api('/api/leaves', { method: 'POST', body });
+                document.getElementById('leaveReason').value = '';
+                showNotification('Leave request sent to your HOD', 'success');
+                loadLeaves();
+            } catch (error) {
+                showNotification(error.message, 'warning');
+            }
+        }
+
+        async function cancelLeave(id) {
+            if (!confirm('Cancel this leave request?')) return;
+            try { await ErpAuth.api(`/api/leaves/${id}`, { method: 'DELETE' }); loadLeaves(); } catch (error) { showNotification(error.message, 'warning'); }
+        }
+
         // ===== Change password =====
         async function changePassword() {
             const currentPassword = document.getElementById('pwCurrent').value;
@@ -1450,7 +1547,7 @@
             const el = document.getElementById('recentActivity');
             try {
                 const items = await ErpAuth.api('/api/notifications');
-                const style = { notice: ['bg-info', 'fa-bullhorn'], fee: ['bg-warning', 'fa-wallet'], assignment: ['bg-primary', 'fa-tasks'], grade: ['bg-success', 'fa-check'], exam: ['bg-danger', 'fa-file-alt'], marks: ['bg-success', 'fa-chart-line'] };
+                const style = { notice: ['bg-info', 'fa-bullhorn'], fee: ['bg-warning', 'fa-wallet'], assignment: ['bg-primary', 'fa-tasks'], grade: ['bg-success', 'fa-check'], exam: ['bg-danger', 'fa-file-alt'], marks: ['bg-success', 'fa-chart-line'], leave: ['bg-secondary', 'fa-plane-departure'] };
                 el.innerHTML = items.length
                     ? items.slice(0, 6).map((n) => {
                         const [bg, icon] = style[n.type] || ['bg-secondary', 'fa-bell'];
@@ -1567,7 +1664,7 @@
                     ? fees.map((f) => {
                         const paid = f.status === 'paid';
                         const overdue = !paid && f.dueDate && new Date(f.dueDate) < new Date(new Date().toDateString());
-                        return `<div class="fee-item ${selectedFees.has(f._id) ? 'selected' : ''}" id="fee-${f._id}" ${paid ? '' : `onclick="toggleFeeSelection('${f._id}')" role="button"`}>
+                        return `<div class="fee-item ${selectedFees.has(f._id) ? 'selected' : ''}" id="fee-${f._id}" ${paid ? (f.payment ? `onclick="ErpAuth.openReceipt('${f.payment}')" role="button" title="View receipt"` : '') : `onclick="toggleFeeSelection('${f._id}')" role="button"`}>
                             <div class="d-flex align-items-center">
                                 ${paid ? '<i class="fas fa-check-circle text-success me-3 fs-4"></i>' : `<input class="form-check-input me-3" type="checkbox" id="check-${f._id}" ${selectedFees.has(f._id) ? 'checked' : ''} onclick="event.stopPropagation(); toggleFeeSelection('${f._id}')">`}
                                 <div class="flex-grow-1">
@@ -1742,6 +1839,8 @@
             const addDay = (d) => new Date(new Date(d).getTime() + 864e5).toISOString().slice(0, 10);
             calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
                 initialView: 'dayGridMonth',
+                navLinks: true,
+                navLinkDayClick: (date) => calendar.changeView('listDay', date),
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,listMonth' },
                 events: [
                     ...events.map((e) => ({
@@ -1878,7 +1977,7 @@
 
             const name = resolveDisplayName(user);
             const meta = resolveMeta(user);
-            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3498db&color=fff`;
+            const avatarUrl = ErpAuth.avatarUrl(user, 128, '3498db');
 
             const nameElement = document.getElementById('loggedInStudentName');
             const metaElement = document.getElementById('loggedInStudentMeta');

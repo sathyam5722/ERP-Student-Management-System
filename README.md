@@ -26,9 +26,9 @@ These accounts exist after `npm run seed -- --demo`, or on a hosted copy with `S
 | Admin | `admin@demo.amc.edu` | `admin123` |
 | Staff | `staff@demo.amc.edu` | `staff123` |
 | Principal | `principal@demo.amc.edu` | `principal123` |
-| HOD | `hod.cse@demo.amc.edu` (Computer Science), `hod.ece@demo.amc.edu` | `hod123` |
-| Faculty | `faculty1@demo.amc.edu` … `faculty4@demo.amc.edu` | `faculty123` |
-| Student | `student1@demo.amc.edu` … `student15@demo.amc.edu` (1–6 = CSE, semester 3, section A) | `student123` |
+| HOD | `hod.cse@`, `hod.ece@`, `hod.me@`, `hod.civil@demo.amc.edu` | `hod123` |
+| Faculty | `faculty1@demo.amc.edu` … `faculty24@demo.amc.edu` (1–6 CSE, 7–12 ECE, 13–18 ME, 19–24 Civil) | `faculty123` |
+| Student | `student1@demo.amc.edu` … `student192@demo.amc.edu` (student1–8 = CSE semester 3 section A) | `student123` |
 
 New accounts created from the dashboards get the same defaults. A one-time migration (`Backend/migrations.js`) set every existing account to these role passwords. It does not run again, so passwords users change later are kept.
 

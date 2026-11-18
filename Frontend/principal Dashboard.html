@@ -223,7 +223,7 @@
       const tab = (s, l) => `<button onclick="filters.hod='${s}'; render()" class="px-4 py-2 text-sm font-semibold rounded-xl ${filters.hod === s ? 'bg-violet-600 text-white' : 'bg-white text-slate-600 border border-slate-200'}">${l}</button>`;
       el.innerHTML = `<div class="space-y-6 fade">${head('Heads of Department', 'HODs log in from the login page as "HOD"', `<div class="flex gap-2">${tab('active', 'Active')}${tab('inactive', 'Inactive')}${UI.button('+ Add HOD', 'hodForm()')}</div>`)}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">${cache.hods.length ? cache.hods.map((h) => `<div class="card-hover bg-white rounded-3xl border border-slate-100 p-6 shadow-sm" data-row>
-          <div class="flex items-start justify-between mb-4"><div class="flex items-center gap-3">${UI.avatar(h.name, 'lg')}<div><p class="font-bold text-slate-800">${esc(h.name)}</p><p class="text-xs text-slate-500">${esc(h.department || 'No department')}</p></div></div>
+          <div class="flex items-start justify-between mb-4"><div class="flex items-center gap-3">${UI.avatar(h.name, 'lg', h.photo)}<div><p class="font-bold text-slate-800">${esc(h.name)}</p><p class="text-xs text-slate-500">${esc(h.department || 'No department')}</p></div></div>
             <div class="flex gap-1">${UI.iconButton('edit', `hodForm('${h._id}')`, 'Edit')}
             ${filters.hod === 'active' ? UI.iconButton('trash', `setHodActive('${h._id}', false)`, 'Deactivate', 'text-red-400 hover:bg-red-50') : UI.iconButton('check', `setHodActive('${h._id}', true)`, 'Reactivate', 'text-emerald-500 hover:bg-emerald-50')}</div></div>
           <div class="space-y-1.5 text-xs text-slate-600"><p>✉ ${esc(h.email)}</p><p>☎ ${esc(h.phone || '—')}</p><p>🆔 ${esc(h.hodId || '—')} • since ${fmt(h.appointedDate)}</p></div>
@@ -267,7 +267,7 @@
       try { cache.faculty = cache.faculty || await api('/api/faculty/active'); } catch (error) { el.innerHTML = UI.empty(error.message); return; }
       const list = cache.faculty.filter((f) => !filters.facultyDept || sameDept(f.department, filters.facultyDept));
       el.innerHTML = `<div class="space-y-6 fade">${head('Faculty', `${list.length} active faculty`, deptSelect('facultyDept'))}
-        ${table(['Name', 'Department', 'Designation', 'Email', 'Phone'], list.map((f) => `<tr class="table-row" data-row>${td(`<div class="flex items-center gap-3">${UI.avatar(f.name, 'sm')}<span class="font-bold text-slate-800">${esc(f.name)}</span></div>`)}${td(esc(f.department || '—'))}${td(esc(f.designation || '—'))}${td(esc(f.email))}${td(esc(f.phone || '—'))}</tr>`), 'No faculty')}</div>`;
+        ${table(['Name', 'Department', 'Designation', 'Email', 'Phone'], list.map((f) => `<tr class="table-row" data-row>${td(`<div class="flex items-center gap-3">${UI.avatar(f.name, 'sm', f.photo)}<span class="font-bold text-slate-800">${esc(f.name)}</span></div>`)}${td(esc(f.department || '—'))}${td(esc(f.designation || '—'))}${td(esc(f.email))}${td(esc(f.phone || '—'))}</tr>`), 'No faculty')}</div>`;
     }
 
     async function renderStudents(el) {
@@ -275,7 +275,7 @@
       const list = cache.students.filter((s) => (!filters.studentDept || sameDept(s.department, filters.studentDept)) && (!filters.studentSem || String(s.semester) === filters.studentSem));
       el.innerHTML = `<div class="space-y-6 fade">${head('Students', `${list.length} students`, `<div class="flex gap-2">${deptSelect('studentDept')}
           <select onchange="filters.studentSem=this.value; render()" class="text-sm border border-slate-200 rounded-xl px-3 py-2 bg-white"><option value="">All semesters</option>${[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `<option ${filters.studentSem === String(n) ? 'selected' : ''}>${n}</option>`).join('')}</select></div>`)}
-        ${table(['Student', 'ID', 'Department', 'Course', 'Sem / Sec', 'Status'], list.map((s) => `<tr class="table-row" data-row>${td(`<div class="flex items-center gap-3">${UI.avatar(s.name, 'sm')}<div><p class="font-bold text-slate-800">${esc(s.name)}</p><p class="text-xs text-slate-400">${esc(s.email)}</p></div></div>`)}
+        ${table(['Student', 'ID', 'Department', 'Course', 'Sem / Sec', 'Status'], list.map((s) => `<tr class="table-row" data-row>${td(`<div class="flex items-center gap-3">${UI.avatar(s.name, 'sm', s.photo)}<div><p class="font-bold text-slate-800">${esc(s.name)}</p><p class="text-xs text-slate-400">${esc(s.email)}</p></div></div>`)}
           ${td(esc(s.studentId || '—'), 'font-mono text-slate-600')}${td(esc(s.department || '—'))}${td(esc(s.courseName || '—'))}${td(s.semester ? `${s.semester}${s.section ? ' / ' + esc(s.section) : ''}` : '—')}${td(UI.pill(s.status || 'active'))}</tr>`), 'No students')}</div>`;
     }
 

@@ -6,8 +6,9 @@
  */
 const {
   Student, Faculty, Staff, Hod, Department, Subject, Allocation, Attendance, Mark,
-  Event, Announcement, Exam, Fee, Payment, Assignment, Submission, Leave, Resource, Admission, Research,
+  Event, Announcement, Exam, Fee, Payment, Assignment, Submission, Leave, Resource, Admission, Research, PasswordRequest,
 } = require("./models");
+const { ACCOUNT_KINDS, findAccount } = require("./auth");
 const { authenticate, allow } = require("./auth");
 
 module.exports = function registerFeatures(app, h) {
@@ -318,7 +319,7 @@ module.exports = function registerFeatures(app, h) {
   );
 
   // -------------------- LEAVE REQUESTS --------------------
-  const LEAVE_APPLICANTS = ["faculty", "hod", "staff"];
+  const LEAVE_APPLICANTS = ["faculty", "hod", "staff", "student"];
 
   app.post(
     "/api/leaves",
@@ -330,10 +331,13 @@ module.exports = function registerFeatures(app, h) {
       if (to < from) return res.status(400).json({ message: "'To' date cannot be before 'From' date" });
       if (!String(req.body.reason || "").trim()) return res.status(400).json({ message: "Please give a reason" });
       const leave = await Leave.create({
-        applicantKind: req.role === "staff" ? "staff" : req.role,
+        applicantKind: req.role,
         applicant: req.user._id,
         applicantName: actorName(req),
-        applicantTitle: req.user.designation || (req.role === "hod" ? "Head of Department" : req.role),
+        applicantTitle:
+          req.role === "student"
+            ? `Student · ${req.user.studentId || ""}${req.user.semester ? ` · Sem ${req.user.semester}${req.user.section || ""}` : ""}`
+            : req.user.designation || (req.role === "hod" ? "Head of Department" : req.role),
         department: req.user.department,
         type: req.body.type || "casual",
         from,
@@ -365,13 +369,13 @@ module.exports = function registerFeatures(app, h) {
 
   /** Which leave requests a reviewer is responsible for. */
   function reviewScope(req) {
-    if (req.role === "hod") return { applicantKind: "faculty", department: ciExact(req.user.department || "-") };
+    if (req.role === "hod") return { applicantKind: { $in: ["faculty", "student"] }, department: ciExact(req.user.department || "-") };
     if (req.role === "principal") return { applicantKind: { $in: ["hod", "staff"] } };
     return {}; // admin & staff see all
   }
   const canReview = (req, leave) => {
     if (req.role === "admin") return true;
-    if (req.role === "hod") return leave.applicantKind === "faculty" && sameDept(leave.department, req.user.department);
+    if (req.role === "hod") return ["faculty", "student"].includes(leave.applicantKind) && sameDept(leave.department, req.user.department);
     if (req.role === "principal") return ["hod", "staff"].includes(leave.applicantKind);
     return false;
   };
@@ -401,6 +405,55 @@ module.exports = function registerFeatures(app, h) {
       leave.reviewedAt = new Date();
       await leave.save();
       res.json({ message: `Leave ${status}`, leave });
+    }),
+  );
+
+  // -------------------- FORGOT PASSWORD (admin-assisted reset) --------------------
+
+  // Public: a user asks for a reset. Always answers the same way so it cannot be used to discover accounts.
+  app.post(
+    "/api/auth/forgot-password",
+    ah(async (req, res) => {
+      const kind = String(req.body.role || "");
+      const generic = { message: "If that account exists, your request has been sent to the administrator. They will set a new password and share it with you." };
+      if (!ACCOUNT_KINDS[kind] || !req.body.identifier) return res.status(400).json({ message: "Choose your role and enter your email or ID" });
+      const user = await findAccount(kind, req.body.identifier);
+      if (user && !(await PasswordRequest.exists({ account: user._id, status: "pending" }))) {
+        await PasswordRequest.create({ kind, account: user._id, name: user.name || user.username, email: user.email, department: user.department });
+      }
+      res.json(generic);
+    }),
+  );
+
+  app.get(
+    "/api/password-requests",
+    auth("admin"),
+    ah(async (req, res) => {
+      const q = req.query.status ? { status: req.query.status } : {};
+      res.json(await PasswordRequest.find(q).sort({ createdAt: -1 }).limit(200));
+    }),
+  );
+
+  app.post(
+    "/api/password-requests/:id/resolve",
+    auth("admin"),
+    ah(async (req, res) => {
+      const reqDoc = await PasswordRequest.findById(req.params.id);
+      if (!reqDoc || reqDoc.status !== "pending") return res.status(404).json({ message: "Request not found or already handled" });
+      if (req.body.dismiss) {
+        Object.assign(reqDoc, { status: "dismissed", resolvedByName: actorName(req), resolvedAt: new Date() });
+        await reqDoc.save();
+        return res.json({ message: "Request dismissed" });
+      }
+      const password = String(req.body.password || "").trim();
+      if (password.length < 6) return res.status(400).json({ message: "New password must be at least 6 characters" });
+      const account = await ACCOUNT_KINDS[reqDoc.kind].model.findById(reqDoc.account);
+      if (!account) return res.status(404).json({ message: "The account no longer exists" });
+      account.password = password;
+      await account.save({ validateBeforeSave: false });
+      Object.assign(reqDoc, { status: "done", resolvedByName: actorName(req), resolvedAt: new Date() });
+      await reqDoc.save();
+      res.json({ message: `New password set for ${reqDoc.name}. Share it with them securely.` });
     }),
   );
 
@@ -761,7 +814,7 @@ module.exports = function registerFeatures(app, h) {
     ah(async (req, res) => {
       const semester = req.user.semester;
       if (!semester) return res.json({ semester: null, subjects: [] });
-      const subjects = await Subject.find({ semester }).sort({ code: 1 });
+      const subjects = await Subject.find({ semester, ...anyDeptOr(req.user.department) }).sort({ code: 1 });
       const codes = subjects.map((s) => s.code);
       const [allocations, resources] = await Promise.all([
         Allocation.find({ subjectCode: { $in: codes }, semester, section: req.user.section || "-" }).populate("faculty", "name"),
@@ -888,6 +941,8 @@ module.exports = function registerFeatures(app, h) {
         graded.forEach((s) => push("grade", `Graded: ${s.assignment ? s.assignment.title : "assignment"} — ${s.marks}/${s.assignment ? s.assignment.maxMarks : ""}`, s.updatedAt, "assignments"));
         const exams = await Exam.find({ semester: me.semester || -1, ...anyDeptOr(me.department), date: { $gte: today(), $lte: daysAhead(14) } });
         exams.forEach((e) => push("exam", `Upcoming exam: ${e.subjectName || e.subjectCode}`, e.date, "exam-schedule"));
+        const myLeaves = await Leave.find({ applicant: me._id, reviewedAt: { $gte: week } });
+        myLeaves.forEach((l) => push("leave", `Your ${l.type} leave was ${l.status}`, l.reviewedAt, "leave"));
         const marks = await Mark.find({ student: me._id, updatedAt: { $gte: week } }, "subjectName assessment updatedAt");
         if (marks.length) push("marks", `New internal marks posted (${marks.length})`, marks[0].updatedAt, "internal-marks");
       }
@@ -907,6 +962,10 @@ module.exports = function registerFeatures(app, h) {
       if (["principal", "admin", "staff"].includes(req.role)) {
         const apps = await Admission.countDocuments({ status: "pending" });
         if (apps) push("admission", `${apps} admission application(s) pending`, new Date(), "admissions");
+      }
+      if (req.role === "admin") {
+        const resets = await PasswordRequest.countDocuments({ status: "pending" });
+        if (resets) push("password", `${resets} password reset request(s) waiting`, new Date(), "settings");
       }
       if (["admin", "staff"].includes(req.role)) {
         const overdue = await Fee.countDocuments({ status: "pending", dueDate: { $lt: today() } });
@@ -994,7 +1053,7 @@ module.exports = function registerFeatures(app, h) {
         Faculty.find(deptQ).sort({ name: 1 }),
         Student.find(deptQ).sort({ studentId: 1 }),
         Allocation.find().populate("faculty", "name department"),
-        Leave.find({ applicantKind: "faculty", ...deptQ }).sort({ createdAt: -1 }),
+        Leave.find({ applicantKind: { $in: ["faculty", "student"] }, ...deptQ }).sort({ createdAt: -1 }),
         Event.find({ date: { $gte: today() }, ...anyDeptOr(dept) }).sort({ date: 1 }).limit(5),
         Announcement.find(anyDeptOr(dept)).sort({ createdAt: -1 }).limit(5),
       ]);

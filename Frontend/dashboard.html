@@ -673,7 +673,7 @@
   <div class="container">
     <!-- ===== SIDEBAR ===== -->
     <div class="sidebar">
-      <div class="logo"><i class="fas fa-graduation-cap"></i><span class="logo-text">EduManager</span></div>
+      <div class="logo"><i class="fas fa-graduation-cap"></i><span class="logo-text">AMC ERP</span></div>
 
       <div class="nav-item active" data-section="dashboard"><i class="fas fa-chart-pie"></i><span class="nav-text">Dashboard</span></div>
       <div class="nav-item" data-section="admins"><i class="fas fa-user-shield"></i><span class="nav-text">Admins</span></div>
@@ -1172,6 +1172,11 @@
         <div class="ov-pad ov-grid-2">
           <div class="widget-card">
             <div class="ov-head"><h3>My Profile</h3></div>
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+              <img id="setPhoto" alt="" style="width:64px;height:64px;border-radius:14px;object-fit:cover;background:#eef2ff">
+              <div><button type="button" class="action-btn edit-btn" onclick="changeMyPhoto()"><i class="fas fa-camera"></i> Change Photo</button>
+                <button type="button" class="action-btn delete-btn" id="removePhotoBtn" onclick="removeMyPhoto()">Remove</button></div>
+            </div>
             <form id="profileForm">
               <div class="form-group"><label for="setName">Full Name</label><input id="setName" type="text"></div>
               <div class="form-group" id="setUsernameGroup"><label for="setUsername">Username</label><input id="setUsername" type="text"></div>
@@ -1188,6 +1193,16 @@
               <button type="submit" class="submit-btn">Change Password</button>
             </form>
           </div>
+        </div>
+        <div class="student-list" id="pwRequestsCard">
+          <div class="table-header">
+            <h2>Password Reset Requests</h2>
+            <span class="ov-muted">Users who clicked "Forgot password?" on the login page. Set a new password and share it with them.</span>
+          </div>
+          <table>
+            <thead><tr><th>Requested</th><th>Name</th><th>Role</th><th>Email</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="pwRequestsBody"></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -1413,7 +1428,7 @@
     
       document.getElementById("loggedInUserName").textContent = name;
       document.getElementById("loggedInUserRole").textContent = roleText;
-      document.getElementById("loggedInUserAvatar").innerHTML = buildUserInitials(name);
+      setTopBarAvatar(user);
     
       const welcomeUserText = document.getElementById("welcomeUserText");
       if (welcomeUserText) {
@@ -2666,7 +2681,7 @@
       }
     }
 
-    const NOTIF_TARGET = { leaves: "leaves", admissions: "admissions", payment: "payment", notices: "notices" };
+    const NOTIF_TARGET = { leaves: "leaves", admissions: "admissions", payment: "payment", notices: "notices", settings: "settings" };
 
     function toggleFullscreen() {
       if (document.fullscreenElement) document.exitFullscreen();
@@ -3059,9 +3074,64 @@
     }
 
     // ===================== SETTINGS =====================
+    function setTopBarAvatar(user) {
+      const el = document.getElementById("loggedInUserAvatar");
+      el.innerHTML = user.photo ? `<img src="${esc(user.photo)}" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">` : buildUserInitials(getUserDisplayName(user));
+    }
+
+    function showMyPhoto(user) {
+      byId("setPhoto").src = ErpAuth.avatarUrl(user, 128, "4f46e5");
+      byId("removePhotoBtn").style.display = user.photo ? "" : "none";
+      setTopBarAvatar(user);
+    }
+
+    async function changeMyPhoto() {
+      try {
+        const user = await ErpAuth.changePhoto();
+        if (user) { showMyPhoto(user); showNotification("Profile photo updated", "success"); }
+      } catch (error) { showNotification(error.message, "error"); }
+    }
+
+    async function removeMyPhoto() {
+      if (!confirm("Remove your profile photo?")) return;
+      try { showMyPhoto(await ErpAuth.removePhoto()); } catch (error) { showNotification(error.message, "error"); }
+    }
+
+    async function loadPasswordRequests() {
+      const card = byId("pwRequestsCard");
+      if (ERP_SESSION.role !== "admin") { card.style.display = "none"; return; }
+      try {
+        const list = await api("/api/password-requests");
+        byId("pwRequestsBody").innerHTML = list.length
+          ? list.map((r) => `<tr><td>${fmt(r.createdAt)}</td><td>${esc(r.name)}</td><td>${esc(r.kind)}</td><td>${esc(r.email)}</td><td>${esc(r.department || "—")}</td>
+              <td><span class="status-badge ${r.status === "done" ? "status-active" : r.status === "dismissed" ? "status-inactive" : ""}">${r.status}</span>${r.resolvedByName ? `<br><small>${esc(r.resolvedByName)}</small>` : ""}</td>
+              <td>${r.status === "pending" ? `<button class="action-btn edit-btn" onclick="resolvePasswordRequest('${r._id}')"><i class="fas fa-key"></i> Set Password</button>
+                <button class="action-btn delete-btn" onclick="dismissPasswordRequest('${r._id}')">Dismiss</button>` : ""}</td></tr>`).join("")
+          : '<tr><td colspan="7" class="empty-state">No password reset requests.</td></tr>';
+      } catch (error) { showNotification(error.message, "error"); }
+    }
+
+    async function resolvePasswordRequest(id) {
+      const password = prompt("New password for this account (at least 6 characters):", "");
+      if (password === null) return;
+      try {
+        const res = await api(`/api/password-requests/${id}/resolve`, { method: "POST", body: { password } });
+        showNotification(res.message, "success");
+        loadPasswordRequests();
+        updateBanner();
+      } catch (error) { showNotification(error.message, "error"); }
+    }
+
+    async function dismissPasswordRequest(id) {
+      if (!confirm("Dismiss this request without changing the password?")) return;
+      try { await api(`/api/password-requests/${id}/resolve`, { method: "POST", body: { dismiss: true } }); loadPasswordRequests(); } catch (error) { showNotification(error.message, "error"); }
+    }
+
     async function loadSettings() {
+      loadPasswordRequests();
       try {
         const { user } = await api("/api/auth/me");
+        showMyPhoto(user);
         byId("setName").value = user.name || "";
         byId("setUsername").value = user.username || "";
         byId("setEmail").value = user.email || "";

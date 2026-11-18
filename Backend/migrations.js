@@ -41,12 +41,26 @@ const MIGRATIONS = [
       log(`Passwords reset to role-based defaults: ${JSON.stringify(counts)}`);
     },
   },
+  {
+    // Hosted demo only: replace the small first demo college with the full one (4 departments, ~190 students).
+    // Never runs on a normal database (needs SEED_ON_START=demo) and leaves bigger databases alone.
+    id: "2026-11-19-demo-college-v2",
+    when: () => process.env.SEED_ON_START === "demo",
+    async run(log) {
+      const models = require("./models");
+      if ((await models.Student.countDocuments()) >= 100) return log("Demo college v2 already present");
+      const all = Object.values(models).filter((m) => m && m.prototype instanceof mongoose.Model);
+      for (const Model of all) await Model.deleteMany({}); // keeps indexes, unlike dropping collections
+      await require("./seed").seedDemo();
+    },
+  },
 ];
 
 async function runMigrations(log = console.log) {
   const done = mongoose.connection.db.collection("migrations");
   for (const m of MIGRATIONS) {
     if (await done.findOne({ _id: m.id })) continue;
+    if (m.when && !m.when()) continue;
     await m.run(log);
     await done.insertOne({ _id: m.id, appliedAt: new Date() });
     log(`Migration applied: ${m.id}`);

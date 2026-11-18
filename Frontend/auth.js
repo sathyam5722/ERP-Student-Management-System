@@ -186,7 +186,58 @@
     }
   }
 
+  /**
+   * Lets the user pick an image, crops it to a 256x256 square, saves it as their profile photo
+   * and returns the updated user. Resolves to null if they cancel.
+   */
+  function changePhoto() {
+    return new Promise((resolve, reject) => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/png,image/jpeg,image/webp";
+      input.onchange = () => {
+        const file = input.files && input.files[0];
+        if (!file) return resolve(null);
+        if (!/^image\/(png|jpeg|webp)$/.test(file.type)) return reject(new Error("Please choose a PNG, JPEG or WebP image"));
+        if (file.size > 15 * 1024 * 1024) return reject(new Error("That image is too large (max 15 MB)"));
+        const img = new Image();
+        img.onload = async () => {
+          const size = 256;
+          const canvas = document.createElement("canvas");
+          canvas.width = size;
+          canvas.height = size;
+          const side = Math.min(img.width, img.height);
+          canvas.getContext("2d").drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+          URL.revokeObjectURL(img.src);
+          try {
+            const { user } = await api("/api/auth/me", { method: "PATCH", body: { photo: canvas.toDataURL("image/jpeg", 0.85) } });
+            updateSessionUser(user);
+            resolve(user);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        img.onerror = () => reject(new Error("Could not read that image"));
+        img.src = URL.createObjectURL(file);
+      };
+      input.click();
+    });
+  }
+
+  async function removePhoto() {
+    const { user } = await api("/api/auth/me", { method: "PATCH", body: { photo: "" } });
+    updateSessionUser({ ...user, photo: "" });
+    return user;
+  }
+
+  /** Avatar image URL: the user's photo, or a generated initials avatar. */
+  const avatarUrl = (user, size, bg) =>
+    (user && user.photo) || `https://ui-avatars.com/api/?name=${encodeURIComponent((user && (user.name || user.username)) || "User")}&background=${bg || "6a11cb"}&color=fff&size=${size || 128}`;
+
   window.ErpAuth = {
+    changePhoto,
+    removePhoto,
+    avatarUrl,
     download,
     escapeHtml,
     formatDate,

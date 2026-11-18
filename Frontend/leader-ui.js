@@ -12,7 +12,9 @@
   ];
   const initials = (name) => String(name || "?").replace(/^(Dr|Prof|Mr|Mrs|Ms)\.?\s+/i, "").split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join("") || "?";
 
-  function avatar(name, size) {
+  function avatar(name, size, photo) {
+    const sz0 = size === "sm" ? "h-9 w-9" : size === "lg" ? "h-14 w-14" : "h-11 w-11";
+    if (photo) return `<img src="${esc(photo)}" alt="" class="${sz0} rounded-2xl object-cover shadow-md flex-shrink-0">`;
     const ini = initials(name);
     const grad = GRADIENTS[ini.charCodeAt(0) % GRADIENTS.length];
     const sz = size === "sm" ? "h-9 w-9 text-xs" : size === "lg" ? "h-14 w-14 text-base" : "h-11 w-11 text-sm";
@@ -180,7 +182,8 @@
     return `<div class="space-y-6 max-w-3xl fade">
       <div><h3 class="text-2xl font-extrabold text-slate-800">Settings</h3><p class="text-sm text-slate-500 mt-1">Manage your profile and password</p></div>
       <div class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
-        <div class="flex items-center gap-4 mb-6">${avatar(user.name, "lg")}<div><p class="font-bold text-slate-800">${esc(user.name)}</p><p class="text-xs text-slate-500">${esc(extraNote || "")}</p></div></div>
+        <div class="flex items-center gap-4 mb-6">${avatar(user.name, "lg", user.photo)}<div><p class="font-bold text-slate-800">${esc(user.name)}</p><p class="text-xs text-slate-500">${esc(extraNote || "")}</p>
+          <div class="flex gap-3 mt-2"><button onclick="LeaderUI.changePhoto()" class="text-xs font-bold text-violet-600">Change photo</button>${user.photo ? '<button onclick="LeaderUI.removePhoto()" class="text-xs font-bold text-red-500">Remove photo</button>' : ""}</div></div></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div><label class="block text-xs font-bold text-slate-700 mb-1.5">Full Name</label><input id="setName" value="${esc(user.name)}" class="${inputCls}"></div>
           <div><label class="block text-xs font-bold text-slate-700 mb-1.5">Email</label><input id="setEmail" type="email" value="${esc(user.email)}" class="${inputCls}"></div>
@@ -206,6 +209,27 @@
       const { user } = await ErpAuth.api("/api/auth/me", { method: "PATCH", body: { name: document.getElementById("setName").value.trim(), email: document.getElementById("setEmail").value.trim(), phone: document.getElementById("setPhone").value.trim() } });
       ErpAuth.updateSessionUser(user);
       toast("Profile saved");
+      if (window.onProfileSaved) window.onProfileSaved(user);
+    } catch (error) {
+      toast(error.message, "error");
+    }
+  }
+
+  async function changePhoto() {
+    try {
+      const user = await ErpAuth.changePhoto();
+      if (!user) return;
+      toast("Profile photo updated");
+      if (window.onProfileSaved) window.onProfileSaved(user);
+    } catch (error) {
+      toast(error.message, "error");
+    }
+  }
+
+  async function removePhoto() {
+    try {
+      const user = await ErpAuth.removePhoto();
+      toast("Photo removed", "info");
       if (window.onProfileSaved) window.onProfileSaved(user);
     } catch (error) {
       toast(error.message, "error");
@@ -250,7 +274,7 @@
           <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-500 hover:bg-red-50 hover:text-red-600 transition">${icon("logout")} Logout</button>
         </nav>
         <div class="p-3 border-t border-slate-100"><div class="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-br from-slate-50 to-violet-50/40 border border-slate-100 cursor-pointer" onclick="go('settings')">
-          ${avatar(o.user.name, "sm")}<div class="flex-1 min-w-0"><p class="text-sm font-bold text-slate-800 truncate">${esc(o.user.name)}</p><p class="text-[11px] text-slate-400 truncate">${esc(o.roleLabel)}</p></div>
+          ${avatar(o.user.name, "sm", o.user.photo)}<div class="flex-1 min-w-0"><p class="text-sm font-bold text-slate-800 truncate">${esc(o.user.name)}</p><p class="text-[11px] text-slate-400 truncate">${esc(o.roleLabel)}</p></div>
           <div class="h-2 w-2 rounded-full bg-emerald-500"></div></div></div>
       </aside>
       <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -272,7 +296,7 @@
               </div>
             </div>
             <div class="hidden sm:flex items-center gap-2 pl-3 ml-1 border-l border-slate-200 cursor-pointer" onclick="go('settings')">
-              ${avatar(o.user.name, "sm")}<div><p class="text-xs font-bold text-slate-800">${esc(o.user.name)}</p><p class="text-[10px] text-slate-400">${esc(o.roleLabel)}</p></div>
+              ${avatar(o.user.name, "sm", o.user.photo)}<div><p class="text-xs font-bold text-slate-800">${esc(o.user.name)}</p><p class="text-[10px] text-slate-400">${esc(o.roleLabel)}</p></div>
             </div>
           </div>
         </header>
@@ -301,7 +325,7 @@
 
   window.LeaderUI = {
     esc, fmt, avatar, pill, progress, icon, statCard, panel, link, button, iconButton, empty, bars, hbars,
-    openModal, closeModal, showForm, toast, settingsPage, saveProfile, changePassword, shell, search, toggleNotifications, download,
+    openModal, closeModal, showForm, toast, settingsPage, saveProfile, changePassword, changePhoto, removePhoto, shell, search, toggleNotifications, download,
     save: () => saveHandler && saveHandler(),
   };
 })();

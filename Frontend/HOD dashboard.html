@@ -101,7 +101,7 @@
       NAV.find((n) => n.id === 'leaves').badge = ov.leaves.filter((l) => l.status === 'pending').length;
       const [title, subtitle] = TITLES[page];
       UI.shell({
-        brand: 'EduPortal', subtitle: 'HOD Dashboard', infoTitle: 'Department', infoValue: ov.department || 'Not set',
+        brand: 'AMC ERP', subtitle: 'HOD Dashboard', infoTitle: 'Department', infoValue: ov.department || 'Not set',
         infoMeta: `${ov.faculty.length} faculty • ${ov.students.length} students`, nav: NAV, page, user: me, roleLabel: `HOD${ov.department ? ', ' + ov.department : ''}`,
         notifications, sidebarOpen, title, subtitleText: subtitle,
         notificationPage: (n) => ({ leaves: 'leaves', students: 'students', notices: 'announcements' }[n.section] || 'dashboard'),
@@ -183,7 +183,7 @@
       if (!list.length) return UI.empty('No faculty in this department yet');
       return `<div class="overflow-x-auto"><table class="w-full"><thead><tr class="text-[10px] uppercase tracking-wider text-slate-400 bg-slate-50/50">
         <th class="text-left px-6 py-3 font-bold">Faculty</th><th class="text-left px-6 py-3 font-bold">Designation</th><th class="text-left px-6 py-3 font-bold">Classes</th><th class="text-left px-6 py-3 font-bold">Status</th></tr></thead>
-        <tbody class="divide-y divide-slate-50">${list.map((f) => `<tr class="table-row" data-row><td class="px-6 py-3.5"><div class="flex items-center gap-3">${UI.avatar(f.name, 'sm')}<div><p class="text-sm font-bold text-slate-800">${esc(f.name)}</p><p class="text-xs text-slate-400">${esc(f.email)}</p></div></div></td>
+        <tbody class="divide-y divide-slate-50">${list.map((f) => `<tr class="table-row" data-row><td class="px-6 py-3.5"><div class="flex items-center gap-3">${UI.avatar(f.name, 'sm', f.photo)}<div><p class="text-sm font-bold text-slate-800">${esc(f.name)}</p><p class="text-xs text-slate-400">${esc(f.email)}</p></div></div></td>
           <td class="px-6 py-3.5 text-sm text-slate-600">${esc(f.designation || '—')}</td>
           <td class="px-6 py-3.5"><span class="px-2.5 py-1 bg-violet-50 text-violet-700 text-xs font-bold rounded-lg">${f.subjects}</span></td>
           <td class="px-6 py-3.5">${UI.pill(f.status === 'inactive' ? 'inactive' : f.onLeave ? 'on_leave' : 'active')}</td></tr>`).join('')}</tbody></table></div>`;
@@ -197,7 +197,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           ${items.length ? items.map((f) => `<div class="card-hover bg-white rounded-3xl border border-slate-100 p-6 shadow-sm ${f.status === 'inactive' ? 'opacity-60' : ''}" data-row>
             <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center gap-3">${UI.avatar(f.name, 'lg')}<div><p class="font-bold text-slate-800">${esc(f.name)}</p><p class="text-xs text-slate-500 mt-0.5">${esc(f.designation || 'Faculty')}</p></div></div>
+              <div class="flex items-center gap-3">${UI.avatar(f.name, 'lg', f.photo)}<div><p class="font-bold text-slate-800">${esc(f.name)}</p><p class="text-xs text-slate-500 mt-0.5">${esc(f.designation || 'Faculty')}</p></div></div>
               <div class="flex gap-1">${UI.iconButton('edit', `facultyForm('${f._id}')`, 'Edit')}
                 ${f.status === 'inactive' ? UI.iconButton('check', `setFacultyActive('${f._id}', true)`, 'Reactivate', 'text-emerald-500 hover:bg-emerald-50') : UI.iconButton('trash', `setFacultyActive('${f._id}', false)`, 'Deactivate', 'text-red-400 hover:bg-red-50')}</div>
             </div>
@@ -252,7 +252,7 @@
         <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="w-full">
           <thead><tr class="text-[10px] uppercase tracking-wider text-slate-400 bg-slate-50/50"><th class="text-left px-6 py-3.5 font-bold">Student</th><th class="text-left px-6 py-3.5 font-bold">ID</th><th class="text-left px-6 py-3.5 font-bold">Sem / Sec</th><th class="text-left px-6 py-3.5 font-bold">Marks</th><th class="text-left px-6 py-3.5 font-bold">Attendance</th><th class="text-left px-6 py-3.5 font-bold">Status</th><th class="text-right px-6 py-3.5 font-bold">Actions</th></tr></thead>
           <tbody class="divide-y divide-slate-50">${list.length ? list.map((s) => `<tr class="table-row" data-row>
-            <td class="px-6 py-4"><div class="flex items-center gap-3">${UI.avatar(s.name, 'sm')}<div><p class="text-sm font-bold text-slate-800">${esc(s.name)}</p><p class="text-xs text-slate-400">${esc(s.email)}</p></div></div></td>
+            <td class="px-6 py-4"><div class="flex items-center gap-3">${UI.avatar(s.name, 'sm', s.photo)}<div><p class="text-sm font-bold text-slate-800">${esc(s.name)}</p><p class="text-xs text-slate-400">${esc(s.email)}</p></div></div></td>
             <td class="px-6 py-4 text-sm font-mono font-semibold text-slate-600">${esc(s.studentId || '—')}</td>
             <td class="px-6 py-4"><span class="px-2.5 py-1 bg-violet-50 text-violet-700 text-xs font-bold rounded-lg">${s.semester ? `Sem ${s.semester}${s.section ? ' / ' + esc(s.section) : ''}` : 'Not set'}</span></td>
             <td class="px-6 py-4">${UI.progress(s.marksPct)}</td>
@@ -367,9 +367,9 @@
       const box = (s, label, color) => `<button onclick="leaveFilter='${s}'; render()" class="text-left bg-white rounded-2xl border ${leaveFilter === s ? 'border-violet-400 ring-2 ring-violet-100' : 'border-slate-100'} p-5 shadow-sm">
           <p class="text-xs font-bold uppercase ${color}">${label}</p><p class="text-3xl font-extrabold text-slate-800 mt-2">${s === 'all' ? ov.leaves.length : count(s)}</p></button>`;
       el.innerHTML = `<div class="space-y-6 fade">
-        ${head('Leave Requests', 'Faculty requests from your department', UI.button('Apply for My Leave', 'myLeaveForm()'))}
+        ${head('Leave Requests', 'Faculty and student requests from your department', UI.button('Apply for My Leave', 'myLeaveForm()'))}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">${box('pending', 'Pending', 'text-amber-600')}${box('approved', 'Approved', 'text-emerald-600')}${box('rejected', 'Rejected', 'text-red-600')}${box('all', 'All', 'text-slate-500')}</div>
-        ${UI.panel('Faculty Requests', items.length ? `<div class="divide-y divide-slate-50">${items.map((l) => leaveRow(l, true)).join('')}</div>` : UI.empty('No requests here'))}
+        ${UI.panel('Faculty & Student Requests', items.length ? `<div class="divide-y divide-slate-50">${items.map((l) => leaveRow(l, true)).join('')}</div>` : UI.empty('No requests here'))}
         ${UI.panel('My Leave Requests <span class="text-xs font-normal text-slate-400">(reviewed by the Principal)</span>', mine.length ? `<div class="divide-y divide-slate-50">${mine.map((l) => leaveRow(l, false)).join('')}</div>` : UI.empty('You have not applied for leave'))}
       </div>`;
     }
