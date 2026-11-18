@@ -1139,7 +1139,7 @@
             </div>
             <button class="add-student-btn" onclick="openCrudForm('admissions')"><i class="fas fa-plus"></i>Add Application</button>
           </div>
-          <p class="ov-muted" style="margin:0 0 12px">Approving an application enrolls the applicant as a student (semester 1, section A, password <strong>student123</strong>). Public application form: <a href="apply.html" target="_blank">apply.html</a></p>
+          <p class="ov-muted" style="margin:0 0 12px">Approving an application enrolls the applicant as a student (semester 1, section A, you set the student's password when approving). Public application form: <a href="apply.html" target="_blank">apply.html</a></p>
           <table>
             <thead><tr><th>Applied</th><th>Name</th><th>Email</th><th>Department</th><th>Program</th><th>Score</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody id="admissionTableBody"></tbody>
@@ -1210,7 +1210,7 @@
         <div class="form-group"><label for="enrollmentDate">Enrollment Date</label><input type="date" id="enrollmentDate" required /></div>
         <div class="form-group"><label for="studentSemester">Semester</label><select id="studentSemester" required><option value="">Select Semester</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></div>
         <div class="form-group"><label for="studentSection">Section</label><select id="studentSection" required><option value="">Select Section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
-        <p style="font-size:12px;color:#6b7280;margin:-4px 0 12px;">New students log in with their email or Student ID. Default password: <strong>student123</strong></p>
+        <div class="form-group"><label for="studentPassword" id="studentPasswordLabel">Password *</label><input type="text" id="studentPassword" minlength="6" autocomplete="new-password" /><small id="studentPasswordHint" style="font-size:11.5px;color:#6b7280"></small></div>
         <button type="submit" class="submit-btn">Save Student</button>
       </form>
     </div>
@@ -1227,7 +1227,7 @@
         <div class="form-group"><label for="facultyCollegeType">College Type</label><select id="facultyCollegeType" required><option value="">Select College Type</option><option value="AMCEC">AMCEC</option><option value="AMCDC">AMCDC</option></select></div>
         <div class="form-group"><label for="facultyDesignation">Designation</label><input type="text" id="facultyDesignation" placeholder="e.g. Assistant Professor" /></div>
         <div class="form-group"><label for="facultyEnrollmentDate">Enrollment Date</label><input type="date" id="facultyEnrollmentDate" required /></div>
-        <p style="font-size:12px;color:#6b7280;margin:-4px 0 12px;">New faculty log in with their email or Faculty ID. Default password: <strong>faculty123</strong></p>
+        <div class="form-group"><label for="facultyPassword" id="facultyPasswordLabel">Password *</label><input type="text" id="facultyPassword" minlength="6" autocomplete="new-password" /><small id="facultyPasswordHint" style="font-size:11.5px;color:#6b7280"></small></div>
         <button type="submit" id="submitBtn" class="submit-btn"></button>
       </form>
     </div>
@@ -1736,6 +1736,8 @@
         section: document.getElementById("studentSection").value,
         status: "active",
       };
+      const studentPassword = document.getElementById("studentPassword").value.trim();
+      if (studentPassword) studentData.password = studentPassword;
 
       try {
         if (editingId) {
@@ -1955,10 +1957,23 @@
       });
     }
 
+    /** Password input: required when adding an account, optional (blank = keep) when editing. */
+    function setPasswordMode(id, isEdit) {
+      const input = document.getElementById(id);
+      input.value = "";
+      input.required = !isEdit;
+      input.placeholder = isEdit ? "Leave blank to keep current password" : "At least 6 characters";
+      const label = document.getElementById(id + "Label");
+      if (label) label.textContent = isEdit ? "New Password (optional)" : "Password *";
+      const hint = document.getElementById(id + "Hint");
+      if (hint) hint.textContent = isEdit ? "Fill this only to reset the password." : "They log in with their email/ID and this password, and can change it later.";
+    }
+
     function openModal() {
       studentModal.style.display = "flex";
       editingId = null;
       studentForm.reset();
+      setPasswordMode("studentPassword", false);
       document.getElementById("modalTitle").textContent = "Add New Student";
     }
 
@@ -2002,6 +2017,7 @@
         const student = await response.json();
 
         editingId = id;
+        setPasswordMode("studentPassword", true);
         document.getElementById("modalTitle").textContent = "Edit Student";
         document.getElementById("studentName").value = student.name || "";
         document.getElementById("studentEmail").value = student.email || "";
@@ -2199,6 +2215,7 @@
         modalTitle.innerText = "Add New Faculty";
         submitBtn.innerText = "Add Faculty";
         document.getElementById("facultyForm").reset();
+        setPasswordMode("facultyPassword", false);
       };
 
       window.closeFacultyModal = function () {
@@ -2215,6 +2232,7 @@
         const faculty = data.faculty || data;
 
         editingFacultyId = id;
+        setPasswordMode("facultyPassword", true);
         modalTitle.innerText = "Update Faculty";
         submitBtn.innerText = "Edit Faculty";
 
@@ -2251,8 +2269,8 @@
           designation: document.getElementById("facultyDesignation").value.trim(),
           status: "active"
         };
-        // New faculty get the default password; editing never resets an existing password.
-        if (!editingFacultyId) facultyData.password = "faculty123";
+        const facultyPassword = document.getElementById("facultyPassword").value.trim();
+        if (facultyPassword) facultyData.password = facultyPassword; // blank on edit = keep current password
 
         const method = editingFacultyId ? "PATCH" : "POST";
         const url = editingFacultyId ? `${API_URL}/${editingFacultyId}` : API_URL;
@@ -2327,9 +2345,9 @@
         staffForm.reset();
         staffModalTitle.innerText = "Add New Staff";
         staffSubmitBtn.innerText = "Add Staff";
-        document.getElementById("staffPassword").value = "staff123";
+        document.getElementById("staffPassword").value = "";
         document.getElementById("staffPassword").required = true;
-        document.getElementById("staffPassword").placeholder = "";
+        document.getElementById("staffPassword").placeholder = "At least 6 characters";
         staffModal.classList.add("show");
       };
 
@@ -2392,7 +2410,7 @@
           department: document.getElementById("staffDepartment").value,
           collegeType: document.getElementById("staffCollegeType").value,
           enrollmentDate: document.getElementById("staffEnrollmentDate").value,
-          password: document.getElementById("staffPassword").value.trim() || (editingStaffId ? "" : "staff123")
+          password: document.getElementById("staffPassword").value.trim()
         };
 
         const method = editingStaffId ? "PATCH" : "POST";
@@ -2471,9 +2489,9 @@
         adminForm.reset();
         adminModalTitle.innerText = "Add New Admin";
         adminSubmitBtn.innerText = "Add Admin";
-        document.getElementById("adminPassword").value = "admin123";
+        document.getElementById("adminPassword").value = "";
         document.getElementById("adminPassword").required = true;
-        document.getElementById("adminPassword").placeholder = "";
+        document.getElementById("adminPassword").placeholder = "At least 6 characters";
         adminModal.classList.add("show");
       };
 
@@ -3015,9 +3033,13 @@
     }
 
     async function reviewAdmission(id, status) {
-      if (!confirm(status === "approved" ? "Approve and enroll this applicant as a student?" : "Reject this application?")) return;
+      let password = "";
+      if (status === "approved") {
+        password = prompt("Approve and enroll this applicant.\n\nSet a password for the new student account (at least 6 characters):", "");
+        if (password === null) return;
+      } else if (!confirm("Reject this application?")) return;
       try {
-        const res = await api(`/api/admissions/${id}/review`, { method: "PATCH", body: { status } });
+        const res = await api(`/api/admissions/${id}/review`, { method: "PATCH", body: { status, password } });
         showNotification(res.message, "success");
         loadAdmissions();
         if (status === "approved") loadStudents();
@@ -3109,8 +3131,8 @@
     // ===== HOD & PRINCIPAL ACCOUNTS (one module, two account types) =====
     function initializeLeaderModule() {
       const TYPES = {
-        hod: { api: `${API_BASE_URL}/api/hod`, label: "HOD", idField: "hodId", tbody: "hodTableBody", btnPrefix: "hod", defaultPassword: "hod123", hasDepartment: true },
-        principal: { api: `${API_BASE_URL}/api/principal`, label: "Principal", idField: "principalId", tbody: "principalTableBody", btnPrefix: "principal", defaultPassword: "principal123", hasDepartment: false }
+        hod: { api: `${API_BASE_URL}/api/hod`, label: "HOD", idField: "hodId", tbody: "hodTableBody", btnPrefix: "hod", hasDepartment: true },
+        principal: { api: `${API_BASE_URL}/api/principal`, label: "Principal", idField: "principalId", tbody: "principalTableBody", btnPrefix: "principal", hasDepartment: false }
       };
       const modal = document.getElementById("leaderModal");
       const form = document.getElementById("leaderForm");
@@ -3165,9 +3187,9 @@
         document.getElementById("leaderDepartmentGroup").style.display = cfg.hasDepartment ? "" : "none";
         document.getElementById("leaderDepartment").required = cfg.hasDepartment;
         const pw = document.getElementById("leaderPassword");
-        pw.value = isEdit ? "" : cfg.defaultPassword;
+        pw.value = "";
         pw.required = !isEdit;
-        pw.placeholder = isEdit ? "Leave blank to keep current password" : "";
+        pw.placeholder = isEdit ? "Leave blank to keep current password" : "At least 6 characters";
         document.getElementById("leaderPasswordHint").innerText = isEdit
           ? "Only fill the password to reset it."
           : `They log in from the login page as "${cfg.label}" using their email or ${cfg.label} ID.`;

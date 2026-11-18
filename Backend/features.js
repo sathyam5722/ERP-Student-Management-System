@@ -273,6 +273,10 @@ module.exports = function registerFeatures(app, h) {
       let student = null;
       if (status === "approved") {
         student = await Student.findOne({ email: ciExact(adm.email) });
+        const password = String(req.body.password || "").trim();
+        if (!student && password.length < 6) {
+          return res.status(400).json({ message: "Set a password (at least 6 characters) for the new student account" });
+        }
         if (!student) {
           const year = new Date().getFullYear();
           const count = await Student.countDocuments({ studentId: new RegExp(`^ADM${year}`) });
@@ -286,6 +290,7 @@ module.exports = function registerFeatures(app, h) {
             semester: Number(req.body.semester) || 1,
             section: req.body.section || "A",
             enrollmentDate: new Date(),
+            password,
           });
         }
         adm.enrolledStudent = student._id;
@@ -295,7 +300,7 @@ module.exports = function registerFeatures(app, h) {
       adm.reviewedByName = actorName(req);
       await adm.save();
       res.json({
-        message: status === "approved" ? `Approved and enrolled as ${student.studentId} (default password: student123)` : "Application rejected",
+        message: status === "approved" ? `Approved and enrolled as ${student.studentId}. They can log in with their email and the password you set.` : "Application rejected",
         admission: adm,
         student,
       });

@@ -219,9 +219,11 @@
           { name: 'facultyId', label: 'Faculty ID', half: true },
           { name: 'designation', label: 'Designation', type: 'select', default: 'Assistant Professor', half: true, options: ['Professor', 'Associate Professor', 'Assistant Professor', 'Lecturer'].map((v) => ({ value: v, label: v })) },
           { name: 'phone', label: 'Phone', half: true },
-          ...(f ? [] : [{ name: 'password', label: 'Initial Password', default: 'faculty123', hint: 'They can change it after logging in' }]),
+          f ? { name: 'password', label: 'New Password (leave blank to keep current)', type: 'password' }
+            : { name: 'password', label: 'Password', type: 'password', required: true, hint: 'At least 6 characters. They can change it after logging in.' },
         ],
         onSave: async (v) => {
+          if (!v.password) delete v.password;
           await api(f ? `/api/faculty/${f._id}` : '/api/faculty', { method: f ? 'PATCH' : 'POST', body: v });
           UI.toast(f ? 'Faculty updated' : 'Faculty added');
           refresh();
@@ -274,10 +276,13 @@
           { name: 'section', label: 'Section', type: 'select', default: 'A', half: true, options: ['A', 'B', 'C', 'D'].map((v) => ({ value: v, label: v })) },
           { name: 'phone', label: 'Phone', half: true },
           { name: 'enrollmentDate', label: 'Enrollment Date', type: 'date', half: true },
+          s ? { name: 'password', label: 'New Password (leave blank to keep current)', type: 'password' }
+            : { name: 'password', label: 'Password', type: 'password', required: true, hint: 'At least 6 characters. They can change it after logging in.' },
         ],
         onSave: async (v) => {
+          if (!v.password) delete v.password;
           await api(s ? `/api/students/${s._id}` : '/api/students', { method: s ? 'PATCH' : 'POST', body: v });
-          UI.toast(s ? 'Student updated' : 'Student added (default password: student123)');
+          UI.toast(s ? 'Student updated' : 'Student added');
           refresh();
         },
       });

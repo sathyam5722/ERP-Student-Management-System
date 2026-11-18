@@ -771,6 +771,19 @@
                     </div>
                 </div>
             </div>
+            <div class="card mt-4">
+                <div class="card-header"><h5 class="mb-0">Change Password</h5></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4"><label class="form-label">Current Password</label><input type="password" class="form-control" id="pwCurrent" autocomplete="current-password"></div>
+                        <div class="col-md-4"><label class="form-label">New Password</label><input type="password" class="form-control" id="pwNew" autocomplete="new-password" placeholder="At least 6 characters"></div>
+                        <div class="col-md-4"><label class="form-label">Confirm New Password</label><input type="password" class="form-control" id="pwConfirm" autocomplete="new-password"></div>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button type="button" class="btn btn-primary" onclick="changePassword()"><i class="fas fa-lock me-2"></i>Change Password</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Curriculum Section -->
@@ -1383,6 +1396,21 @@
                     }
                 }
             });
+        }
+
+        // ===== Change password =====
+        async function changePassword() {
+            const currentPassword = document.getElementById('pwCurrent').value;
+            const newPassword = document.getElementById('pwNew').value;
+            if (newPassword.length < 6) return showNotification('New password must be at least 6 characters', 'warning');
+            if (newPassword !== document.getElementById('pwConfirm').value) return showNotification('New passwords do not match', 'warning');
+            try {
+                await ErpAuth.api('/api/auth/change-password', { method: 'POST', body: { currentPassword, newPassword } });
+                ['pwCurrent', 'pwNew', 'pwConfirm'].forEach((id) => { document.getElementById(id).value = ''; });
+                showNotification('Password changed successfully', 'success');
+            } catch (error) {
+                showNotification(error.message, 'warning');
+            }
         }
 
         // ===== Dashboard overview, activity & deadlines =====

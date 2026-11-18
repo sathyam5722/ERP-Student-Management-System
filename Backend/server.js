@@ -217,7 +217,10 @@ function registerPeople({ base, Model, label, flag, fields, readRoles, writeRole
       if (!(await ensureUniqueEmail(data.email))) {
         return res.status(409).json({ message: `A ${label.toLowerCase()} with this email already exists` });
       }
-      if (req.body.password) data.password = String(req.body.password);
+      // A password must be given for every new account; there is no silent default.
+      const password = String(req.body.password || "").trim();
+      if (password.length < 6) return res.status(400).json({ message: "Please set a password of at least 6 characters" });
+      data.password = password;
       if (!flag && ["active", "inactive"].includes(req.body.status)) data.status = req.body.status;
       if (Model === Admin && req.user) data.createdBy = req.user._id;
       if (isScoped(req)) data.department = req.user.department;
@@ -239,7 +242,11 @@ function registerPeople({ base, Model, label, flag, fields, readRoles, writeRole
       return res.status(409).json({ message: `A ${label.toLowerCase()} with this email already exists` });
     }
     Object.assign(doc, data);
-    if (req.body.password) doc.password = String(req.body.password); // empty = keep current password
+    const newPassword = String(req.body.password || "").trim(); // empty = keep current password
+    if (newPassword) {
+      if (newPassword.length < 6) return res.status(400).json({ message: "New password must be at least 6 characters" });
+      doc.password = newPassword;
+    }
     if (!flag && ["active", "inactive"].includes(req.body.status)) doc.status = req.body.status;
 
     await doc.save();

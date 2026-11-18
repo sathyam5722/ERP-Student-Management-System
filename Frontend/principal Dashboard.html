@@ -178,8 +178,12 @@
     }
 
     async function reviewAdmission(id, status) {
-      if (!confirm(status === 'approved' ? 'Approve and enroll this applicant as a student?' : 'Reject this application?')) return;
-      try { const res = await api(`/api/admissions/${id}/review`, { method: 'PATCH', body: { status } }); UI.toast(res.message); cache.admissions = null; refresh(); } catch (error) { UI.toast(error.message, 'error'); }
+      let password = '';
+      if (status === 'approved') {
+        password = prompt('Approve and enroll this applicant.\n\nSet a password for the new student account (at least 6 characters):', '');
+        if (password === null) return;
+      } else if (!confirm('Reject this application?')) return;
+      try { const res = await api(`/api/admissions/${id}/review`, { method: 'PATCH', body: { status, password } }); UI.toast(res.message); cache.admissions = null; refresh(); } catch (error) { UI.toast(error.message, 'error'); }
     }
 
     // ---------- DEPARTMENTS ----------
@@ -238,7 +242,7 @@
           { name: 'phone', label: 'Phone', half: true },
           { name: 'appointedDate', label: 'Appointed On', type: 'date', half: true },
           { name: 'collegeType', label: 'College', type: 'select', half: true, options: ['AMCEC', 'AMCDC'].map((v) => ({ value: v, label: v })) },
-          { name: 'password', label: h ? 'New Password (leave blank to keep)' : 'Initial Password', default: h ? '' : 'hod123', half: true },
+          { name: 'password', label: h ? 'New Password (leave blank to keep)' : 'Password (min 6 characters)', type: 'password', required: !h, half: true },
         ],
         onSave: async (v) => {
           if (!v.password) delete v.password;
@@ -280,7 +284,7 @@
       try { cache.admissions = await api(`/api/admissions${filters.admission ? `?status=${filters.admission}` : ''}`); } catch (error) { el.innerHTML = UI.empty(error.message); return; }
       const tab = (s, l) => `<button onclick="filters.admission='${s}'; render()" class="px-4 py-2 text-sm font-semibold rounded-xl ${filters.admission === s ? 'bg-violet-600 text-white' : 'bg-white text-slate-600 border border-slate-200'}">${l}</button>`;
       el.innerHTML = `<div class="space-y-6 fade">
-        ${head('Admissions', `Approving enrolls the applicant as a semester-1 student (password student123). Public form: <a class="text-violet-600 font-semibold" href="apply.html" target="_blank">apply.html</a>`, `<div class="flex gap-2 flex-wrap">${tab('pending', `Pending (${ov.admissions.pending})`)}${tab('approved', 'Approved')}${tab('rejected', 'Rejected')}${tab('', 'All')}${UI.button('+ Add Application', 'admissionForm()')}</div>`)}
+        ${head('Admissions', `Approving enrolls the applicant as a semester-1 student with a password you set. Public form: <a class="text-violet-600 font-semibold" href="apply.html" target="_blank">apply.html</a>`, `<div class="flex gap-2 flex-wrap">${tab('pending', `Pending (${ov.admissions.pending})`)}${tab('approved', 'Approved')}${tab('rejected', 'Rejected')}${tab('', 'All')}${UI.button('+ Add Application', 'admissionForm()')}</div>`)}
         ${table(['Applied', 'Applicant', 'Department / Program', 'Score', 'Status', ''], cache.admissions.map((a) => `<tr class="table-row" data-row>${td(fmt(a.createdAt))}
           ${td(`<p class="font-bold text-slate-800">${esc(a.name)}</p><p class="text-xs text-slate-400">${esc(a.email)}${a.phone ? ' • ' + esc(a.phone) : ''}</p>`)}${td(`${esc(a.department || '—')}<br><span class="text-xs text-slate-400">${esc(a.program || '')}</span>`)}
           ${td(a.score ?? '—')}${td(UI.pill(a.status))}

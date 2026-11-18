@@ -59,7 +59,7 @@
         const res = await fetch(`${API}/api/admissions/apply`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Could not submit the application");
-        show("okBox", "Application submitted! The admissions office will review it. Once approved you can log in as a Student with your email and the password student123.");
+        show("okBox", "Application submitted! The admissions office will review it. Once approved, the college will share your login password and you can log in as a Student with your email.");
         e.target.reset();
       } catch (error) {
         show("errBox", error.message);
