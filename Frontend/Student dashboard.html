@@ -521,8 +521,11 @@
         .countdown-card .row { flex-wrap: wrap; }
         .countdown-card .col { flex: 0 0 calc(50% - 6px); margin-bottom: 8px; }
       }
-    
-</style>
+        /* Sidebar scrolls on short screens so every item (incl. Logout) is reachable */
+        .sidebar { overflow-y: auto; overflow-x: hidden; }
+        .header-logout { margin-left: 14px; border: 1px solid #fecaca; color: #dc2626; background: #fff; border-radius: 10px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .header-logout:hover { background: #fef2f2; }
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -562,6 +565,7 @@
                     <h6 class="mb-0" id="loggedInStudentName">Student</h6>
                     <small class="text-muted" id="loggedInStudentMeta">Student Portal</small>
                 </div>
+                <button type="button" class="header-logout" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
             </div>
         </div>
 
