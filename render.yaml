@@ -1,0 +1,20 @@
+# Render blueprint: one web service runs the API and serves the Frontend pages.
+# Render dashboard -> New -> Blueprint -> pick this repository.
+services:
+  - type: web
+    name: amc-college-erp
+    runtime: node
+    plan: free
+    rootDir: Backend
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: MONGODB_URI
+        sync: false # paste your MongoDB Atlas connection string when Render asks
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: SEED_ON_START
+        value: demo # fills an empty database with the demo college on first start

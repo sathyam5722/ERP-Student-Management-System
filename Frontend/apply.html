@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply for Admission - AMC Engineering College</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body { background: linear-gradient(135deg, #eef2ff, #f5f3ff); min-height: 100vh; }
+    .apply-card { max-width: 640px; margin: 48px auto; border: none; border-radius: 20px; box-shadow: 0 20px 50px rgba(79, 70, 229, .12); }
+    .apply-head { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; border-radius: 20px 20px 0 0; padding: 28px; }
+  </style>
+</head>
+<body>
+  <div class="container px-3">
+    <div class="card apply-card">
+      <div class="apply-head">
+        <h3 class="mb-1"><i class="fas fa-graduation-cap me-2"></i>AMC Engineering College</h3>
+        <p class="mb-0 opacity-75">Online admission application 2026-27</p>
+      </div>
+      <div class="card-body p-4">
+        <div class="alert alert-success d-none" id="okBox"></div>
+        <div class="alert alert-danger d-none" id="errBox"></div>
+        <form id="applyForm">
+          <div class="mb-3"><label class="form-label">Full Name *</label><input class="form-control" id="name" required></div>
+          <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label">Email *</label><input class="form-control" type="email" id="email" required></div>
+            <div class="col-md-6 mb-3"><label class="form-label">Phone</label><input class="form-control" id="phone"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3"><label class="form-label">Department</label><select class="form-select" id="department"><option value="">Select department</option></select></div>
+            <div class="col-md-6 mb-3"><label class="form-label">Program</label><select class="form-select" id="program"><option value="">Select program</option></select></div>
+          </div>
+          <div class="mb-3"><label class="form-label">Qualifying exam score (%)</label><input class="form-control" type="number" min="0" max="100" id="score"></div>
+          <button class="btn btn-primary w-100" id="submitBtn"><i class="fas fa-paper-plane me-2"></i>Submit Application</button>
+        </form>
+        <p class="text-center mt-3 mb-0"><a href="login.html">Already a student? Log in</a> · <a href="index2.html">Home</a></p>
+      </div>
+    </div>
+  </div>
+  <script>
+    const API = location.protocol === "file:" ? "http://localhost:3000" : location.origin;
+    const show = (id, msg) => { const el = document.getElementById(id); el.textContent = msg; el.classList.remove("d-none"); };
+    const hide = (id) => document.getElementById(id).classList.add("d-none");
+    const fill = (id, items) => { document.getElementById(id).innerHTML += items.map((x) => `<option>${String(x).replace(/[<>&"]/g, "")}</option>`).join(""); };
+
+    // Departments & courses are public read-only lists exposed for the form
+    fetch(`${API}/api/public/options`).then((r) => r.json()).then((o) => { fill("department", o.departments || []); fill("program", o.programs || []); }).catch(() => {});
+
+    document.getElementById("applyForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hide("okBox"); hide("errBox");
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      const body = Object.fromEntries(["name", "email", "phone", "department", "program", "score"].map((k) => [k, document.getElementById(k).value.trim()]));
+      if (body.score === "") delete body.score;
+      try {
+        const res = await fetch(`${API}/api/admissions/apply`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Could not submit the application");
+        show("okBox", "Application submitted! The admissions office will review it. Once approved you can log in as a Student with your email and the password student123.");
+        e.target.reset();
+      } catch (error) {
+        show("errBox", error.message);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

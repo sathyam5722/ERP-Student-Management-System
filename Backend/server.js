@@ -1,1459 +1,883 @@
-// const express = require("express");
-// const mongoose = require("mongoose");
-// const cors = require("cors");
-// require("dotenv").config();
-// const morgan = require("morgan");
-// const winston = require("winston");
+require("dotenv").config();
 
-// const app = express();
-
-// app.use(cors());
-// app.use(express.json());
-// app.use(express.static("public"));
-
-// // Configure Winston Logger
-// const logger = winston.createLogger({
-//   level: "info",
-//   format: winston.format.combine(
-//     winston.format.timestamp(),
-//     winston.format.json(),
-//   ),
-//   transports: [
-//     new winston.transports.File({ filename: "error.log", level: "error" }),
-//     new winston.transports.File({ filename: "combined.log" }),
-//     new winston.transports.Console({
-//       format: winston.format.combine(
-//         winston.format.colorize(),
-//         winston.format.simple(),
-//       ),
-//     }),
-//   ],
-// });
-
-// app.use(
-//   morgan(":method :url :status :response-time ms - :res[content-length]"),
-// );
-
-// // Custom API Logger Middleware
-// const apiLogger = (req, res, next) => {
-//   const start = Date.now();
-//   res.on("finish", () => {
-//     const duration = Date.now() - start;
-//     logger.info({
-//       method: req.method,
-//       path: req.path,
-//       status: res.statusCode,
-//       duration: `${duration}ms`,
-//       params: req.params,
-//       query: req.query,
-//       body: req.method !== "GET" ? req.body : undefined,
-//     });
-//   });
-//   next();
-// };
-
-// app.use(apiLogger);
-
-// // MongoDB Connection
-// mongoose
-//   .connect(
-//     process.env.MONGODB_URI ||
-//       "mongodb://localhost:27017/student-management-app",
-//   )
-//   .then(() => console.log("Connected to MongoDB"))
-//   .catch((err) => console.error("MongoDB connection error:", err));
-
-// // -------------------- SCHEMAS & MODELS --------------------
-
-// const studentSchema = new mongoose.Schema(
-//   {
-//     name: {
-//       type: String,
-//       required: true,
-//     },
-//     email: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//     },
-//     course: {
-//       type: String,
-//       required: true,
-//     },
-//     enrollmentDate: {
-//       type: Date,
-//       required: true,
-//     },
-//     status: {
-//       type: String,
-//       enum: ["active", "inactive"],
-//       default: "active",
-//     },
-//     password: {
-//       type: String,
-//       default: "student123",
-//     },
-//   },
-//   {
-//     timestamps: true,
-//   },
-// );
-
-// const Student =
-//   mongoose.models.Student || mongoose.model("Student", studentSchema);
-
-// const facultySchema = new mongoose.Schema(
-//   {
-//     name: {
-//       type: String,
-//       required: true,
-//     },
-//     email: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//     },
-//     department: {
-//       type: String,
-//       required: true,
-//     },
-//     designation: {
-//       type: String,
-//       required: true,
-//     },
-//     status: {
-//       type: String,
-//       enum: ["active", "inactive"],
-//       default: "active",
-//     },
-//     password: {
-//       type: String,
-//       default: "faculty123",
-//     },
-//   },
-//   {
-//     timestamps: true,
-//   },
-// );
-
-// const Faculty =
-//   mongoose.models.Faculty || mongoose.model("Faculty", facultySchema);
-
-// // UPDATED: staff schema now matches your frontend staff form
-// const staffSchema = new mongoose.Schema(
-//   {
-//     username: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       trim: true,
-//       minlength: 3,
-//     },
-//     email: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       lowercase: true,
-//       match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address"],
-//     },
-//     password: {
-//       type: String,
-//       required: true,
-//       minlength: 6,
-//     },
-//     isActive: {
-//       type: Boolean,
-//       default: true,
-//     },
-//   },
-//   {
-//     timestamps: true,
-//   },
-// );
-
-// const Staff = mongoose.models.Staff || mongoose.model("Staff", staffSchema);
-
-// const courseSchema = new mongoose.Schema(
-//   {
-//     name: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//     },
-//     description: {
-//       type: String,
-//       required: true,
-//     },
-//     duration: {
-//       type: Number,
-//       required: true,
-//     },
-//     status: {
-//       type: String,
-//       enum: ["active", "inactive"],
-//       default: "active",
-//     },
-//   },
-//   {
-//     timestamps: true,
-//   },
-// );
-
-// const Course = mongoose.models.Course || mongoose.model("Course", courseSchema);
-
-// const AdminSchema = new mongoose.Schema(
-//   {
-//     accountType: {
-//       type: String,
-//       enum: ["SuperAdmin", "Admin"],
-//       required: true,
-//     },
-
-//     username: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       trim: true,
-//       minlength: 3,
-//     },
-
-//     email: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       lowercase: true,
-//       match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address"],
-//     },
-
-//     password: {
-//       type: String,
-//       required: true,
-//       minlength: 6,
-//       select: false,
-//     },
-
-//     isActive: {
-//       type: Boolean,
-//       default: true,
-//     },
-
-//     createdBy: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: "Admin",
-//       required: false,
-//     },
-//   },
-//   {
-//     timestamps: true,
-//   },
-// );
-
-// const Admin = mongoose.models.Admin || mongoose.model("Admin", AdminSchema);
-
-// // -------------------- FACULTY ROUTES --------------------
-
-// app.get("/api/faculty/active", async (req, res) => {
-//   try {
-//     const faculty = await Faculty.find({ status: "active" });
-
-//     if (!faculty || faculty.length === 0) {
-//       return res.status(404).json({ msg: "Faculty not found" });
-//     }
-
-//     logger.info(`Retrieved ${faculty.length} faculties successfully`);
-//     res.status(200).json(faculty);
-//   } catch (error) {
-//     logger.error("Error fetching faculties:", error);
-//     res.status(500).json({ msg: error.message });
-//   }
-// });
-
-// app.get("/api/faculty/inactive", async (req, res) => {
-//   try {
-//     const faculty = await Faculty.find({ status: "inactive" });
-
-//     if (!faculty || faculty.length === 0) {
-//       return res.status(404).json({ msg: "Faculty not found" });
-//     }
-
-//     logger.info(`Retrieved ${faculty.length} faculties successfully`);
-//     res.status(200).json(faculty);
-//   } catch (error) {
-//     logger.error("Error fetching faculties:", error);
-//     res.status(500).json({ msg: error.message });
-//   }
-// });
-
-// app.get("/api/faculty/:id", async (req, res) => {
-//   try {
-//     const facultyId = req.params.id;
-//     const faculty = await Faculty.findById(facultyId);
-
-//     if (!faculty) return res.status(404).json({ msg: "Faculty not found" });
-
-//     res.status(200).json({ msg: "Success", faculty });
-//   } catch (error) {
-//     logger.error("Error Fetching faculty:", error);
-//     res.status(500).json({ msg: "Internal Server Error" });
-//   }
-// });
-
-// app.post("/api/faculty", async (req, res) => {
-//   try {
-//     const { name, email, department, designation, status, password } = req.body;
-
-//     if (!name || !email || !department || !designation) {
-//       return res.status(400).json({ msg: "All fields are required" });
-//     }
-
-//     const existingFaculty = await Faculty.findOne({ email });
-//     if (existingFaculty) {
-//       return res.status(409).json({ msg: "Email already exists" });
-//     }
-
-//     const result = await Faculty.create({
-//       name,
-//       email,
-//       department,
-//       designation,
-//       status,
-//       password,
-//     });
-
-//     return res.status(201).json({ msg: "success", id: result._id });
-//   } catch (error) {
-//     logger.error("Error creating faculty:", error);
-//     res.status(400).json({ message: error.message });
-//   }
-// });
-
-// app.patch("/api/faculty/reactivate/:id", async (req, res) => {
-//   try {
-//     const result = await Faculty.findByIdAndUpdate(
-//       req.params.id,
-//       { status: "active" },
-//       { new: true },
-//     );
-
-//     if (!result) {
-//       return res.status(404).json({ msg: "Faculty not found" });
-//     }
-
-//     res.status(200).json({ msg: "success" });
-//   } catch (error) {
-//     res.status(500).json({ msg: error.message });
-//   }
-// });
-
-// app.patch("/api/faculty/:id", async (req, res) => {
-//   try {
-//     const facultyId = req.params.id;
-//     const { name, email, department, designation, status, password } = req.body;
-
-//     const faculty = await Faculty.findById(facultyId);
-//     if (!faculty) {
-//       return res.status(404).json({ msg: "Faculty not found" });
-//     }
-
-//     if (name !== undefined) faculty.name = name;
-//     if (email !== undefined) faculty.email = email;
-//     if (department !== undefined) faculty.department = department;
-//     if (designation !== undefined) faculty.designation = designation;
-//     if (status !== undefined) faculty.status = status;
-//     if (password !== undefined) faculty.password = password;
-
-//     await faculty.save();
-
-//     return res.status(200).json({
-//       msg: "Faculty updated successfully",
-//       id: faculty._id,
-//     });
-//   } catch (error) {
-//     logger.error("Error updating faculty:", error);
-//     res.status(500).json({ msg: "Internal Server Error" });
-//   }
-// });
-
-// app.patch("/api/faculty/inactive/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     const faculty = await Faculty.findById(id);
-//     if (!faculty) {
-//       return res.status(404).json({ msg: "Faculty not found" });
-//     }
-
-//     if (faculty.status === "inactive") {
-//       return res.status(400).json({ msg: "Faculty already deleted" });
-//     }
-
-//     faculty.status = "inactive";
-//     await faculty.save();
-
-//     return res.status(200).json({
-//       msg: "Faculty deleted successfully",
-//       id: faculty._id,
-//     });
-//   } catch (error) {
-//     logger.error("Error deleting faculty:", error);
-//     res.status(500).json({ msg: "Internal Server Error" });
-//   }
-// });
-
-// // -------------------- STAFF MANAGEMENT ROUTES --------------------
-
-// // Get all active staff
-// app.get("/api/staff/active", async (req, res) => {
-//   try {
-//     const staff = await Staff.find({ isActive: true });
-
-//     if (!staff || staff.length === 0) {
-//       return res.status(404).json({ msg: "No active staff found" });
-//     }
-
-//     logger.info(`Retrieved ${staff.length} active staff successfully`);
-//     res.status(200).json(staff);
-//   } catch (error) {
-//     logger.error("Error fetching active staff:", error);
-//     res.status(500).json({ msg: error.message });
-//   }
-// });
-
-// // Get all inactive staff
-// app.get("/api/staff/inactive", async (req, res) => {
-//   try {
-//     const staff = await Staff.find({ isActive: false });
-
-//     if (!staff || staff.length === 0) {
-//       return res.status(404).json({ msg: "No inactive staff found" });
-//     }
-
-//     logger.info(`Retrieved ${staff.length} inactive staff successfully`);
-//     res.status(200).json(staff);
-//   } catch (error) {
-//     logger.error("Error fetching inactive staff:", error);
-//     res.status(500).json({ msg: error.message });
-//   }
-// });
-
-// // Get single staff by ID
-// app.get("/api/staff/:id", async (req, res) => {
-//   try {
-//     const staff = await Staff.findById(req.params.id);
-
-//     if (!staff) return res.status(404).json({ msg: "Staff not found" });
-
-//     res.status(200).json({ msg: "Success", staff });
-//   } catch (error) {
-//     logger.error("Error Fetching staff:", error);
-//     res.status(500).json({ msg: "Internal Server Error" });
-//   }
-// });
-
-// // Create new staff
-// app.post("/api/staff", async (req, res) => {
-//   try {
-//     const { username, email, password } = req.body;
-
-//     if (!username || !email || !password) {
-//       return res
-//         .status(400)
-//         .json({ msg: "Username, email, and password are required" });
-//     }
-
-//     const existingEmail = await Staff.findOne({ email });
-//     if (existingEmail) {
-//       return res.status(409).json({ msg: "Email already exists" });
-//     }
-
-//     const existingUsername = await Staff.findOne({ username });
-//     if (existingUsername) {
-//       return res.status(409).json({ msg: "Username already exists" });
-//     }
-
-//     const result = await Staff.create({
-//       username,
-//       email,
-//       password,
-//       isActive: true,
-//     });
-
-//     logger.info(`Staff created: ${result.username}`);
-//     return res.status(201).json({ msg: "success", id: result._id });
-//   } catch (error) {
-//     logger.error("Error creating staff:", error);
-//     res.status(400).json({ message: error.message });
-//   }
-// });
-
-// // Reactivate staff
-// app.patch("/api/staff/reactivate/:id", async (req, res) => {
-//   try {
-//     const result = await Staff.findByIdAndUpdate(
-//       req.params.id,
-//       { isActive: true },
-//       { new: true },
-//     );
-
-//     if (!result) return res.status(404).json({ msg: "Staff not found" });
-
-//     res.status(200).json({ msg: "success" });
-//   } catch (error) {
-//     res.status(500).json({ msg: error.message });
-//   }
-// });
-
-// // Update staff details
-// app.patch("/api/staff/:id", async (req, res) => {
-//   try {
-//     const { username, email, password } = req.body;
-
-//     const staff = await Staff.findById(req.params.id);
-
-//     if (!staff) {
-//       return res.status(404).json({ msg: "Staff not found" });
-//     }
-
-//     if (email && email !== staff.email) {
-//       const existingEmail = await Staff.findOne({ email });
-//       if (existingEmail) {
-//         return res.status(409).json({ msg: "Email already exists" });
-//       }
-//     }
-
-//     if (username && username !== staff.username) {
-//       const existingUsername = await Staff.findOne({ username });
-//       if (existingUsername) {
-//         return res.status(409).json({ msg: "Username already exists" });
-//       }
-//     }
-
-//     if (username !== undefined) staff.username = username;
-//     if (email !== undefined) staff.email = email;
-//     if (password !== undefined && password !== "") staff.password = password;
-
-//     await staff.save();
-
-//     return res.status(200).json({
-//       msg: "Staff updated successfully",
-//       id: staff._id,
-//     });
-//   } catch (error) {
-//     logger.error("Error updating staff:", error);
-//     res.status(500).json({ msg: "Internal Server Error" });
-//   }
-// });
-
-// // Deactivate staff
-// app.patch("/api/staff/inactive/:id", async (req, res) => {
-//   try {
-//     const staff = await Staff.findById(req.params.id);
-
-//     if (!staff) {
-//       return res.status(404).json({ msg: "Staff not found" });
-//     }
-
-//     if (!staff.isActive) {
-//       return res.status(400).json({ msg: "Staff already deactivated" });
-//     }
-
-//     staff.isActive = false;
-//     await staff.save();
-
-//     return res.status(200).json({
-//       msg: "Staff deactivated successfully",
-//       id: staff._id,
-//     });
-//   } catch (error) {
-//     logger.error("Error deactivating staff:", error);
-//     res.status(500).json({ msg: "Internal Server Error" });
-//   }
-// });
-
-// // -------------------- COURSE ROUTES --------------------
-
-// app.get("/api/courses", async (req, res) => {
-//   try {
-//     const courses = await Course.find().sort({ name: 1 });
-//     logger.info(`Retrieved ${courses.length} courses successfully`);
-//     res.json(courses);
-//   } catch (error) {
-//     logger.error("Error fetching courses:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.post("/api/courses", async (req, res) => {
-//   try {
-//     const course = new Course(req.body);
-//     const savedCourse = await course.save();
-
-//     logger.info("New course created:", {
-//       courseId: savedCourse._id,
-//       name: savedCourse.name,
-//     });
-
-//     res.status(201).json(savedCourse);
-//   } catch (error) {
-//     logger.error("Error creating course:", error);
-//     res.status(400).json({ message: error.message });
-//   }
-// });
-
-// app.put("/api/courses/:id", async (req, res) => {
-//   try {
-//     const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
-//       new: true,
-//     });
-
-//     if (!course) {
-//       logger.warn("Course not found for update:", { courseId: req.params.id });
-//       return res.status(404).json({ message: "Course not found" });
-//     }
-
-//     logger.info("Course updated successfully:", {
-//       courseId: course._id,
-//       name: course.name,
-//     });
-
-//     res.json(course);
-//   } catch (error) {
-//     logger.error("Error updating course:", error);
-//     res.status(400).json({ message: error.message });
-//   }
-// });
-
-// app.delete("/api/courses/:id", async (req, res) => {
-//   try {
-//     const enrolledStudents = await Student.countDocuments({
-//       course: req.params.id,
-//     });
-
-//     if (enrolledStudents > 0) {
-//       logger.warn("Attempted to delete course with enrolled students:", {
-//         courseId: req.params.id,
-//         enrolledStudents,
-//       });
-
-//       return res
-//         .status(400)
-//         .json({ message: "Cannot delete course with enrolled students" });
-//     }
-
-//     const course = await Course.findByIdAndDelete(req.params.id);
-
-//     if (!course) {
-//       logger.warn("Course not found for deletion:", {
-//         courseId: req.params.id,
-//       });
-//       return res.status(404).json({ message: "Course not found" });
-//     }
-
-//     logger.info("Course deleted successfully:", {
-//       courseId: course._id,
-//       name: course.name,
-//     });
-
-//     res.json({ message: "Course deleted successfully" });
-//   } catch (error) {
-//     logger.error("Error deleting course:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.get("/api/courses/:id", async (req, res) => {
-//   try {
-//     const course = await Course.findById(req.params.id);
-
-//     if (!course) {
-//       return res.status(404).json({ message: "Course not found" });
-//     }
-
-//     res.json(course);
-//   } catch (error) {
-//     logger.error("Error fetching course:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // -------------------- STUDENT ROUTES --------------------
-
-// app.get("/api/students", async (req, res) => {
-//   try {
-//     const students = await Student.find().sort({ createdAt: -1 });
-//     logger.info(`Retrieved ${students.length} students successfully`);
-//     res.json(students);
-//   } catch (error) {
-//     logger.error("Error fetching students:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.post("/api/students", async (req, res) => {
-//   try {
-//     const student = new Student(req.body);
-//     const savedStudent = await student.save();
-
-//     logger.info("New student created:", {
-//       studentId: savedStudent._id,
-//       name: savedStudent.name,
-//       course: savedStudent.course,
-//     });
-
-//     res.status(201).json(savedStudent);
-//   } catch (error) {
-//     logger.error("Error creating student:", error);
-//     res.status(400).json({ message: error.message });
-//   }
-// });
-
-// app.put("/api/students/:id", async (req, res) => {
-//   try {
-//     const student = await Student.findByIdAndUpdate(req.params.id, req.body, {
-//       new: true,
-//     });
-
-//     if (!student) {
-//       logger.warn("Student not found for update:", {
-//         studentId: req.params.id,
-//       });
-//       return res.status(404).json({ message: "Student not found" });
-//     }
-
-//     logger.info("Student updated successfully:", {
-//       studentId: student._id,
-//       name: student.name,
-//       course: student.course,
-//     });
-
-//     res.json(student);
-//   } catch (error) {
-//     logger.error("Error updating student:", error);
-//     res.status(400).json({ message: error.message });
-//   }
-// });
-
-// app.delete("/api/students/:id", async (req, res) => {
-//   try {
-//     const student = await Student.findByIdAndDelete(req.params.id);
-
-//     if (!student) {
-//       logger.warn("Student not found for deletion:", {
-//         studentId: req.params.id,
-//       });
-//       return res.status(404).json({ message: "Student not found" });
-//     }
-
-//     logger.info("Student deleted successfully:", {
-//       studentId: student._id,
-//       name: student.name,
-//       course: student.course,
-//     });
-
-//     res.json({ message: "Student deleted successfully" });
-//   } catch (error) {
-//     logger.error("Error deleting student:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.get("/api/students/search", async (req, res) => {
-//   try {
-//     const searchTerm = req.query.q;
-//     logger.info("Student search initiated:", { searchTerm });
-
-//     const students = await Student.find({
-//       $or: [
-//         { name: { $regex: searchTerm, $options: "i" } },
-//         { course: { $regex: searchTerm, $options: "i" } },
-//         { email: { $regex: searchTerm, $options: "i" } },
-//       ],
-//     });
-
-//     logger.info("Student search completed:", {
-//       searchTerm,
-//       resultsCount: students.length,
-//     });
-
-//     res.json(students);
-//   } catch (error) {
-//     logger.error("Error searching students:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.get("/api/students/:id", async (req, res) => {
-//   try {
-//     const student = await Student.findById(req.params.id);
-
-//     if (!student) {
-//       return res.status(404).json({ message: "Student not found" });
-//     }
-
-//     res.json(student);
-//   } catch (error) {
-//     logger.error("Error fetching student:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // -------------------- LOGIN ROUTES --------------------
-
-// app.post("/api/students/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     if (!email || !password) {
-//       return res
-//         .status(400)
-//         .json({ message: "Email and password are required" });
-//     }
-
-//     const student = await Student.findOne({ email });
-//     if (!student) {
-//       logger.warn("Login attempt with invalid email:", { email });
-//       return res.status(401).json({ message: "Invalid email or password" });
-//     }
-
-//     if (student.password !== password) {
-//       logger.warn("Login attempt with invalid password:", { email });
-//       return res.status(401).json({ message: "Invalid email or password" });
-//     }
-
-//     const { password: _, ...studentData } = student.toObject();
-
-//     logger.info("Student logged in successfully:", {
-//       studentId: student._id,
-//       email,
-//     });
-
-//     res.json({ message: "Login successful", student: studentData });
-//   } catch (error) {
-//     logger.error("Error during student login:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.post("/api/faculty/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     const faculty = await Faculty.findOne({ email, status: "active" });
-
-//     if (!faculty || faculty.password !== password) {
-//       logger.warn("Faculty login failed:", { email });
-//       return res.status(401).json({ message: "Invalid email or password" });
-//     }
-
-//     const { password: _, ...facultyData } = faculty.toObject();
-//     logger.info("Faculty logged in successfully:", { facultyId: faculty._id });
-
-//     res.json({
-//       message: "Login successful",
-//       user: facultyData,
-//       role: "faculty",
-//     });
-//   } catch (error) {
-//     logger.error("Error during faculty login:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // NEW: separate staff login
-// app.post("/api/staff/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     const staff = await Staff.findOne({ email, isActive: true });
-
-//     if (!staff || staff.password !== password) {
-//       logger.warn("Staff login failed:", { email });
-//       return res.status(401).json({ message: "Invalid email or password" });
-//     }
-
-//     const { password: _, ...staffData } = staff.toObject();
-//     logger.info("Staff logged in successfully:", { staffId: staff._id });
-
-//     res.json({
-//       message: "Login successful",
-//       user: staffData,
-//       role: "staff",
-//     });
-//   } catch (error) {
-//     logger.error("Error during staff login:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // UPDATED: admin login checks only Admin collection
-// app.post("/api/admin/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     const admin = await Admin.findOne({ email, isActive: true }).select(
-//       "+password",
-//     );
-
-//     if (!admin || admin.password !== password) {
-//       logger.warn("Admin login failed:", { email });
-//       return res.status(401).json({ message: "Invalid email or password" });
-//     }
-
-//     const { password: _, ...adminData } = admin.toObject();
-//     logger.info("Admin logged in:", {
-//       adminId: admin._id,
-//       type: admin.accountType,
-//     });
-
-//     res.json({
-//       message: "Login successful",
-//       user: adminData,
-//       role: admin.accountType,
-//     });
-//   } catch (error) {
-//     logger.error("Error during admin login:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // -------------------- ADMIN ROUTES --------------------
-
-// app.post("/api/admin", async (req, res) => {
-//   try {
-//     const { accountType, username, email, password, createdBy } = req.body;
-
-//     if (!username || !email || !password) {
-//       return res
-//         .status(400)
-//         .json({ message: "Username, email and password are required" });
-//     }
-
-//     const existingEmail = await Admin.findOne({ email });
-//     if (existingEmail) {
-//       return res.status(409).json({ message: "Email already exists" });
-//     }
-
-//     const existingUsername = await Admin.findOne({ username });
-//     if (existingUsername) {
-//       return res.status(409).json({ message: "Username already exists" });
-//     }
-
-//     const admin = new Admin({
-//       accountType: accountType || "Admin",
-//       username,
-//       email,
-//       password,
-//       createdBy,
-//       isActive: true,
-//     });
-
-//     const savedAdmin = await admin.save();
-
-//     logger.info("New admin created:", {
-//       adminId: savedAdmin._id,
-//       username: savedAdmin.username,
-//     });
-
-//     const adminData = savedAdmin.toObject();
-//     delete adminData.password;
-
-//     res.status(201).json(adminData);
-//   } catch (error) {
-//     logger.error("Error creating admin:", error);
-//     res.status(400).json({ message: error.message });
-//   }
-// });
-
-// app.get("/api/admin/active", async (req, res) => {
-//   try {
-//     const admins = await Admin.find({ isActive: true }).sort({ createdAt: -1 });
-//     return res.status(200).json(admins || []);
-//   } catch (error) {
-//     logger.error("Error fetching active admins:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.get("/api/admin/inactive", async (req, res) => {
-//   try {
-//     const admins = await Admin.find({ isActive: false }).sort({ createdAt: -1 });
-//     return res.status(200).json(admins || []);
-//   } catch (error) {
-//     logger.error("Error fetching inactive admins:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.get("/api/admin/list/all", async (req, res) => {
-//   try {
-//     const admins = await Admin.find().sort({ createdAt: -1 });
-//     res.status(200).json(admins);
-//   } catch (error) {
-//     logger.error("Error listing admins:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.get("/api/admin/:id", async (req, res) => {
-//   try {
-//     const admin = await Admin.findById(req.params.id);
-
-//     if (!admin) {
-//       return res.status(404).json({ message: "Admin not found" });
-//     }
-
-//     res.status(200).json({ message: "Success", admin });
-//   } catch (error) {
-//     logger.error("Error fetching admin:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.patch("/api/admin/:id", async (req, res) => {
-//   try {
-//     const { accountType, username, email, password } = req.body;
-
-//     const admin = await Admin.findById(req.params.id).select("+password");
-
-//     if (!admin) {
-//       return res.status(404).json({ message: "Admin not found" });
-//     }
-
-//     if (email && email !== admin.email) {
-//       const existingEmail = await Admin.findOne({ email });
-//       if (existingEmail) {
-//         return res.status(409).json({ message: "Email already exists" });
-//       }
-//     }
-
-//     if (username && username !== admin.username) {
-//       const existingUsername = await Admin.findOne({ username });
-//       if (existingUsername) {
-//         return res.status(409).json({ message: "Username already exists" });
-//       }
-//     }
-
-//     if (accountType !== undefined) admin.accountType = accountType;
-//     if (username !== undefined) admin.username = username;
-//     if (email !== undefined) admin.email = email;
-//     if (password !== undefined && password !== "") admin.password = password;
-
-//     await admin.save();
-
-//     res.status(200).json({
-//       message: "Admin updated successfully",
-//       id: admin._id,
-//     });
-//   } catch (error) {
-//     logger.error("Error updating admin:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.patch("/api/admin/inactive/:id", async (req, res) => {
-//   try {
-//     const admin = await Admin.findById(req.params.id);
-
-//     if (!admin) {
-//       return res.status(404).json({ message: "Admin not found" });
-//     }
-
-//     if (!admin.isActive) {
-//       return res.status(400).json({ message: "Admin already inactive" });
-//     }
-
-//     admin.isActive = false;
-//     await admin.save();
-
-//     res.status(200).json({
-//       message: "Admin deactivated successfully",
-//       id: admin._id,
-//     });
-//   } catch (error) {
-//     logger.error("Error deactivating admin:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// app.patch("/api/admin/reactivate/:id", async (req, res) => {
-//   try {
-//     const admin = await Admin.findByIdAndUpdate(
-//       req.params.id,
-//       { isActive: true },
-//       { new: true },
-//     );
-
-//     if (!admin) {
-//       return res.status(404).json({ message: "Admin not found" });
-//     }
-
-//     res.status(200).json({
-//       message: "Admin reactivated successfully",
-//       id: admin._id,
-//     });
-//   } catch (error) {
-//     logger.error("Error reactivating admin:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // -------------------- DASHBOARD --------------------
-
-// app.get("/api/dashboard/stats", async (req, res) => {
-//   try {
-//     const stats = await getDashboardStats();
-//     logger.info("Dashboard statistics retrieved successfully:", stats);
-//     res.json(stats);
-//   } catch (error) {
-//     logger.error("Error fetching dashboard stats:", error);
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// async function getDashboardStats() {
-//   const totalStudents = await Student.countDocuments();
-//   const activeStudents = await Student.countDocuments({ status: "active" });
-//   const totalCourses = await Course.countDocuments();
-//   const activeCourses = await Course.countDocuments({ status: "active" });
-//   const graduates = await Student.countDocuments({ status: "inactive" });
-//   const courseCounts = await Student.aggregate([
-//     { $group: { _id: "$course", count: { $sum: 1 } } },
-//   ]);
-
-//   return {
-//     totalStudents,
-//     activeStudents,
-//     totalCourses,
-//     activeCourses,
-//     graduates,
-//     courseCounts,
-//     successRate:
-//       totalStudents > 0 ? Math.round((graduates / totalStudents) * 100) : 0,
-//   };
-// }
-
-// // -------------------- HEALTH CHECK --------------------
-
-// app.get("/health", (req, res) => {
-//   res.status(200).json({
-//     status: "UP",
-//     timestamp: new Date(),
-//     uptime: process.uptime(),
-//     environment: process.env.NODE_ENV || "development",
-//   });
-// });
-
-// app.get("/health/detailed", async (req, res) => {
-//   try {
-//     const dbStatus =
-//       mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
-
-//     const systemInfo = {
-//       memory: {
-//         total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
-//         used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
-//         unit: "MB",
-//       },
-//       uptime: {
-//         seconds: Math.round(process.uptime()),
-//         formatted: formatUptime(process.uptime()),
-//       },
-//       nodeVersion: process.version,
-//       platform: process.platform,
-//     };
-
-//     const healthCheck = {
-//       status: "UP",
-//       timestamp: new Date(),
-//       database: {
-//         status: dbStatus,
-//         name: "MongoDB",
-//         host: mongoose.connection.host,
-//       },
-//       system: systemInfo,
-//       environment: process.env.NODE_ENV || "development",
-//     };
-
-//     res.status(200).json(healthCheck);
-//   } catch (error) {
-//     res.status(500).json({
-//       status: "DOWN",
-//       timestamp: new Date(),
-//       error: error.message,
-//     });
-//   }
-// });
-
-// // -------------------- HELPERS --------------------
-
-// function formatUptime(seconds) {
-//   const days = Math.floor(seconds / (3600 * 24));
-//   const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-//   const minutes = Math.floor((seconds % 3600) / 60);
-//   const remainingSeconds = Math.floor(seconds % 60);
-
-//   const parts = [];
-//   if (days > 0) parts.push(`${days}d`);
-//   if (hours > 0) parts.push(`${hours}h`);
-//   if (minutes > 0) parts.push(`${minutes}m`);
-//   if (remainingSeconds > 0) parts.push(`${remainingSeconds}s`);
-
-//   return parts.join(" ");
-// }
-
-// // -------------------- ERROR HANDLER --------------------
-// // Keep this AFTER all routes
-// app.use((err, req, res, next) => {
-//   logger.error({
-//     message: err.message,
-//     stack: err.stack,
-//     method: req.method,
-//     path: req.path,
-//     params: req.params,
-//     query: req.query,
-//     body: req.method !== "GET" ? req.body : undefined,
-//   });
-
-//   res.status(500).json({ message: "Internal server error" });
-// });
-
-// // -------------------- SERVER --------------------
-
-// const PORT = process.env.PORT || 3000;
-
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-
+const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const morgan = require("morgan");
 const winston = require("winston");
-require("dotenv").config();
+
+const {
+  Student,
+  Faculty,
+  Staff,
+  Admin,
+  Hod,
+  Principal,
+  Department,
+  Course,
+  Subject,
+  Allocation,
+  Attendance,
+  Mark,
+  ASSESSMENTS,
+} = require("./models");
+const { ACCOUNT_KINDS, signToken, findAccount, authenticate, optionalAuth, allow } = require("./auth");
 
 const app = express();
 
-// -------------------- CONFIG --------------------
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan("dev"));
 
-// -------------------- LOGGER --------------------
+// Serve the frontend too, so the app works at http://localhost:3000/login.html
+app.use(express.static(path.join(__dirname, "..", "Frontend")));
+
 const logger = winston.createLogger({
   level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json(),
-  ),
-  transports: [
-    new winston.transports.Console(),
+  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+  transports: [new winston.transports.Console()],
+});
+
+// -------------------- HELPERS --------------------
+
+/** Wrap async route handlers so thrown errors reach the error handler. */
+const ah = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
+const pick = (source, fields) => {
+  const out = {};
+  fields.forEach((f) => {
+    if (source[f] !== undefined) out[f] = typeof source[f] === "string" ? source[f].trim() : source[f];
+  });
+  return out;
+};
+
+const escapeRegex = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const ciExact = (email) => new RegExp(`^${escapeRegex(String(email).trim())}$`, "i");
+const sameDept = (a, b) => String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
+const pct = (part, whole) => (whole > 0 ? Math.round((part / whole) * 1000) / 10 : 0);
+
+/** "YYYY-MM-DD" -> Date at UTC midnight, or null when invalid. */
+function parseDay(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""))) return null;
+  const d = new Date(`${value}T00:00:00.000Z`);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+// Role groups
+const MANAGE = ["admin", "staff"];
+const LEADERS = ["hod", "principal"];
+const EVERYONE = ["admin", "staff", "hod", "principal", "faculty", "student"];
+
+// -------------------- AUTH --------------------
+
+const LOGIN_PATHS = {
+  student: "/api/students/login",
+  faculty: "/api/faculty/login",
+  staff: "/api/staff/login",
+  admin: "/api/admin/login",
+  hod: "/api/hod/login",
+  principal: "/api/principal/login",
+};
+
+Object.entries(LOGIN_PATHS).forEach(([kind, route]) => {
+  app.post(
+    route,
+    ah(async (req, res) => {
+      const identifier = req.body.email || req.body.loginId || req.body.username;
+      const { password } = req.body;
+      if (!identifier || !password) {
+        return res.status(400).json({ message: "Email/ID and password are required" });
+      }
+
+      const user = await findAccount(kind, identifier);
+      const valid = user && ACCOUNT_KINDS[kind].isActive(user) && (await user.verifyPassword(password));
+      if (!valid) {
+        logger.warn({ msg: "Login failed", kind, identifier });
+        return res.status(401).json({ message: "Invalid email/ID or password" });
+      }
+
+      const token = signToken(kind, user);
+      const role = kind === "admin" && user.accountType === "Staff" ? "staff" : kind;
+      logger.info({ msg: "Login success", kind, id: String(user._id) });
+      res.json({ message: "Login successful", token, role, kind, user: user.toJSON() });
+    }),
+  );
+});
+
+// Fields each kind of user may change on their own profile.
+const SELF_EDITABLE = {
+  student: ["name", "email", "phone", "address", "fatherPhone", "motherPhone"],
+  faculty: ["name", "email", "phone", "designation", "bio"],
+  staff: ["name", "email", "phone"],
+  admin: ["name", "username", "email"],
+  hod: ["name", "email", "phone"],
+  principal: ["name", "email", "phone"],
+};
+
+app.get("/api/auth/me", authenticate, (req, res) => {
+  res.json({ role: req.role, kind: req.kind, user: req.user.toJSON() });
+});
+
+app.patch(
+  "/api/auth/me",
+  authenticate,
+  ah(async (req, res) => {
+    const updates = pick(req.body, SELF_EDITABLE[req.kind]);
+    if (updates.email) {
+      const Model = ACCOUNT_KINDS[req.kind].model;
+      const clash = await Model.findOne({ email: ciExact(updates.email), _id: { $ne: req.user._id } });
+      if (clash) return res.status(409).json({ message: "Another account already uses this email" });
+    }
+    Object.assign(req.user, updates);
+    await req.user.save();
+    res.json({ message: "Profile updated", user: req.user.toJSON() });
+  }),
+);
+
+app.post(
+  "/api/auth/change-password",
+  authenticate,
+  ah(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    if (!newPassword || String(newPassword).length < 6) {
+      return res.status(400).json({ message: "New password must be at least 6 characters" });
+    }
+    if (!(await req.user.verifyPassword(currentPassword))) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+    req.user.password = newPassword;
+    await req.user.save();
+    res.json({ message: "Password changed successfully" });
+  }),
+);
+
+// -------------------- PEOPLE (students, faculty, staff, admins, HODs, principals) --------------------
+
+/**
+ * Registers the standard routes for one type of person:
+ *   GET  base/active | base/inactive | base/:id   (and GET base when listAll)
+ *   POST base
+ *   PATCH|PUT base/:id
+ *   PATCH base/inactive/:id | base/reactivate/:id
+ *   DELETE base/:id (when allowDelete)
+ */
+function registerPeople({ base, Model, label, flag, fields, readRoles, writeRoles, createGuard, listAll, allowDelete, deptScopedRoles = [] }) {
+  // Roles in deptScopedRoles (e.g. HOD) may only manage records of their own department.
+  const isScoped = (req) => deptScopedRoles.includes(req.role);
+  const outOfScope = (req, doc) => isScoped(req) && !sameDept(doc.department, req.user.department);
+  const scopeError = (res) => res.status(403).json({ message: `You can only manage ${label.toLowerCase()} records of your own department` });
+  const activeFilter = flag ? { isActive: { $ne: false } } : { status: { $ne: "inactive" } };
+  const inactiveFilter = flag ? { isActive: false } : { status: "inactive" };
+  const read = [authenticate, allow(...readRoles)];
+  const write = [authenticate, allow(...writeRoles)];
+
+  const ensureUniqueEmail = async (email, exceptId) => {
+    if (!email) return true;
+    const query = { email: ciExact(email) };
+    if (exceptId) query._id = { $ne: exceptId };
+    return !(await Model.exists(query));
+  };
+
+  const setActive = (active) =>
+    ah(async (req, res) => {
+      const doc = await Model.findById(req.params.id);
+      if (!doc) return res.status(404).json({ message: `${label} not found` });
+      if (outOfScope(req, doc)) return scopeError(res);
+      if (!active && req.user && String(req.user._id) === String(doc._id)) {
+        return res.status(400).json({ message: "You cannot deactivate your own account" });
+      }
+      if (flag) doc.isActive = active;
+      else doc.status = active ? "active" : "inactive";
+      await doc.save({ validateBeforeSave: false });
+      res.json({ message: `${label} ${active ? "reactivated" : "deactivated"} successfully`, id: doc._id });
+    });
+
+  app.get(`${base}/active`, read, ah(async (_req, res) => res.json(await Model.find(activeFilter).sort({ createdAt: -1 }))));
+  app.get(`${base}/inactive`, read, ah(async (_req, res) => res.json(await Model.find(inactiveFilter).sort({ createdAt: -1 }))));
+  if (listAll) app.get(base, read, ah(async (_req, res) => res.json(await Model.find().sort({ createdAt: -1 }))));
+
+  app.get(
+    `${base}/:id`,
+    read,
+    ah(async (req, res) => {
+      const doc = await Model.findById(req.params.id);
+      if (!doc) return res.status(404).json({ message: `${label} not found` });
+      res.json(doc);
+    }),
+  );
+
+  app.post(
+    base,
+    createGuard || write,
+    ah(async (req, res) => {
+      const data = pick(req.body, fields);
+      if (!data.email) return res.status(400).json({ message: "Email is required" });
+      if (!(await ensureUniqueEmail(data.email))) {
+        return res.status(409).json({ message: `A ${label.toLowerCase()} with this email already exists` });
+      }
+      if (req.body.password) data.password = String(req.body.password);
+      if (!flag && ["active", "inactive"].includes(req.body.status)) data.status = req.body.status;
+      if (Model === Admin && req.user) data.createdBy = req.user._id;
+      if (isScoped(req)) data.department = req.user.department;
+
+      const doc = await Model.create(data);
+      logger.info({ msg: `${label} created`, id: String(doc._id) });
+      res.status(201).json(doc);
+    }),
+  );
+
+  const update = ah(async (req, res) => {
+    const doc = await Model.findById(req.params.id);
+    if (!doc) return res.status(404).json({ message: `${label} not found` });
+    if (outOfScope(req, doc)) return scopeError(res);
+
+    const data = pick(req.body, fields);
+    if (isScoped(req)) delete data.department;
+    if (data.email && !(await ensureUniqueEmail(data.email, doc._id))) {
+      return res.status(409).json({ message: `A ${label.toLowerCase()} with this email already exists` });
+    }
+    Object.assign(doc, data);
+    if (req.body.password) doc.password = String(req.body.password); // empty = keep current password
+    if (!flag && ["active", "inactive"].includes(req.body.status)) doc.status = req.body.status;
+
+    await doc.save();
+    res.json(doc);
+  });
+  app.patch(`${base}/inactive/:id`, write, setActive(false));
+  app.patch(`${base}/reactivate/:id`, write, setActive(true));
+  app.patch(`${base}/:id`, write, update);
+  app.put(`${base}/:id`, write, update);
+
+  if (allowDelete) {
+    app.delete(
+      `${base}/:id`,
+      write,
+      ah(async (req, res) => {
+        const found = await Model.findById(req.params.id);
+        if (!found) return res.status(404).json({ message: `${label} not found` });
+        if (outOfScope(req, found)) return scopeError(res);
+        const doc = await Model.findByIdAndDelete(req.params.id);
+        await Promise.all([Attendance.deleteMany({ student: doc._id }), Mark.deleteMany({ student: doc._id })]);
+        res.json({ message: `${label} deleted successfully` });
+      }),
+    );
+  }
+}
+
+// Student search must be registered before /api/students/:id
+app.get(
+  "/api/students/search",
+  authenticate,
+  allow(...MANAGE, ...LEADERS, "faculty"),
+  ah(async (req, res) => {
+    const q = String(req.query.q || "").trim();
+    if (!q) return res.json([]);
+    const rx = new RegExp(escapeRegex(q), "i");
+    res.json(
+      await Student.find({ $or: [{ name: rx }, { email: rx }, { studentId: rx }, { courseName: rx }, { department: rx }] }),
+    );
+  }),
+);
+
+registerPeople({
+  base: "/api/students",
+  Model: Student,
+  label: "Student",
+  flag: false,
+  listAll: true,
+  allowDelete: true,
+  readRoles: [...MANAGE, ...LEADERS, "faculty"],
+  writeRoles: [...MANAGE, "hod"],
+  deptScopedRoles: ["hod"],
+  fields: [
+    "name", "email", "studentId", "department", "course", "courseName", "collegeType", "enrollmentDate",
+    "semester", "section", "phone", "address", "dob", "bloodGroup", "fatherName", "fatherPhone", "motherName", "motherPhone",
   ],
 });
 
-app.use(morgan("dev"));
-
-// -------------------- DB --------------------
-mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/student-management-app")
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.log(err));
-
-// -------------------- SCHEMAS --------------------
-
-const studentSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  studentId: { type: String, unique: true },
-  department: String,
-  course: String,
-  courseName: String,
-  collegeType: String,
-  enrollmentDate: Date,
-  status: { type: String, default: "active" },
-  password: { type: String, default: "student123" },
+registerPeople({
+  base: "/api/faculty",
+  Model: Faculty,
+  label: "Faculty",
+  flag: false,
+  readRoles: [...MANAGE, ...LEADERS, "faculty"],
+  writeRoles: [...MANAGE, "hod"],
+  deptScopedRoles: ["hod"],
+  fields: ["name", "email", "facultyId", "department", "designation", "collegeType", "enrollmentDate", "phone", "bio"],
 });
 
-const facultySchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  facultyId: { type: String, unique: true },
-  department: String,
-  collegeType: String,
-  enrollmentDate: Date,
-  status: { type: String, default: "active" },
-  password: { type: String, default: "faculty123" },
+registerPeople({
+  base: "/api/staff",
+  Model: Staff,
+  label: "Staff",
+  flag: true,
+  readRoles: MANAGE,
+  writeRoles: MANAGE,
+  fields: ["name", "username", "email", "staffId", "department", "collegeType", "enrollmentDate", "phone"],
 });
 
-const staffSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  staffId: { type: String, unique: true },
-  department: String,
-  collegeType: String,
-  enrollmentDate: Date,
-  isActive: { type: Boolean, default: true },
-  password: String,
+registerPeople({
+  base: "/api/hod",
+  Model: Hod,
+  label: "HOD",
+  flag: false,
+  readRoles: [...MANAGE, "principal"],
+  writeRoles: [...MANAGE, "principal"],
+  fields: ["name", "email", "hodId", "department", "collegeType", "appointedDate", "phone"],
 });
 
-const adminSchema = new mongoose.Schema({
-  username: String,
-  email: { type: String, unique: true },
-  password: String,
-  isActive: { type: Boolean, default: true },
+registerPeople({
+  base: "/api/principal",
+  Model: Principal,
+  label: "Principal",
+  flag: false,
+  readRoles: MANAGE,
+  writeRoles: MANAGE,
+  fields: ["name", "email", "principalId", "collegeType", "appointedDate", "phone"],
 });
 
-const departmentSchema = new mongoose.Schema({
-  departmentId: String,
-  name: String,
-  collegeType: String,
-  status: { type: String, default: "active" },
+// Creating an admin: open only while no admin exists yet (first-time setup), otherwise admins only.
+const adminCreateGuard = [
+  optionalAuth,
+  ah(async (req, res, next) => {
+    if (req.role === "admin") return next();
+    if (!(await Admin.exists({}))) return next();
+    return res.status(403).json({
+      message: "Only a logged-in admin can create admin accounts. Use the Admins section of the dashboard.",
+    });
+  }),
+];
+
+registerPeople({
+  base: "/api/admin",
+  Model: Admin,
+  label: "Admin",
+  flag: true,
+  readRoles: ["admin"],
+  writeRoles: ["admin"],
+  createGuard: adminCreateGuard,
+  fields: ["accountType", "username", "name", "email"],
 });
 
-const courseSchema = new mongoose.Schema({
-  courseId: String,
-  name: String,
-  department: String,
-  collegeType: String,
-  description: String,
-  duration: Number,
-  status: { type: String, default: "active" },
+// -------------------- DEPARTMENTS & COURSES --------------------
+
+function registerSimpleCrud({ base, Model, label, fields, writeRoles, beforeDelete }) {
+  const read = [authenticate, allow(...EVERYONE)];
+  const write = [authenticate, allow(...writeRoles)];
+
+  app.get(base, read, ah(async (_req, res) => res.json(await Model.find().sort({ name: 1 }))));
+  app.get(
+    `${base}/:id`,
+    read,
+    ah(async (req, res) => {
+      const doc = await Model.findById(req.params.id);
+      if (!doc) return res.status(404).json({ message: `${label} not found` });
+      res.json(doc);
+    }),
+  );
+  app.post(base, write, ah(async (req, res) => res.status(201).json(await Model.create(pick(req.body, fields)))));
+
+  const update = ah(async (req, res) => {
+    const doc = await Model.findById(req.params.id);
+    if (!doc) return res.status(404).json({ message: `${label} not found` });
+    Object.assign(doc, pick(req.body, fields));
+    await doc.save();
+    res.json(doc);
+  });
+  app.put(`${base}/:id`, write, update);
+  app.patch(`${base}/:id`, write, update);
+
+  app.delete(
+    `${base}/:id`,
+    write,
+    ah(async (req, res) => {
+      if (beforeDelete) {
+        const problem = await beforeDelete(req.params.id);
+        if (problem) return res.status(400).json({ message: problem });
+      }
+      const doc = await Model.findByIdAndDelete(req.params.id);
+      if (!doc) return res.status(404).json({ message: `${label} not found` });
+      res.json({ message: `${label} deleted successfully` });
+    }),
+  );
+}
+
+registerSimpleCrud({
+  base: "/api/departments",
+  Model: Department,
+  label: "Department",
+  writeRoles: [...MANAGE, "principal"],
+  fields: ["departmentId", "name", "collegeType", "status"],
 });
 
-// -------------------- MODELS --------------------
-
-const Student = mongoose.model("Student", studentSchema);
-const Faculty = mongoose.model("Faculty", facultySchema);
-const Staff = mongoose.model("Staff", staffSchema);
-const Admin = mongoose.model("Admin", adminSchema);
-const Department = mongoose.model("Department", departmentSchema);
-const Course = mongoose.model("Course", courseSchema);
-
-// -------------------- STUDENT --------------------
-
-app.post("/api/students", async (req, res) => {
-  try {
-    const student = await Student.create(req.body);
-    res.json(student);
-  } catch (err) {
-    res.status(400).json(err.message);
-  }
+registerSimpleCrud({
+  base: "/api/courses",
+  Model: Course,
+  label: "Course",
+  writeRoles: MANAGE,
+  fields: ["courseId", "name", "department", "collegeType", "description", "duration", "durationMonths", "status"],
+  beforeDelete: async (id) =>
+    (await Student.exists({ course: id })) ? "Cannot delete a course that still has students enrolled" : null,
 });
 
-app.get("/api/students", async (req, res) => {
-  const data = await Student.find();
-  res.json(data);
+registerSimpleCrud({
+  base: "/api/subjects",
+  Model: Subject,
+  label: "Subject",
+  writeRoles: [...MANAGE, "hod"],
+  fields: ["code", "name", "semester", "credits", "department"],
+  beforeDelete: async (id) => {
+    const subject = await Subject.findById(id);
+    if (!subject) return null;
+    const used = await Promise.all([
+      Attendance.exists({ subjectCode: subject.code }),
+      Mark.exists({ subjectCode: subject.code }),
+    ]);
+    return used.some(Boolean) ? "This subject already has attendance or marks recorded" : null;
+  },
 });
 
-// -------------------- FACULTY --------------------
+// -------------------- SUBJECT ALLOCATION --------------------
 
-app.post("/api/faculty", async (req, res) => {
-  const data = await Faculty.create(req.body);
-  res.json(data);
-});
+const ALLOCATORS = [...MANAGE, "hod", "faculty"];
 
-app.get("/api/faculty/active", async (req, res) => {
-  res.json(await Faculty.find({ status: "active" }));
-});
+app.get(
+  "/api/allocations",
+  authenticate,
+  allow(...ALLOCATORS, "principal"),
+  ah(async (_req, res) => {
+    const allocations = await Allocation.find().populate("faculty", "name email department").sort({ semester: 1, section: 1 });
+    const subjects = await Subject.find({ code: { $in: allocations.map((a) => a.subjectCode) } });
+    const byCode = Object.fromEntries(subjects.map((s) => [s.code, s]));
+    res.json(
+      allocations.map((a) => ({
+        _id: a._id,
+        faculty: a.faculty,
+        subjectCode: a.subjectCode,
+        subjectName: byCode[a.subjectCode]?.name || a.subjectCode,
+        semester: a.semester,
+        section: a.section,
+        createdAt: a.createdAt,
+      })),
+    );
+  }),
+);
 
-// -------------------- STAFF --------------------
+// Assign a subject to a faculty member, or un-assign it if they already have it.
+app.post(
+  "/api/allocations/toggle",
+  authenticate,
+  allow(...ALLOCATORS),
+  ah(async (req, res) => {
+    const { faculty, subjectCode, semester, section } = req.body;
+    if (!faculty || !subjectCode || !semester || !section) {
+      return res.status(400).json({ message: "faculty, subjectCode, semester and section are required" });
+    }
+    const code = String(subjectCode).toUpperCase();
+    if (!(await Subject.exists({ code }))) return res.status(400).json({ message: "Unknown subject" });
+    if (!(await Faculty.exists({ _id: faculty }))) return res.status(400).json({ message: "Unknown faculty" });
 
-app.post("/api/staff", async (req, res) => {
-  const data = await Staff.create(req.body);
-  res.json(data);
-});
+    const existing = await Allocation.findOne({ subjectCode: code, semester, section });
+    if (existing && String(existing.faculty) !== String(faculty)) {
+      return res.status(409).json({ message: "This subject is already assigned to another faculty for this section" });
+    }
+    if (existing) {
+      await existing.deleteOne();
+      return res.json({ message: "Allocation removed", allocated: false });
+    }
+    const created = await Allocation.create({ faculty, subjectCode: code, semester, section });
+    res.status(201).json({ message: "Subject allocated", allocated: true, allocation: created });
+  }),
+);
 
-app.get("/api/staff/active", async (req, res) => {
-  res.json(await Staff.find({ isActive: true }));
-});
+app.delete(
+  "/api/allocations/:id",
+  authenticate,
+  allow(...ALLOCATORS),
+  ah(async (req, res) => {
+    const doc = await Allocation.findByIdAndDelete(req.params.id);
+    if (!doc) return res.status(404).json({ message: "Allocation not found" });
+    res.json({ message: "Allocation removed" });
+  }),
+);
 
-// -------------------- ADMIN --------------------
+// -------------------- FACULTY PORTAL --------------------
 
-app.post("/api/admin", async (req, res) => {
-  const data = await Admin.create(req.body);
-  res.json(data);
-});
+const facultyOnly = [authenticate, allow("faculty")];
 
-app.get("/api/admin/active", async (req, res) => {
-  res.json(await Admin.find({ isActive: true }));
-});
+/** Active students in the faculty member's department (all departments if theirs is not set). */
+function facultyStudentFilter(faculty, { semester, section } = {}) {
+  const filter = { status: { $ne: "inactive" } };
+  if (faculty.department) filter.department = ciExact(faculty.department); 
+  if (semester) filter.semester = Number(semester);
+  if (section) filter.section = String(section);
+  return filter;
+}
 
-// -------------------- DEPARTMENT --------------------
+app.get(
+  "/api/faculty-portal/subjects",
+  facultyOnly,
+  ah(async (req, res) => {
+    const [allocations, subjects] = await Promise.all([
+      Allocation.find({ faculty: req.user._id }).sort({ semester: 1, section: 1 }),
+      Subject.find().sort({ semester: 1, code: 1 }),
+    ]);
+    const byCode = Object.fromEntries(subjects.map((s) => [s.code, s]));
+    res.json({
+      allocated: allocations.map((a) => ({
+        subjectCode: a.subjectCode,
+        subjectName: byCode[a.subjectCode]?.name || a.subjectCode,
+        semester: a.semester,
+        section: a.section,
+      })),
+      subjects,
+    });
+  }),
+);
 
-app.post("/api/departments", async (req, res) => {
-  const data = await Department.create(req.body);
-  res.json(data);
-});
+app.get(
+  "/api/faculty-portal/students",
+  facultyOnly,
+  ah(async (req, res) => {
+    const students = await Student.find(facultyStudentFilter(req.user, req.query)).sort({ studentId: 1, name: 1 });
+    const ids = students.map((s) => s._id);
+    const [att, marks] = await Promise.all([
+      Attendance.aggregate([
+        { $match: { student: { $in: ids } } },
+        { $group: { _id: "$student", total: { $sum: 1 }, present: { $sum: { $cond: [{ $eq: ["$status", "present"] }, 1, 0] } } } },
+      ]),
+      Mark.aggregate([
+        { $match: { student: { $in: ids } } },
+        { $group: { _id: "$student", got: { $sum: "$marks" }, max: { $sum: "$maxMarks" } } },
+      ]),
+    ]);
+    const attBy = Object.fromEntries(att.map((a) => [String(a._id), a]));
+    const marksBy = Object.fromEntries(marks.map((m) => [String(m._id), m]));
 
-app.get("/api/departments", async (req, res) => {
-  res.json(await Department.find());
-});
+    res.json(
+      students.map((s) => {
+        const a = attBy[String(s._id)];
+        const m = marksBy[String(s._id)];
+        return {
+          ...s.toJSON(),
+          stats: {
+            attendancePct: a ? pct(a.present, a.total) : null,
+            marksPct: m ? pct(m.got, m.max) : null,
+            classesRecorded: a ? a.total : 0,
+          },
+        };
+      }),
+    );
+  }),
+);
 
-// -------------------- COURSE --------------------
+app.get(
+  "/api/faculty-portal/overview",
+  facultyOnly,
+  ah(async (req, res) => {
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setUTCMonth(sixMonthsAgo.getUTCMonth() - 5, 1);
+    sixMonthsAgo.setUTCHours(0, 0, 0, 0);
 
-app.post("/api/courses", async (req, res) => {
-  const data = await Course.create(req.body);
-  res.json(data);
-});
+    const [totalStudents, subjects, records] = await Promise.all([
+      Student.countDocuments(facultyStudentFilter(req.user)),
+      Allocation.countDocuments({ faculty: req.user._id }),
+      Attendance.find({ markedBy: req.user._id, date: { $gte: sixMonthsAgo } }, "date status"),
+    ]);
 
-app.get("/api/courses", async (req, res) => {
-  res.json(await Course.find());
-});
+    const months = [];
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(sixMonthsAgo);
+      d.setUTCMonth(d.getUTCMonth() + i);
+      months.push({ key: `${d.getUTCFullYear()}-${d.getUTCMonth()}`, label: d.toLocaleString("en-US", { month: "short", timeZone: "UTC" }), present: 0, total: 0 });
+    }
+    const byKey = Object.fromEntries(months.map((m) => [m.key, m]));
+    let present = 0;
+    records.forEach((r) => {
+      const m = byKey[`${r.date.getUTCFullYear()}-${r.date.getUTCMonth()}`];
+      if (!m) return;
+      m.total += 1;
+      if (r.status === "present") {
+        m.present += 1;
+        present += 1;
+      }
+    });
 
-// -------------------- LOGIN (PLAIN TEXT) --------------------
+    res.json({
+      totalStudents,
+      subjects,
+      avgAttendance: records.length ? pct(present, records.length) : null,
+      monthly: months.map((m) => ({ label: m.label, percentage: m.total ? pct(m.present, m.total) : 0, total: m.total })),
+    });
+  }),
+);
 
-app.post("/api/students/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await Student.findOne({ email, password });
+// ---- Attendance ----
 
-  if (!user) return res.status(401).json({ message: "Invalid" });
+app.get(
+  "/api/attendance",
+  facultyOnly,
+  ah(async (req, res) => {
+    const date = parseDay(req.query.date);
+    if (!req.query.subjectCode || !date) return res.status(400).json({ message: "subjectCode and date (YYYY-MM-DD) are required" });
+    res.json(await Attendance.find({ subjectCode: String(req.query.subjectCode).toUpperCase(), date }));
+  }),
+);
 
-  res.json({ message: "Login success", user });
-});
+app.post(
+  "/api/attendance",
+  facultyOnly,
+  ah(async (req, res) => {
+    const { subjectCode, records } = req.body;
+    const date = parseDay(req.body.date);
+    if (!subjectCode || !date || !Array.isArray(records) || records.length === 0) {
+      return res.status(400).json({ message: "subjectCode, date (YYYY-MM-DD) and at least one record are required" });
+    }
+    if (date > new Date()) return res.status(400).json({ message: "Attendance cannot be marked for a future date" });
 
-app.post("/api/faculty/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await Faculty.findOne({ email, password });
+    const subject = await Subject.findOne({ code: String(subjectCode).toUpperCase() });
+    if (!subject) return res.status(400).json({ message: "Unknown subject" });
 
-  if (!user) return res.status(401).json({ message: "Invalid" });
+    const valid = records.filter((r) => r.student && ["present", "absent"].includes(r.status));
+    if (valid.length !== records.length) return res.status(400).json({ message: "Each record needs a student and a status of present/absent" });
 
-  res.json({ message: "Login success", user });
-});
+    await Attendance.bulkWrite(
+      valid.map((r) => ({
+        updateOne: {
+          filter: { student: r.student, subjectCode: subject.code, date },
+          update: {
+            $set: { status: r.status, remarks: String(r.remarks || "").trim(), subjectName: subject.name, markedBy: req.user._id },
+          },
+          upsert: true,
+        },
+      })),
+    );
+    res.json({ message: `Attendance saved for ${valid.length} students`, saved: valid.length });
+  }),
+);
 
-app.post("/api/staff/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await Staff.findOne({ email, password });
+app.get(
+  "/api/attendance/summary",
+  facultyOnly,
+  ah(async (req, res) => {
+    const rows = await Attendance.aggregate([
+      { $match: { markedBy: req.user._id } },
+      {
+        $group: {
+          _id: "$subjectCode",
+          subjectName: { $first: "$subjectName" },
+          dates: { $addToSet: "$date" },
+          total: { $sum: 1 },
+          present: { $sum: { $cond: [{ $eq: ["$status", "present"] }, 1, 0] } },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    const subjects = rows.map((r) => ({
+      subjectCode: r._id,
+      subjectName: r.subjectName || r._id,
+      classes: r.dates.length,
+      total: r.total,
+      present: r.present,
+      percentage: pct(r.present, r.total),
+    }));
+    const total = subjects.reduce((s, r) => s + r.total, 0);
+    const present = subjects.reduce((s, r) => s + r.present, 0);
+    res.json({ subjects, total, present, absent: total - present, percentage: pct(present, total) });
+  }),
+);
 
-  if (!user) return res.status(401).json({ message: "Invalid" });
+// ---- Internal marks ----
 
-  res.json({ message: "Login success", user });
-});
+app.get(
+  "/api/marks",
+  facultyOnly,
+  ah(async (req, res) => {
+    const { subjectCode, assessment } = req.query;
+    if (!subjectCode || !ASSESSMENTS[assessment]) return res.status(400).json({ message: "subjectCode and a valid assessment are required" });
+    res.json(await Mark.find({ subjectCode: String(subjectCode).toUpperCase(), assessment }));
+  }),
+);
 
-app.post("/api/admin/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await Admin.findOne({ email, password });
+app.post(
+  "/api/marks",
+  facultyOnly,
+  ah(async (req, res) => {
+    const { subjectCode, assessment, records } = req.body;
+    const maxMarks = ASSESSMENTS[assessment];
+    if (!subjectCode || !maxMarks || !Array.isArray(records)) {
+      return res.status(400).json({ message: "subjectCode, a valid assessment and records are required" });
+    }
+    const subject = await Subject.findOne({ code: String(subjectCode).toUpperCase() });
+    if (!subject) return res.status(400).json({ message: "Unknown subject" });
 
-  if (!user) return res.status(401).json({ message: "Invalid" });
+    const entries = records.filter((r) => r.student && r.marks !== "" && r.marks !== null && r.marks !== undefined);
+    const bad = entries.find((r) => !(Number(r.marks) >= 0 && Number(r.marks) <= maxMarks));
+    if (bad) return res.status(400).json({ message: `Marks must be between 0 and ${maxMarks}` });
+    if (entries.length === 0) return res.status(400).json({ message: "Enter marks for at least one student" });
 
-  res.json({ message: "Login success", user });
-});
+    await Mark.bulkWrite(
+      entries.map((r) => ({
+        updateOne: {
+          filter: { student: r.student, subjectCode: subject.code, assessment },
+          update: {
+            $set: {
+              marks: Number(r.marks),
+              maxMarks,
+              remarks: String(r.remarks || "").trim(),
+              subjectName: subject.name,
+              enteredBy: req.user._id,
+            },
+          },
+          upsert: true,
+        },
+      })),
+    );
+    res.json({ message: `Marks saved for ${entries.length} students`, saved: entries.length });
+  }),
+);
+
+// -------------------- STUDENT PORTAL --------------------
+
+const studentOnly = [authenticate, allow("student")];
+
+app.get(
+  "/api/student-portal/attendance",
+  studentOnly,
+  ah(async (req, res) => {
+    const records = await Attendance.find({ student: req.user._id }, "subjectCode subjectName date status").sort({ date: 1 });
+
+    const bySubject = {};
+    records.forEach((r) => {
+      const s = (bySubject[r.subjectCode] ||= { subjectCode: r.subjectCode, subjectName: r.subjectName || r.subjectCode, total: 0, present: 0 });
+      s.total += 1;
+      if (r.status === "present") s.present += 1;
+    });
+    const subjects = Object.values(bySubject).map((s) => ({ ...s, absent: s.total - s.present, percentage: pct(s.present, s.total) }));
+
+    // Last 6 weeks, oldest first
+    const DAY = 24 * 60 * 60 * 1000;
+    const today = new Date();
+    const weeks = Array.from({ length: 6 }, (_, i) => {
+      const start = new Date(today.getTime() - (6 - i) * 7 * DAY);
+      return { label: start.toLocaleDateString("en-US", { day: "numeric", month: "short" }), start, end: new Date(start.getTime() + 7 * DAY), total: 0, present: 0 };
+    });
+    records.forEach((r) => {
+      const w = weeks.find((wk) => r.date >= wk.start && r.date < wk.end);
+      if (!w) return;
+      w.total += 1;
+      if (r.status === "present") w.present += 1;
+    });
+
+    const total = records.length;
+    const present = records.filter((r) => r.status === "present").length;
+    res.json({
+      subjects,
+      overall: { total, present, absent: total - present, percentage: pct(present, total) },
+      weekly: weeks.map((w) => ({ label: `Week of ${w.label}`, percentage: w.total ? pct(w.present, w.total) : null })),
+    });
+  }),
+);
+
+app.get(
+  "/api/student-portal/marks",
+  studentOnly,
+  ah(async (req, res) => {
+    const marks = await Mark.find({ student: req.user._id });
+    const bySubject = {};
+    marks.forEach((m) => {
+      const s = (bySubject[m.subjectCode] ||= { subjectCode: m.subjectCode, subjectName: m.subjectName || m.subjectCode, total: 0, maxTotal: 0 });
+      s[m.assessment] = m.marks;
+      s.total += m.marks;
+      s.maxTotal += m.maxMarks;
+    });
+    const subjects = Object.values(bySubject).map((s) => ({ ...s, percentage: pct(s.total, s.maxTotal) }));
+    const got = subjects.reduce((a, s) => a + s.total, 0);
+    const max = subjects.reduce((a, s) => a + s.maxTotal, 0);
+    res.json({ subjects, averagePercentage: max ? pct(got, max) : null, maxMarks: ASSESSMENTS });
+  }),
+);
 
 // -------------------- DASHBOARD --------------------
 
-app.get("/api/dashboard/stats", async (req, res) => {
-  const totalStudents = await Student.countDocuments();
-  const totalCourses = await Course.countDocuments();
+app.get(
+  "/api/dashboard/stats",
+  authenticate,
+  allow(...MANAGE, ...LEADERS),
+  ah(async (_req, res) => {
+    const [totalStudents, activeStudents, totalCourses, activeCourses, totalFaculty, totalDepartments, courseCounts] =
+      await Promise.all([
+        Student.countDocuments(),
+        Student.countDocuments({ status: { $ne: "inactive" } }),
+        Course.countDocuments(),
+        Course.countDocuments({ status: { $ne: "inactive" } }),
+        Faculty.countDocuments({ status: { $ne: "inactive" } }),
+        Department.countDocuments(),
+        Student.aggregate([{ $group: { _id: "$courseName", count: { $sum: 1 } } }]),
+      ]);
+    const graduates = totalStudents - activeStudents;
+    res.json({
+      totalStudents,
+      activeStudents,
+      totalCourses,
+      activeCourses,
+      totalFaculty,
+      totalDepartments,
+      graduates,
+      courseCounts,
+      successRate: totalStudents > 0 ? Math.round((graduates / totalStudents) * 100) : 0,
+    });
+  }),
+);
 
+app.get("/health", (_req, res) => {
   res.json({
-    totalStudents,
-    totalCourses,
+    status: "UP",
+    database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
+    uptime: Math.round(process.uptime()),
+    timestamp: new Date(),
   });
 });
 
-// -------------------- SERVER --------------------
+// -------------------- EVENTS, NOTICES, EXAMS, FEES, ASSIGNMENTS, LEAVE, LIBRARY, ADMISSIONS, RESEARCH, REPORTS --------------------
+
+require("./features")(app, { ah, pick, ciExact, escapeRegex, sameDept, pct, parseDay, logger, MANAGE, LEADERS, EVERYONE });
+
+// -------------------- ERRORS --------------------
+
+app.use("/api", (_req, res) => res.status(404).json({ message: "API route not found" }));
+
+app.use((err, req, res, _next) => {
+  if (err.name === "CastError") return res.status(400).json({ message: "Invalid ID" });
+  if (err.name === "ValidationError") return res.status(400).json({ message: err.message });
+  if (err.code === 11000) return res.status(409).json({ message: "A record with these details already exists" });
+  if (err.type === "entity.parse.failed") return res.status(400).json({ message: "Invalid JSON body" });
+
+  logger.error({ message: err.message, stack: err.stack, method: req.method, path: req.path });
+  res.status(500).json({ message: "Internal server error" });
+});
+
+// -------------------- START --------------------
 
 const PORT = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/student-management-app";
 
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
-});
+mongoose
+  .connect(MONGODB_URI)
+  .then(async () => {
+    logger.info("Connected to MongoDB");
+    if (process.env.SEED_ON_START === "demo") {
+      try {
+        await require("./seed").seedOnStart();
+      } catch (err) {
+        logger.error({ message: "Demo seed failed", error: err.message });
+      }
+    }
+    app.listen(PORT, () => logger.info(`Server running on http://localhost:${PORT}`));
+  })
+  .catch((err) => {
+    logger.error({ message: "MongoDB connection error", error: err.message });
+    process.exit(1);
+  });

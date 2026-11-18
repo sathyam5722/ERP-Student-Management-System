@@ -901,6 +901,8 @@
                 <li><a href="#" onclick="showSection('assignments')"><i class="fas fa-tasks"></i> <span>Assignments</span></a></li>
                 <li><a href="#" onclick="showSection('student-details')"><i class="fas fa-user-graduate"></i> <span>Student Details</span></a></li>
                 <li><a href="#" onclick="showSection('regulations')"><i class="fas fa-book"></i> <span>Regulations</span></a></li>
+                <li><a href="#" onclick="showSection('leave')"><i class="fas fa-plane-departure"></i> <span>Leave</span></a></li>
+                <li><a href="#" onclick="showSection('notices')"><i class="fas fa-bullhorn"></i> <span>Notices</span></a></li>
                 <li><a href="#" onclick="showSection('profile')"><i class="fas fa-user-cog"></i> <span>Profile Settings</span></a></li>
                 <li><a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
             </ul>
@@ -918,7 +920,7 @@
                     <h6 class="mb-0" id="loggedInUserName">Faculty User</h6>
                     <small class="text-muted" id="loggedInUserRole">Faculty Dashboard</small>
                 </div>
-                <span class="notification-badge">3</span>
+                <span class="notification-badge" id="notifBadge" role="button" title="Notifications" onclick="showSection('notices')" style="display:none">0</span>
             </div>
         </div>
 
@@ -949,18 +951,18 @@
                 <div class="card card-stats-1">
                     <div class="stats-card">
                         <i class="fas fa-users"></i>
-                        <h3>142</h3>
-                        <p>Total Students</p>
+                        <h3 id="statTotalStudents">—</h3>
+                        <p>Students in Department</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar" style="width: 85%"></div>
+                            <div class="progress-bar" style="width: 100%"></div>
                         </div>
                     </div>
                 </div>
                 <div class="card card-stats-2">
                     <div class="stats-card">
                         <i class="fas fa-book-open"></i>
-                        <h3>6</h3>
-                        <p>Subjects</p>
+                        <h3 id="statSubjects">—</h3>
+                        <p>Subjects Allocated</p>
                         <div class="progress mt-3">
                             <div class="progress-bar" style="width: 100%"></div>
                         </div>
@@ -969,20 +971,20 @@
                 <div class="card card-stats-3">
                     <div class="stats-card">
                         <i class="fas fa-chart-line"></i>
-                        <h3>87%</h3>
-                        <p>Average Attendance</p>
+                        <h3 id="statAvgAttendance">—</h3>
+                        <p>Average Attendance (last 6 months)</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar" style="width: 87%"></div>
+                            <div class="progress-bar" id="statAvgAttendanceBar" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
                 <div class="card card-stats-4">
                     <div class="stats-card">
                         <i class="fas fa-clipboard-check"></i>
-                        <h3>24</h3>
-                        <p>Pending Assignments</p>
+                        <h3 id="statToGrade" role="button" onclick="showSection('assignments')">—</h3>
+                        <p>Submissions to Grade</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar" style="width: 60%"></div>
+                            <div class="progress-bar" style="width: 100%"></div>
                         </div>
                     </div>
                 </div>
@@ -1008,60 +1010,16 @@
                             <h5 class="mb-0">Recent Activity</h5>
                         </div>
                         <div class="card-body">
-                            <div class="list-group list-group-flush">
-                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
-                                    <div>
-                                        <h6 class="mb-1">Marked Attendance</h6>
-                                        <small class="text-muted">CS301 - 2 hours ago</small>
-                                    </div>
-                                    <span class="badge bg-primary">Today</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
-                                    <div>
-                                        <h6 class="mb-1">Uploaded Assignment</h6>
-                                        <small class="text-muted">DSA Lab - 5 hours ago</small>
-                                    </div>
-                                    <span class="badge bg-primary">Today</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
-                                    <div>
-                                        <h6 class="mb-1">Updated Marks</h6>
-                                        <small class="text-muted">Internal Test 1 - Yesterday</small>
-                                    </div>
-                                    <span class="badge bg-secondary">Yesterday</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
-                                    <div>
-                                        <h6 class="mb-1">Added Student</h6>
-                                        <small class="text-muted">AM24M0101 - 2 days ago</small>
-                                    </div>
-                                    <span class="badge bg-secondary">2 days</span>
-                                </div>
-                            </div>
+                            <div class="list-group list-group-flush" id="activityList"><p class="text-muted mb-0">Loading...</p></div>
                         </div>
                     </div>
-                    
+
                     <!-- Upcoming Deadlines -->
                     <div class="card mt-4">
                         <div class="card-header">
                             <h5 class="mb-0">Upcoming Deadlines</h5>
                         </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div>
-                                    <h6 class="mb-0">Binary Search Tree Implementation</h6>
-                                    <small class="text-muted">Data Structures</small>
-                                </div>
-                                <span class="badge bg-warning">3 days</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-0">SQL Queries Practice</h6>
-                                    <small class="text-muted">Database Systems</small>
-                                </div>
-                                <span class="badge bg-danger">1 day</span>
-                            </div>
-                        </div>
+                        <div class="card-body" id="facultyDeadlines"><p class="text-muted mb-0">Loading...</p></div>
                     </div>
                 </div>
             </div>
@@ -1077,27 +1035,26 @@
                     <div class="row mb-4">
                         <div class="col-md-4">
                             <label class="form-label">Select Subject</label>
-                            <select class="form-select">
-                                <option selected>Select Subject</option>
-                                <option>Data Structures (CS301)</option>
-                                <option>Database Systems (CS302)</option>
-                                <option>Operating Systems (CS303)</option>
-                                <option>Computer Networks (CS304)</option>
+                            <select class="form-select js-subject-select" id="attSubject" onchange="onClassChange('att')">
+                                <option value="">Loading subjects...</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Select Date</label>
-                            <input type="date" class="form-control">
+                            <input type="date" class="form-control" id="attDate" onchange="loadAttendanceSheet()">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Select Section</label>
-                            <select class="form-select">
-                                <option selected>Select Section</option>
-                                <option>Section A</option>
-                                <option>Section B</option>
+                            <select class="form-select" id="attSection" onchange="loadAttendanceSheet()">
+                                <option value="">All Sections</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="D">Section D</option>
                             </select>
                         </div>
                     </div>
+                    <p class="text-muted small mb-2" id="attHint">Choose a subject and date to load the class list.</p>
 
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -1109,57 +1066,12 @@
                                     <th>Remarks</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>AM24M0101</td>
-                                    <td>Rahul Sharma</td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="attendance1" id="present1" checked>
-                                            <label class="form-check-label attendance-present" for="present1">Present</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="attendance1" id="absent1">
-                                            <label class="form-check-label attendance-absent" for="absent1">Absent</label>
-                                        </div>
-                                    </td>
-                                    <td><input type="text" class="form-control" placeholder="Remarks"></td>
-                                </tr>
-                                <tr>
-                                    <td>AM24M0102</td>
-                                    <td>Priya Patel</td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="attendance2" id="present2" checked>
-                                            <label class="form-check-label attendance-present" for="present2">Present</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="attendance2" id="absent2">
-                                            <label class="form-check-label attendance-absent" for="absent2">Absent</label>
-                                        </div>
-                                    </td>
-                                    <td><input type="text" class="form-control" placeholder="Remarks"></td>
-                                </tr>
-                                <tr>
-                                    <td>AM24M0103</td>
-                                    <td>Amit Kumar</td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="attendance3" id="present3">
-                                            <label class="form-check-label attendance-present" for="present3">Present</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="attendance3" id="absent3" checked>
-                                            <label class="form-check-label attendance-absent" for="absent3">Absent</label>
-                                        </div>
-                                    </td>
-                                    <td><input type="text" class="form-control" placeholder="Medical Leave"></td>
-                                </tr>
-                            </tbody>
+                            <tbody id="attTableBody"></tbody>
                         </table>
                     </div>
-                    <div class="text-end mt-3">
-                        <button class="btn btn-success"><i class="fas fa-save me-2"></i>Save Attendance</button>
+                    <div class="d-flex justify-content-between mt-3">
+                        <button class="btn btn-outline-secondary" onclick="markAll('present')"><i class="fas fa-check-double me-2"></i>Mark All Present</button>
+                        <button class="btn btn-success" id="attSaveBtn" onclick="saveAttendance()"><i class="fas fa-save me-2"></i>Save Attendance</button>
                     </div>
                 </div>
             </div>
@@ -1182,30 +1094,13 @@
                                     <thead>
                                         <tr>
                                             <th>Subject</th>
-                                            <th>Total Classes</th>
-                                            <th>Present</th>
+                                            <th>Classes Held</th>
+                                            <th>Present / Marked</th>
                                             <th>Attendance %</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Data Structures</td>
-                                            <td>45</td>
-                                            <td>39</td>
-                                            <td>86.7%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Database Systems</td>
-                                            <td>40</td>
-                                            <td>36</td>
-                                            <td>90.0%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Operating Systems</td>
-                                            <td>42</td>
-                                            <td>35</td>
-                                            <td>83.3%</td>
-                                        </tr>
+                                    <tbody id="attSummaryBody">
+                                        <tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -1225,33 +1120,31 @@
                     <div class="row mb-4">
                         <div class="col-md-4">
                             <label class="form-label">Select Subject</label>
-                            <select class="form-select">
-                                <option selected>Select Subject</option>
-                                <option>Data Structures (CS301)</option>
-                                <option>Database Systems (CS302)</option>
-                                <option>Operating Systems (CS303)</option>
-                                <option>Computer Networks (CS304)</option>
+                            <select class="form-select js-subject-select" id="mkSubject" onchange="onClassChange('mk')">
+                                <option value="">Loading subjects...</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Select Test</label>
-                            <select class="form-select">
-                                <option selected>Select Test</option>
-                                <option>Internal Test 1</option>
-                                <option>Internal Test 2</option>
-                                <option>Assignment 1</option>
-                                <option>Lab Evaluation</option>
+                            <select class="form-select" id="mkAssessment" onchange="loadMarksSheet()">
+                                <option value="test1">Internal Test 1 (25)</option>
+                                <option value="test2">Internal Test 2 (25)</option>
+                                <option value="assignment">Assignments (20)</option>
+                                <option value="lab">Lab Evaluation (30)</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Select Section</label>
-                            <select class="form-select">
-                                <option selected>Select Section</option>
-                                <option>Section A</option>
-                                <option>Section B</option>
+                            <select class="form-select" id="mkSection" onchange="loadMarksSheet()">
+                                <option value="">All Sections</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="D">Section D</option>
                             </select>
                         </div>
                     </div>
+                    <p class="text-muted small mb-2" id="mkHint">Choose a subject to load the class list.</p>
 
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -1259,38 +1152,16 @@
                                 <tr>
                                     <th>Student ID</th>
                                     <th>Student Name</th>
-                                    <th>Marks (Out of 25)</th>
+                                    <th id="mkMaxHeader">Marks (Out of 25)</th>
                                     <th>Grade</th>
                                     <th>Remarks</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>AM24M0101</td>
-                                    <td>Rahul Sharma</td>
-                                    <td><input type="number" class="form-control" value="22"></td>
-                                    <td><span class="badge bg-success">A</span></td>
-                                    <td><input type="text" class="form-control" placeholder="Excellent"></td>
-                                </tr>
-                                <tr>
-                                    <td>AM24M0102</td>
-                                    <td>Priya Patel</td>
-                                    <td><input type="number" class="form-control" value="20"></td>
-                                    <td><span class="badge bg-success">A</span></td>
-                                    <td><input type="text" class="form-control" placeholder="Good"></td>
-                                </tr>
-                                <tr>
-                                    <td>AM24M0103</td>
-                                    <td>Amit Kumar</td>
-                                    <td><input type="number" class="form-control" value="15"></td>
-                                    <td><span class="badge bg-warning">C</span></td>
-                                    <td><input type="text" class="form-control" placeholder="Needs Improvement"></td>
-                                </tr>
-                            </tbody>
+                            <tbody id="mkTableBody"></tbody>
                         </table>
                     </div>
                     <div class="text-end mt-3">
-                        <button class="btn btn-success"><i class="fas fa-save me-2"></i>Save Marks</button>
+                        <button class="btn btn-success" id="mkSaveBtn" onclick="saveMarks()"><i class="fas fa-save me-2"></i>Save Marks</button>
                     </div>
                 </div>
             </div>
@@ -1317,27 +1188,8 @@
                                             <th>No. of Students</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><span class="badge bg-success">A</span></td>
-                                            <td>21-25</td>
-                                            <td>18</td>
-                                        </tr>
-                                        <tr>
-                                            <td><span class="badge bg-info">B</span></td>
-                                            <td>16-20</td>
-                                            <td>22</td>
-                                        </tr>
-                                        <tr>
-                                            <td><span class="badge bg-warning">C</span></td>
-                                            <td>11-15</td>
-                                            <td>8</td>
-                                        </tr>
-                                        <tr>
-                                            <td><span class="badge bg-danger">D</span></td>
-                                            <td>0-10</td>
-                                            <td>2</td>
-                                        </tr>
+                                    <tbody id="mkDistBody">
+                                        <tr><td colspan="3" class="text-center text-muted">Load a class to see the distribution.</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -1354,68 +1206,18 @@
                     <h5 class="mb-0">Assignments Management</h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex justify-content-between mb-4">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAssignmentModal">
+                    <div class="d-flex justify-content-between flex-wrap gap-2 mb-4">
+                        <button class="btn btn-primary" onclick="openCreateAssignment()">
                             <i class="fas fa-plus me-2"></i>Create New Assignment
                         </button>
-                        <div class="btn-group">
-                            <button class="btn btn-outline-primary active">All</button>
-                            <button class="btn btn-outline-primary">Pending</button>
-                            <button class="btn btn-outline-primary">Submitted</button>
-                            <button class="btn btn-outline-primary">Graded</button>
+                        <div class="btn-group" id="asgFilters">
+                            <button class="btn btn-outline-primary active" data-filter="" onclick="setAssignmentFilter(this)">All</button>
+                            <button class="btn btn-outline-primary" data-filter="active" onclick="setAssignmentFilter(this)">Open</button>
+                            <button class="btn btn-outline-primary" data-filter="grade" onclick="setAssignmentFilter(this)">To Grade</button>
+                            <button class="btn btn-outline-primary" data-filter="closed" onclick="setAssignmentFilter(this)">Past Due</button>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-4 mb-4">
-                            <div class="assignment-card pending">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <h5 class="mb-0">Binary Search Tree Implementation</h5>
-                                    <span class="badge bg-warning">Pending</span>
-                                </div>
-                                <p class="text-muted mb-2">Data Structures - Section A</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">Due: 15 Dec 2023</small>
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-primary me-1">View</button>
-                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-4">
-                            <div class="assignment-card submitted">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <h5 class="mb-0">SQL Queries Practice</h5>
-                                    <span class="badge bg-success">Submitted</span>
-                                </div>
-                                <p class="text-muted mb-2">Database Systems - Section B</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">Due: 10 Dec 2023</small>
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-primary me-1">Grade</button>
-                                        <button class="btn btn-sm btn-outline-info">Download</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-4">
-                            <div class="assignment-card late">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <h5 class="mb-0">Process Scheduling Algorithms</h5>
-                                    <span class="badge bg-danger">Late</span>
-                                </div>
-                                <p class="text-muted mb-2">Operating Systems - Section A</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">Due: 5 Dec 2023</small>
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-primary me-1">View</button>
-                                        <button class="btn btn-sm btn-outline-warning">Remind</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="row" id="assignmentCards"><div class="col-12 text-muted">Loading...</div></div>
                 </div>
             </div>
 
@@ -1432,19 +1234,40 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="stats-card">
-                                <h3>24</h3>
-                                <p>Total Assignments</p>
-                            </div>
-                            <div class="stats-card mt-3">
-                                <h3>18</h3>
-                                <p>Submitted</p>
-                            </div>
-                            <div class="stats-card mt-3">
-                                <h3>6</h3>
-                                <p>Pending</p>
-                            </div>
+                            <div class="stats-card"><h3 id="asgTotal">0</h3><p>Total Assignments</p></div>
+                            <div class="stats-card mt-3"><h3 id="asgSubmitted">0</h3><p>Submissions Received</p></div>
+                            <div class="stats-card mt-3"><h3 id="asgToGrade">0</h3><p>Waiting to be Graded</p></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Materials -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Study Materials <small class="text-muted">(shown to students in Curriculum &amp; Library)</small></h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-3"><input class="form-control" id="resTitle" placeholder="Title, e.g. Unit 2 notes"></div>
+                        <div class="col-md-3"><select class="form-select js-subject-select" id="resSubject"><option value="">Loading subjects...</option></select></div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="resCategory">
+                                <option value="notes">Notes</option>
+                                <option value="syllabus">Syllabus</option>
+                                <option value="lab-manual">Lab manual</option>
+                                <option value="question-paper">Question paper</option>
+                                <option value="textbook">Textbook</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3"><input class="form-control" id="resUrl" placeholder="https:// link (Drive, PDF...)"></div>
+                        <div class="col-md-1 d-grid"><button class="btn btn-success" onclick="addResource()"><i class="fas fa-plus"></i></button></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead><tr><th>Title</th><th>Subject</th><th>Type</th><th>Link</th><th></th></tr></thead>
+                            <tbody id="resTableBody"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1454,117 +1277,38 @@
         <div id="student-details" class="section" style="display: none;">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Student Details Management</h5>
+                    <h5 class="mb-0">Student Details</h5>
                 </div>
                 <div class="card-body">
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search students...">
-                                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                <input type="text" class="form-control" id="sdSearch" placeholder="Search by name, ID or email..." oninput="renderStudentCards()">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-select">
-                                <option selected>All Sections</option>
-                                <option>Section A</option>
-                                <option>Section B</option>
+                            <select class="form-select" id="sdSection" onchange="renderStudentCards()">
+                                <option value="">All Sections</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="D">Section D</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-select">
-                                <option selected>All Years</option>
-                                <option>1st Year</option>
-                                <option>2nd Year</option>
+                            <select class="form-select" id="sdYear" onchange="renderStudentCards()">
+                                <option value="">All Years</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-4 mb-4">
-                            <div class="student-card">
-                                <div class="d-flex align-items-center mb-3">
-                                    <img src="https://ui-avatars.com/api/?name=Rahul+Sharma&background=6a11cb&color=fff" alt="Student" class="student-avatar me-3">
-                                    <div>
-                                        <h6 class="mb-0">Rahul Sharma</h6>
-                                        <small class="text-muted">AM24M0101</small>
-                                    </div>
-                                </div>
-                                <div class="row text-center">
-                                    <div class="col-4">
-                                        <h6 class="mb-0">85%</h6>
-                                        <small class="text-muted">Attendance</small>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="mb-0">78%</h6>
-                                        <small class="text-muted">Marks</small>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="mb-0">12</h6>
-                                        <small class="text-muted">Assignments</small>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <button class="btn btn-sm btn-primary w-100">View Details</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-4">
-                            <div class="student-card">
-                                <div class="d-flex align-items-center mb-3">
-                                    <img src="https://ui-avatars.com/api/?name=Priya+Patel&background=2575fc&color=fff" alt="Student" class="student-avatar me-3">
-                                    <div>
-                                        <h6 class="mb-0">Priya Patel</h6>
-                                        <small class="text-muted">AM24M0102</small>
-                                    </div>
-                                </div>
-                                <div class="row text-center">
-                                    <div class="col-4">
-                                        <h6 class="mb-0">92%</h6>
-                                        <small class="text-muted">Attendance</small>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="mb-0">85%</h6>
-                                        <small class="text-muted">Marks</small>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="mb-0">15</h6>
-                                        <small class="text-muted">Assignments</small>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <button class="btn btn-sm btn-primary w-100">View Details</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-4">
-                            <div class="student-card">
-                                <div class="d-flex align-items-center mb-3">
-                                    <img src="https://ui-avatars.com/api/?name=Amit+Kumar&background=00b09b&color=fff" alt="Student" class="student-avatar me-3">
-                                    <div>
-                                        <h6 class="mb-0">Amit Kumar</h6>
-                                        <small class="text-muted">AM24M0103</small>
-                                    </div>
-                                </div>
-                                <div class="row text-center">
-                                    <div class="col-4">
-                                        <h6 class="mb-0">76%</h6>
-                                        <small class="text-muted">Attendance</small>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="mb-0">68%</h6>
-                                        <small class="text-muted">Marks</small>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="mb-0">8</h6>
-                                        <small class="text-muted">Assignments</small>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <button class="btn btn-sm btn-primary w-100">View Details</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="row" id="sdCards">
+                        <div class="col-12 text-center text-muted">Loading students...</div>
                     </div>
                 </div>
             </div>
@@ -1776,6 +1520,75 @@
             </div>
         </div>
 
+        <!-- Leave Section -->
+        <div id="leave" class="section" style="display: none;">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Apply for Leave</h5></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Leave Type</label>
+                                <select class="form-select" id="leaveType">
+                                    <option value="casual">Casual</option>
+                                    <option value="sick">Sick</option>
+                                    <option value="earned">Earned</option>
+                                    <option value="academic">Academic</option>
+                                    <option value="conference">Conference</option>
+                                    <option value="emergency">Emergency</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-6"><label class="form-label">From</label><input type="date" class="form-control" id="leaveFrom"></div>
+                                <div class="col-6"><label class="form-label">To</label><input type="date" class="form-control" id="leaveTo"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Reason</label>
+                                <textarea class="form-control" rows="3" id="leaveReason"></textarea>
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="applyLeave()"><i class="fas fa-paper-plane me-2"></i>Submit to HOD</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">My Leave Requests</h5></div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Status</th><th>Reviewer note</th><th></th></tr></thead>
+                                    <tbody id="leaveTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notices Section -->
+        <div id="notices" class="section" style="display: none;">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Notice Board</h5></div>
+                        <div class="card-body" id="noticeList"></div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Notifications</h5></div>
+                        <div class="card-body" id="notificationList"></div>
+                    </div>
+                    <div class="card mt-4">
+                        <div class="card-header"><h5 class="mb-0">Upcoming Events</h5></div>
+                        <div class="card-body" id="facultyEvents"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Profile Section -->
         <div id="profile" class="section" style="display: none;">
             <div class="card">
@@ -1811,13 +1624,14 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Phone</label>
-                                        <input type="tel" class="form-control" value="+91 9876543210">
+                                        <input type="tel" class="form-control" id="profilePhone" value="">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Department</label>
-                                        <input type="text" class="form-control" id="profileDepartment" value="">
+                                        <input type="text" class="form-control" id="profileDepartment" value="" disabled>
+                                        <small class="text-muted">Set by admin</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Designation</label>
@@ -1826,10 +1640,10 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Bio</label>
-                                    <textarea class="form-control" id="profileBio" rows="4">Experienced faculty member.</textarea>
+                                    <textarea class="form-control" id="profileBio" rows="4"></textarea>
                                 </div>
                                 <div class="text-end">
-                                    <button type="button" class="btn btn-primary">
+                                    <button type="button" class="btn btn-primary" onclick="updateFacultyProfile()">
                                         <i class="fas fa-save me-2"></i>Update Profile
                                     </button>
                                 </div>
@@ -1849,21 +1663,21 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Current Password</label>
-                                <input type="password" class="form-control">
+                                <input type="password" class="form-control" id="pwCurrent" autocomplete="current-password">
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">New Password</label>
-                                <input type="password" class="form-control">
+                                <input type="password" class="form-control" id="pwNew" autocomplete="new-password">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Confirm New Password</label>
-                                <input type="password" class="form-control">
+                                <input type="password" class="form-control" id="pwConfirm" autocomplete="new-password">
                             </div>
                         </div>
                         <div class="text-end">
-                            <button type="button" class="btn btn-primary">
+                            <button type="button" class="btn btn-primary" onclick="changePassword()">
                                 <i class="fas fa-lock me-2"></i>Change Password
                             </button>
                         </div>
@@ -1882,49 +1696,65 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Assignment Title</label>
-                                <input type="text" class="form-control" placeholder="Enter assignment title">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Subject</label>
-                                <select class="form-select">
-                                    <option selected>Select Subject</option>
-                                    <option>Data Structures</option>
-                                    <option>Database Systems</option>
-                                    <option>Operating Systems</option>
-                                </select>
-                            </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Assignment Title</label>
+                            <input type="text" class="form-control" id="asgTitle" placeholder="Enter assignment title">
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Due Date</label>
-                                <input type="date" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Section</label>
-                                <select class="form-select">
-                                    <option selected>Select Section</option>
-                                    <option>Section A</option>
-                                    <option>Section B</option>
-                                </select>
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Subject / Class</label>
+                            <select class="form-select js-subject-select" id="asgSubject" onchange="onAsgSubjectChange()"><option value="">Loading subjects...</option></select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Instructions</label>
-                            <textarea class="form-control" rows="4" placeholder="Enter assignment instructions"></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="asgDue">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Attachment</label>
-                            <input type="file" class="form-control">
+                        <div class="col-md-4">
+                            <label class="form-label">Section</label>
+                            <select class="form-select" id="asgSection">
+                                <option value="">All sections</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="D">Section D</option>
+                            </select>
                         </div>
-                    </form>
+                        <div class="col-md-4">
+                            <label class="form-label">Max Marks</label>
+                            <input type="number" class="form-control" id="asgMax" value="10" min="1" max="100">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Instructions</label>
+                        <textarea class="form-control" rows="4" id="asgInstructions" placeholder="Enter assignment instructions (you can include links to reference material)"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Create Assignment</button>
+                    <button type="button" class="btn btn-primary" id="asgCreateBtn" onclick="createAssignment()">Create Assignment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submissions / grading Modal -->
+    <div class="modal fade" id="submissionsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subModalTitle">Submissions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small" id="subModalInfo"></p>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead><tr><th>Student</th><th>Submission</th><th>Submitted</th><th style="width:110px">Marks</th><th>Feedback</th><th></th></tr></thead>
+                            <tbody id="subTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1933,745 +1763,1034 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <script src="auth.js"></script>
     <script>
-        // Data storage
-        const facultyData = [
-            { id: 1, name: "Dr. Ramesh Kumar", department: "Computer Science", email: "ramesh.kumar@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Ramesh+Kumar&background=6a11cb&color=fff" },
-            { id: 2, name: "Prof. Sunita Sharma", department: "Computer Science", email: "sunita.sharma@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Sunita+Sharma&background=2575fc&color=fff" },
-            { id: 3, name: "Dr. Vikram Patel", department: "Information Science", email: "vikram.patel@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Vikram+Patel&background=00b09b&color=fff" },
-            { id: 4, name: "Prof. Anjali Singh", department: "Electronics", email: "anjali.singh@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Anjali+Singh&background=ff9a00&color=fff" },
-            { id: 5, name: "Dr. Rajesh Verma", department: "Mechanical", email: "rajesh.verma@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Rajesh+Verma&background=ff416c&color=fff" },
-            { id: 6, name: "Prof. Priya Nair", department: "Civil", email: "priya.nair@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Priya+Nair&background=00c9ff&color=fff" },
-            { id: 7, name: "Dr. Amit Joshi", department: "Computer Science", email: "amit.joshi@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Amit+Joshi&background=8e2de2&color=fff" },
-            { id: 8, name: "Prof. Neha Gupta", department: "Information Science", email: "neha.gupta@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Neha+Gupta&background=ff7e5f&color=fff" },
-            { id: 9, name: "Dr. Sanjay Reddy", department: "Electronics", email: "sanjay.reddy@amc.edu", avatar: "https://ui-avatars.com/api/?name=Dr+Sanjay+Reddy&background=00b4db&color=fff" },
-            { id: 10, name: "Prof. Meera Iyer", department: "Mechanical", email: "meera.iyer@amc.edu", avatar: "https://ui-avatars.com/api/?name=Prof+Meera+Iyer&background=ff6b6b&color=fff" }
-        ];
+        // ===================== SESSION & HELPERS =====================
+        const ERP_SESSION = ErpAuth.requireRole(["faculty"]);
+        const api = ErpAuth.api;
+        const charts = {};
+        const MAX_MARKS = { test1: 25, test2: 25, assignment: 20, lab: 30 };
 
-        const subjectData = {
-            1: [ // Semester 1
-                { id: 101, code: "MATH101", name: "Engineering Mathematics I", credits: 4 },
-                { id: 102, code: "PHY101", name: "Engineering Physics", credits: 4 },
-                { id: 103, code: "CHE101", name: "Engineering Chemistry", credits: 3 },
-                { id: 104, code: "CSE101", name: "Programming in C", credits: 3 },
-                { id: 105, code: "MEC101", name: "Engineering Mechanics", credits: 3 }
-            ],
-            2: [ // Semester 2
-                { id: 201, code: "MATH102", name: "Engineering Mathematics II", credits: 4 },
-                { id: 202, code: "EEE102", name: "Basic Electrical Engineering", credits: 4 },
-                { id: 203, code: "CSE102", name: "Data Structures", credits: 3 },
-                { id: 204, code: "CSE103", name: "Digital Electronics", credits: 3 },
-                { id: 205, code: "MEC102", name: "Engineering Drawing", credits: 3 }
-            ],
-            3: [ // Semester 3
-                { id: 301, code: "MATH201", name: "Discrete Mathematics", credits: 4 },
-                { id: 302, code: "CSE201", name: "Object Oriented Programming", credits: 4 },
-                { id: 303, code: "CSE202", name: "Computer Organization", credits: 3 },
-                { id: 304, code: "CSE203", name: "Database Management Systems", credits: 3 },
-                { id: 305, code: "CSE204", name: "Operating Systems", credits: 3 }
-            ],
-            4: [ // Semester 4
-                { id: 401, code: "CSE205", name: "Design and Analysis of Algorithms", credits: 4 },
-                { id: 402, code: "CSE206", name: "Software Engineering", credits: 4 },
-                { id: 403, code: "CSE207", name: "Computer Networks", credits: 3 },
-                { id: 404, code: "CSE208", name: "Microprocessors", credits: 3 },
-                { id: 405, code: "CSE209", name: "Theory of Computation", credits: 3 }
-            ]
+        const escapeHtml = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
+        const byId = (id) => document.getElementById(id);
+        const todayStr = () => {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
         };
+
+        function renderChart(key, canvasId, config) {
+            if (charts[key]) charts[key].destroy();
+            charts[key] = new Chart(byId(canvasId).getContext("2d"), config);
+        }
+
+        function toast(message, type = "info") {
+            const el = document.createElement("div");
+            const cls = type === "success" ? "success" : type === "error" ? "danger" : type === "warning" ? "warning" : "info";
+            el.className = `alert alert-${cls} alert-dismissible fade show position-fixed`;
+            el.style.cssText = "top: 20px; right: 20px; z-index: 9999; min-width: 300px;";
+            el.innerHTML = `${escapeHtml(message)}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 3500);
+        }
+
+        // ===================== STATE =====================
+        let mySubjects = { allocated: [], subjects: [] };
+        let sheet = { att: [], mk: [] };      // students currently shown in each sheet
+        let detailStudents = [];
+        let facultyData = [];                  // all active faculty (subject allocation)
+        let subjectData = {};                  // semester -> [subjects]
+        let allocations = [];
+        let currentSelection = { facultyId: null, year: null, semester: null, section: null };
 
         const semesterData = {
-            1: [
-                { id: 1, name: "Semester 1", year: 1 },
-                { id: 2, name: "Semester 2", year: 1 }
-            ],
-            2: [
-                { id: 3, name: "Semester 3", year: 2 },
-                { id: 4, name: "Semester 4", year: 2 }
-            ]
+            1: [{ id: 1, name: "Semester 1", year: 1 }, { id: 2, name: "Semester 2", year: 1 }],
+            2: [{ id: 3, name: "Semester 3", year: 2 }, { id: 4, name: "Semester 4", year: 2 }]
         };
 
-        let subjectAllocations = {};
-        let currentSelection = {
-            facultyId: null,
-            year: null,
-            semester: null,
-            section: null
-        };
+        // ===================== NAVIGATION =====================
+        function showSection(sectionId) {
+            document.querySelectorAll(".section").forEach((s) => { s.style.display = "none"; });
+            byId(sectionId).style.display = "block";
 
-        // Initialize data
-        function initializeData() {
-            // Load from localStorage or use empty object
-            const savedAllocations = localStorage.getItem('subjectAllocations');
-            subjectAllocations = savedAllocations ? JSON.parse(savedAllocations) : {};
-            
-            // Clean up any unknown allocations
-            cleanUnknownAllocations();
-            
+            document.querySelectorAll(".sidebar-menu a").forEach((link) => {
+                link.classList.toggle("active", (link.getAttribute("onclick") || "").includes(`'${sectionId}'`));
+            });
+
+            const titles = {
+                dashboard: "Dashboard",
+                attendance: "Attendance Management",
+                "internal-marks": "Internal Marks",
+                assignments: "Assignments Management",
+                "student-details": "Student Details",
+                regulations: "Faculty Subject Allocation",
+                leave: "Leave Requests",
+                notices: "Notices & Notifications",
+                profile: "Profile Settings"
+            };
+            byId("page-title").textContent = titles[sectionId];
+
+            if (sectionId === "dashboard") { loadOverview(); loadActivity(); }
+            if (sectionId === "assignments") { loadAssignments(); loadResources(); }
+            if (sectionId === "leave") loadLeaves();
+            if (sectionId === "notices") { loadNotices(); loadNotifications(); }
+            if (sectionId === "attendance") loadAttendanceSummary();
+            if (sectionId === "student-details") loadStudentDetails();
+            if (sectionId === "regulations") loadAllocationData();
+        }
+
+        // ===================== PROFILE =====================
+        function toTitleCase(value) {
+            return String(value || "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim().replace(/\b\w/g, (c) => c.toUpperCase());
+        }
+
+        function avatarUrl(name, size) {
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "User")}&background=6a11cb&color=fff&size=${size}`;
+        }
+
+        function applyHeader(user) {
+            const name = user.name || user.email || "Faculty";
+            const role = user.designation || "Faculty";
+            byId("loggedInUserName").textContent = name;
+            byId("loggedInUserRole").textContent = user.department ? `${role} - ${user.department}` : role;
+            byId("loggedInUserAvatar").src = avatarUrl(name, 128);
+            byId("profileAvatar").src = avatarUrl(name, 150);
+            document.title = `${name} - Faculty Dashboard`;
+        }
+
+        function fillProfile(user) {
+            const [first, ...rest] = String(user.name || "").trim().split(/\s+/);
+            byId("profileFirstName").value = first || "";
+            byId("profileLastName").value = rest.join(" ");
+            byId("profileEmail").value = user.email || "";
+            byId("profilePhone").value = user.phone || "";
+            byId("profileDepartment").value = user.department || "";
+            byId("profileDesignation").value = user.designation || "";
+            byId("profileBio").value = user.bio || "";
+        }
+
+        async function loadMe() {
+            try {
+                const { user } = await api("/api/auth/me");
+                ErpAuth.updateSessionUser(user);
+                applyHeader(user);
+                fillProfile(user);
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        async function updateFacultyProfile() {
+            const name = `${byId("profileFirstName").value.trim()} ${byId("profileLastName").value.trim()}`.trim();
+            const email = byId("profileEmail").value.trim();
+            if (!name || !email) return toast("Name and email are required", "warning");
+            try {
+                const { user } = await api("/api/auth/me", {
+                    method: "PATCH",
+                    body: { name, email, phone: byId("profilePhone").value.trim(), designation: byId("profileDesignation").value.trim(), bio: byId("profileBio").value.trim() }
+                });
+                ErpAuth.updateSessionUser(user);
+                applyHeader(user);
+                fillProfile(user);
+                toast("Profile updated", "success");
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        async function changePassword() {
+            const currentPassword = byId("pwCurrent").value;
+            const newPassword = byId("pwNew").value;
+            if (newPassword !== byId("pwConfirm").value) return toast("New passwords do not match", "warning");
+            try {
+                await api("/api/auth/change-password", { method: "POST", body: { currentPassword, newPassword } });
+                ["pwCurrent", "pwNew", "pwConfirm"].forEach((id) => { byId(id).value = ""; });
+                toast("Password changed successfully", "success");
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        // ===================== DASHBOARD =====================
+        async function loadOverview() {
+            try {
+                const ov = await api("/api/faculty-portal/overview");
+                byId("statTotalStudents").textContent = ov.totalStudents;
+                byId("statSubjects").textContent = ov.subjects;
+                byId("statAvgAttendance").textContent = ov.avgAttendance === null ? "—" : `${ov.avgAttendance}%`;
+                byId("statAvgAttendanceBar").style.width = `${ov.avgAttendance || 0}%`;
+
+                renderChart("overview", "attendanceChart", {
+                    type: "bar",
+                    data: {
+                        labels: ov.monthly.map((m) => m.label),
+                        datasets: [{
+                            label: "Present (%)",
+                            data: ov.monthly.map((m) => m.percentage),
+                            backgroundColor: "rgba(106, 17, 203, 0.7)",
+                            borderColor: "rgba(106, 17, 203, 1)",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } }
+                });
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        // ===================== SUBJECT PICKERS =====================
+        async function loadMySubjects() {
+            try {
+                mySubjects = await api("/api/faculty-portal/subjects");
+            } catch (error) {
+                toast(error.message, "error");
+            }
+            const allocatedOpts = mySubjects.allocated.map((a) =>
+                `<option value="${escapeHtml(`${a.subjectCode}|${a.semester}|${a.section}`)}">${escapeHtml(a.subjectName)} (${escapeHtml(a.subjectCode)}) - Sem ${a.semester}, Sec ${escapeHtml(a.section)}</option>`).join("");
+            const allOpts = mySubjects.subjects.map((s) =>
+                `<option value="${escapeHtml(`${s.code}|${s.semester}|`)}">${escapeHtml(s.name)} (${escapeHtml(s.code)}) - Sem ${s.semester}</option>`).join("");
+
+            const html = `<option value="">Select Subject</option>` +
+                (allocatedOpts ? `<optgroup label="Your allocated classes">${allocatedOpts}</optgroup>` : "") +
+                (allOpts ? `<optgroup label="All subjects">${allOpts}</optgroup>` : "");
+            document.querySelectorAll(".js-subject-select").forEach((sel) => { sel.innerHTML = html; });
+        }
+
+        function readClass(prefix) {
+            const [subjectCode, semester, section] = (byId(`${prefix}Subject`).value || "").split("|");
+            return { subjectCode, semester, allocatedSection: section };
+        }
+
+        function onClassChange(prefix) {
+            const { allocatedSection } = readClass(prefix);
+            if (allocatedSection) byId(`${prefix}Section`).value = allocatedSection;
+            prefix === "att" ? loadAttendanceSheet() : loadMarksSheet();
+        }
+
+        function rosterQuery(semester, section) {
+            const params = new URLSearchParams();
+            if (semester) params.set("semester", semester);
+            if (section) params.set("section", section);
+            return `/api/faculty-portal/students?${params}`;
+        }
+
+        const emptyRow = (cols, text) => `<tr><td colspan="${cols}" class="text-center text-muted">${escapeHtml(text)}</td></tr>`;
+
+        // ===================== ATTENDANCE =====================
+        async function loadAttendanceSheet() {
+            const tbody = byId("attTableBody");
+            const { subjectCode, semester } = readClass("att");
+            const date = byId("attDate").value;
+            const section = byId("attSection").value;
+            sheet.att = [];
+            if (!subjectCode || !date) {
+                tbody.innerHTML = emptyRow(4, "Choose a subject and date to load the class list.");
+                return;
+            }
+            byId("attHint").textContent = `Students of semester ${semester}${section ? `, section ${section}` : ""} in your department.`;
+            tbody.innerHTML = emptyRow(4, "Loading...");
+            try {
+                const [students, existing] = await Promise.all([
+                    api(rosterQuery(semester, section)),
+                    api(`/api/attendance?subjectCode=${encodeURIComponent(subjectCode)}&date=${date}`)
+                ]);
+                sheet.att = students;
+                const saved = Object.fromEntries(existing.map((r) => [r.student, r]));
+                if (!students.length) {
+                    tbody.innerHTML = emptyRow(4, "No students found for this semester/section. Ask the admin to set semester and section on student records.");
+                    return;
+                }
+                tbody.innerHTML = students.map((s, i) => {
+                    const rec = saved[s._id];
+                    const absent = rec && rec.status === "absent";
+                    return `
+                    <tr>
+                        <td>${escapeHtml(s.studentId || "")}</td>
+                        <td>${escapeHtml(s.name)}</td>
+                        <td>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="att${i}" id="present${i}" value="present" ${absent ? "" : "checked"}>
+                                <label class="form-check-label attendance-present" for="present${i}">Present</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="att${i}" id="absent${i}" value="absent" ${absent ? "checked" : ""}>
+                                <label class="form-check-label attendance-absent" for="absent${i}">Absent</label>
+                            </div>
+                            ${rec ? '<span class="badge bg-light text-dark ms-1">saved</span>' : ""}
+                        </td>
+                        <td><input type="text" class="form-control" id="attRemark${i}" placeholder="Remarks" value="${escapeHtml(rec ? rec.remarks : "")}"></td>
+                    </tr>`;
+                }).join("");
+            } catch (error) {
+                tbody.innerHTML = emptyRow(4, error.message);
+            }
+        }
+
+        function markAll(status) {
+            sheet.att.forEach((_, i) => { const el = byId(`${status}${i}`); if (el) el.checked = true; });
+        }
+
+        async function saveAttendance() {
+            const { subjectCode } = readClass("att");
+            const date = byId("attDate").value;
+            if (!subjectCode || !date || !sheet.att.length) return toast("Load a class list first", "warning");
+
+            const records = sheet.att.map((s, i) => ({
+                student: s._id,
+                status: byId(`absent${i}`).checked ? "absent" : "present",
+                remarks: byId(`attRemark${i}`).value
+            }));
+            const btn = byId("attSaveBtn");
+            btn.disabled = true;
+            try {
+                const res = await api("/api/attendance", { method: "POST", body: { subjectCode, date, records } });
+                toast(res.message, "success");
+                loadAttendanceSheet();
+                loadAttendanceSummary();
+            } catch (error) {
+                toast(error.message, "error");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function loadAttendanceSummary() {
+            const tbody = byId("attSummaryBody");
+            try {
+                const summary = await api("/api/attendance/summary");
+                tbody.innerHTML = summary.subjects.length
+                    ? summary.subjects.map((s) => `
+                        <tr>
+                            <td>${escapeHtml(s.subjectName)}</td>
+                            <td>${s.classes}</td>
+                            <td>${s.present} / ${s.total}</td>
+                            <td>${s.percentage}%</td>
+                        </tr>`).join("")
+                    : emptyRow(4, "No attendance recorded yet.");
+
+                renderChart("attSummary", "attendanceSummaryChart", {
+                    type: "doughnut",
+                    data: {
+                        labels: ["Present", "Absent"],
+                        datasets: [{ data: [summary.present, summary.absent], backgroundColor: ["rgba(0, 180, 219, 0.8)", "rgba(255, 65, 108, 0.8)"], borderWidth: 1 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } }
+                });
+            } catch (error) {
+                tbody.innerHTML = emptyRow(4, error.message);
+            }
+        }
+
+        // ===================== INTERNAL MARKS =====================
+        const GRADE_BANDS = [
+            { grade: "A", min: 0.84, cls: "bg-success" },
+            { grade: "B", min: 0.64, cls: "bg-info" },
+            { grade: "C", min: 0.44, cls: "bg-warning" },
+            { grade: "D", min: 0, cls: "bg-danger" }
+        ];
+        const gradeOf = (marks, max) => GRADE_BANDS.find((b) => marks / max >= b.min);
+
+        function gradeBadge(value, max) {
+            if (value === "" || value === null || value === undefined || Number.isNaN(Number(value))) return '<span class="badge bg-light text-dark">-</span>';
+            const g = gradeOf(Number(value), max);
+            return `<span class="badge ${g.cls}">${g.grade}</span>`;
+        }
+
+        async function loadMarksSheet() {
+            const tbody = byId("mkTableBody");
+            const { subjectCode, semester } = readClass("mk");
+            const assessment = byId("mkAssessment").value;
+            const section = byId("mkSection").value;
+            const max = MAX_MARKS[assessment];
+            byId("mkMaxHeader").textContent = `Marks (Out of ${max})`;
+            sheet.mk = [];
+            if (!subjectCode) {
+                tbody.innerHTML = emptyRow(5, "Choose a subject to load the class list.");
+                updateMarksDistribution();
+                return;
+            }
+            byId("mkHint").textContent = `Students of semester ${semester}${section ? `, section ${section}` : ""} in your department.`;
+            tbody.innerHTML = emptyRow(5, "Loading...");
+            try {
+                const [students, existing] = await Promise.all([
+                    api(rosterQuery(semester, section)),
+                    api(`/api/marks?subjectCode=${encodeURIComponent(subjectCode)}&assessment=${assessment}`)
+                ]);
+                sheet.mk = students;
+                const saved = Object.fromEntries(existing.map((m) => [m.student, m]));
+                if (!students.length) {
+                    tbody.innerHTML = emptyRow(5, "No students found for this semester/section. Ask the admin to set semester and section on student records.");
+                    updateMarksDistribution();
+                    return;
+                }
+                tbody.innerHTML = students.map((s, i) => {
+                    const rec = saved[s._id];
+                    const value = rec ? rec.marks : "";
+                    return `
+                    <tr>
+                        <td>${escapeHtml(s.studentId || "")}</td>
+                        <td>${escapeHtml(s.name)}</td>
+                        <td><input type="number" class="form-control" id="mkVal${i}" min="0" max="${max}" step="0.5" value="${value}" oninput="onMarkInput(${i})"></td>
+                        <td id="mkGrade${i}">${gradeBadge(value, max)}</td>
+                        <td><input type="text" class="form-control" id="mkRemark${i}" placeholder="Remarks" value="${escapeHtml(rec ? rec.remarks : "")}"></td>
+                    </tr>`;
+                }).join("");
+                updateMarksDistribution();
+            } catch (error) {
+                tbody.innerHTML = emptyRow(5, error.message);
+            }
+        }
+
+        function onMarkInput(i) {
+            const max = MAX_MARKS[byId("mkAssessment").value];
+            byId(`mkGrade${i}`).innerHTML = gradeBadge(byId(`mkVal${i}`).value, max);
+            updateMarksDistribution();
+        }
+
+        function updateMarksDistribution() {
+            const max = MAX_MARKS[byId("mkAssessment").value];
+            const counts = { A: 0, B: 0, C: 0, D: 0 };
+            sheet.mk.forEach((_, i) => {
+                const v = byId(`mkVal${i}`).value;
+                if (v !== "" && !Number.isNaN(Number(v))) counts[gradeOf(Number(v), max).grade] += 1;
+            });
+            const ranges = { A: "84% and above", B: "64% - 83%", C: "44% - 63%", D: "Below 44%" };
+            byId("mkDistBody").innerHTML = GRADE_BANDS.map((b) => `
+                <tr>
+                    <td><span class="badge ${b.cls}">${b.grade}</span></td>
+                    <td>${ranges[b.grade]}</td>
+                    <td>${counts[b.grade]}</td>
+                </tr>`).join("");
+
+            renderChart("marksDist", "marksDistributionChart", {
+                type: "pie",
+                data: {
+                    labels: GRADE_BANDS.map((b) => `${b.grade} (${ranges[b.grade]})`),
+                    datasets: [{
+                        data: GRADE_BANDS.map((b) => counts[b.grade]),
+                        backgroundColor: ["rgba(0, 180, 219, 0.8)", "rgba(0, 201, 255, 0.8)", "rgba(255, 154, 0, 0.8)", "rgba(255, 65, 108, 0.8)"],
+                        borderWidth: 1
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } }
+            });
+        }
+
+        async function saveMarks() {
+            const { subjectCode } = readClass("mk");
+            const assessment = byId("mkAssessment").value;
+            if (!subjectCode || !sheet.mk.length) return toast("Load a class list first", "warning");
+
+            const records = sheet.mk.map((s, i) => ({
+                student: s._id,
+                marks: byId(`mkVal${i}`).value,
+                remarks: byId(`mkRemark${i}`).value
+            }));
+            const btn = byId("mkSaveBtn");
+            btn.disabled = true;
+            try {
+                const res = await api("/api/marks", { method: "POST", body: { subjectCode, assessment, records } });
+                toast(res.message, "success");
+                loadMarksSheet();
+            } catch (error) {
+                toast(error.message, "error");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // ===================== STUDENT DETAILS =====================
+        async function loadStudentDetails() {
+            byId("sdCards").innerHTML = '<div class="col-12 text-center text-muted">Loading students...</div>';
+            try {
+                detailStudents = await api("/api/faculty-portal/students");
+                renderStudentCards();
+            } catch (error) {
+                byId("sdCards").innerHTML = `<div class="col-12 text-center text-danger">${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        function renderStudentCards() {
+            const q = byId("sdSearch").value.trim().toLowerCase();
+            const section = byId("sdSection").value;
+            const year = byId("sdYear").value;
+            const list = detailStudents.filter((s) =>
+                (!q || [s.name, s.studentId, s.email].some((v) => String(v || "").toLowerCase().includes(q))) &&
+                (!section || s.section === section) &&
+                (!year || (s.semester && String(Math.ceil(s.semester / 2)) === year)));
+
+            const pctText = (v) => (v === null || v === undefined ? "—" : `${v}%`);
+            byId("sdCards").innerHTML = list.length
+                ? list.map((s) => `
+                    <div class="col-md-4 mb-4">
+                        <div class="student-card">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(s.name)}&background=6a11cb&color=fff" alt="" class="student-avatar me-3">
+                                <div>
+                                    <h6 class="mb-0">${escapeHtml(s.name)}</h6>
+                                    <small class="text-muted">${escapeHtml(s.studentId || "")}</small>
+                                </div>
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-4"><h6 class="mb-0">${pctText(s.stats.attendancePct)}</h6><small class="text-muted">Attendance</small></div>
+                                <div class="col-4"><h6 class="mb-0">${pctText(s.stats.marksPct)}</h6><small class="text-muted">Marks</small></div>
+                                <div class="col-4"><h6 class="mb-0">${s.semester ? `${s.semester}${s.section ? s.section : ""}` : "—"}</h6><small class="text-muted">Sem/Sec</small></div>
+                            </div>
+                            <div class="mt-3 small text-muted text-truncate"><i class="fas fa-envelope me-1"></i>${escapeHtml(s.email)}</div>
+                        </div>
+                    </div>`).join("")
+                : '<div class="col-12 text-center text-muted">No students match these filters.</div>';
+        }
+
+        // ===================== SUBJECT ALLOCATION =====================
+        async function loadAllocationData() {
+            try {
+                const [faculty, subjects, allocs] = await Promise.all([
+                    api("/api/faculty/active"),
+                    api("/api/subjects"),
+                    api("/api/allocations")
+                ]);
+                facultyData = faculty;
+                subjectData = {};
+                subjects.forEach((s) => { (subjectData[s.semester] ||= []).push(s); });
+                allocations = allocs;
+            } catch (error) {
+                toast(error.message, "error");
+            }
             renderFacultyList();
             renderAllocationsTable();
             updateAllocationSummary();
         }
 
-        // Clean up unknown allocations
-        function cleanUnknownAllocations() {
-            let hasChanges = false;
-            
-            // Remove allocations with invalid subject IDs
-            Object.keys(subjectAllocations).forEach(key => {
-                const allocation = subjectAllocations[key];
-                const subject = getAllSubjectById(allocation.subjectId);
-                
-                // If subject is unknown, remove the allocation
-                if (subject.code === 'Unknown') {
-                    delete subjectAllocations[key];
-                    hasChanges = true;
-                }
-            });
-            
-            // Save if changes were made
-            if (hasChanges) {
-                localStorage.setItem('subjectAllocations', JSON.stringify(subjectAllocations));
-            }
+        async function refreshAllocations() {
+            allocations = await api("/api/allocations");
+            renderFacultyList();
+            renderAllocationsTable();
+            updateAllocationSummary();
+            loadMySubjects();
         }
 
-        // Render faculty list
+        const allocFacultyId = (a) => (a.faculty && a.faculty._id) || a.faculty;
+
         function renderFacultyList() {
-            const facultyList = document.getElementById('faculty-list');
-            facultyList.innerHTML = '';
-
-            facultyData.forEach(faculty => {
-                const assignedSubjects = Object.values(subjectAllocations).filter(allocation => 
-                    allocation.facultyId === faculty.id
-                ).length;
-
-                const facultyCard = document.createElement('div');
-                facultyCard.className = 'col-md-6 col-lg-4';
-                facultyCard.innerHTML = `
-                    <div class="faculty-card" onclick="selectFaculty(${faculty.id})">
+            const list = byId("faculty-list");
+            if (!facultyData.length) {
+                list.innerHTML = '<div class="col-12 text-center text-muted">No active faculty found.</div>';
+                return;
+            }
+            list.innerHTML = facultyData.map((f) => {
+                const assigned = allocations.filter((a) => allocFacultyId(a) === f._id).length;
+                return `
+                <div class="col-md-6 col-lg-4">
+                    <div class="faculty-card" onclick="selectFaculty('${f._id}')">
                         <div class="d-flex align-items-center">
-                            <img src="${faculty.avatar}" alt="${faculty.name}" class="faculty-avatar me-3">
+                            <img src="${avatarUrl(f.name, 64)}" alt="" class="faculty-avatar me-3">
                             <div class="flex-grow-1">
-                                <h5 class="mb-1">${faculty.name}</h5>
-                                <p class="text-muted mb-1">${faculty.department}</p>
-                                <p class="text-muted mb-0">${faculty.email}</p>
+                                <h5 class="mb-1">${escapeHtml(f.name)}</h5>
+                                <p class="text-muted mb-1">${escapeHtml(f.department || "")}</p>
+                                <p class="text-muted mb-0">${escapeHtml(f.email)}</p>
                             </div>
                         </div>
-                        <div class="mt-3">
-                            <span class="badge bg-primary">Assigned Subjects: ${assignedSubjects}</span>
-                        </div>
+                        <div class="mt-3"><span class="badge bg-primary">Assigned Subjects: ${assigned}</span></div>
                     </div>
-                `;
-                facultyList.appendChild(facultyCard);
-            });
+                </div>`;
+            }).join("");
         }
 
-        // Render allocations table - Only shows allocated subjects
         function renderAllocationsTable() {
-            const allocationsTable = document.getElementById('allocations-table');
-            const emptyState = document.getElementById('empty-allocations');
-            
-            allocationsTable.innerHTML = '';
-
-            // Get all allocations and display them
-            const allocations = Object.values(subjectAllocations);
-            
-            if (allocations.length === 0) {
-                emptyState.style.display = 'block';
-                document.querySelector('.allocations-table-container').style.display = 'none';
-            } else {
-                emptyState.style.display = 'none';
-                document.querySelector('.allocations-table-container').style.display = 'block';
-                
-                allocations.forEach(allocation => {
-                    const faculty = facultyData.find(f => f.id === allocation.facultyId);
-                    const subject = getAllSubjectById(allocation.subjectId);
-                    const semesterName = `Year ${Math.ceil(allocation.semester/2)} - Semester ${allocation.semester}`;
-
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><strong>${subject.code}</strong></td>
-                        <td>${subject.name}</td>
-                        <td>${faculty ? faculty.name : 'Unknown'}</td>
-                        <td>${semesterName}</td>
-                        <td>Section ${allocation.section}</td>
-                        <td>
-                            <button class="btn btn-sm btn-danger" onclick="removeAllocation('${allocation.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    allocationsTable.appendChild(row);
-                });
+            const table = byId("allocations-table");
+            const empty = byId("empty-allocations");
+            const container = document.querySelector(".allocations-table-container");
+            if (!allocations.length) {
+                table.innerHTML = "";
+                empty.style.display = "block";
+                container.style.display = "none";
+                return;
             }
+            empty.style.display = "none";
+            container.style.display = "block";
+            table.innerHTML = allocations.map((a) => `
+                <tr>
+                    <td><strong>${escapeHtml(a.subjectCode)}</strong></td>
+                    <td>${escapeHtml(a.subjectName)}</td>
+                    <td>${escapeHtml(a.faculty ? a.faculty.name : "Unknown")}</td>
+                    <td>Year ${Math.ceil(a.semester / 2)} - Semester ${a.semester}</td>
+                    <td>Section ${escapeHtml(a.section)}</td>
+                    <td><button class="btn btn-sm btn-danger" onclick="removeAllocation('${a._id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>`).join("");
         }
 
-        // Update allocation summary
         function updateAllocationSummary() {
-            const allocations = Object.values(subjectAllocations);
-            
-            document.getElementById('total-allocations').textContent = allocations.length;
-            
-            // Count unique faculty
-            const facultyIds = [...new Set(allocations.map(a => a.facultyId))];
-            document.getElementById('faculty-count').textContent = facultyIds.length;
-            
-            // Count unique subjects
-            const subjectIds = [...new Set(allocations.map(a => a.subjectId))];
-            document.getElementById('subjects-count').textContent = subjectIds.length;
-            
-            // Count unique sections
-            const sections = [...new Set(allocations.map(a => `${a.semester}-${a.section}`))];
-            document.getElementById('sections-count').textContent = sections.length;
+            byId("total-allocations").textContent = allocations.length;
+            byId("faculty-count").textContent = new Set(allocations.map(allocFacultyId)).size;
+            byId("subjects-count").textContent = new Set(allocations.map((a) => a.subjectCode)).size;
+            byId("sections-count").textContent = new Set(allocations.map((a) => `${a.semester}-${a.section}`)).size;
         }
 
-        // Helper function to get subject by ID from all semesters
-        function getAllSubjectById(subjectId) {
-            for (const semester in subjectData) {
-                const subject = subjectData[semester].find(s => s.id === subjectId);
-                if (subject) return subject;
-            }
-            return { code: 'Unknown', name: 'Unknown Subject' };
-        }
-
-        // Select faculty
-        function selectFaculty(facultyId) {
-            currentSelection.facultyId = facultyId;
-            const faculty = facultyData.find(f => f.id === facultyId);
-            
-            document.getElementById('selected-faculty-name').textContent = faculty.name;
-            updateProgressIndicator(2);
-            showStep('year-selection-step');
-        }
-
-        // Select year
-        function selectYear(year) {
-            currentSelection.year = year;
-            
-            document.getElementById('selected-year-name').textContent = `Year ${year}`;
-            updateProgressIndicator(3);
-            
-            // Render semester cards
-            const semesterList = document.getElementById('semester-list');
-            semesterList.innerHTML = '';
-            
-            semesterData[year].forEach(semester => {
-                const semesterCard = document.createElement('div');
-                semesterCard.className = 'col-md-6 mb-4';
-                semesterCard.innerHTML = `
-                    <div class="selection-card" onclick="selectSemester(${semester.id})">
-                        <i class="fas fa-book-open"></i>
-                        <h4>${semester.name}</h4>
-                        <p class="text-muted">Year ${year}</p>
-                    </div>
-                `;
-                semesterList.appendChild(semesterCard);
-            });
-            
-            showStep('semester-selection-step');
-        }
-
-        // Select semester
-        function selectSemester(semesterId) {
-            currentSelection.semester = semesterId;
-            
-            const semester = getAllSemesters().find(s => s.id === semesterId);
-            document.getElementById('selected-semester-name').textContent = `${semester.name} (Year ${semester.year})`;
-            updateProgressIndicator(4);
-            showStep('section-selection-step');
-        }
-
-        // Select section
-        function selectSection(section) {
-            currentSelection.section = section;
-            
-            const semester = getAllSemesters().find(s => s.id === currentSelection.semester);
-            document.getElementById('selected-section-name').textContent = `${semester.name}, Section ${section} (Year ${semester.year})`;
-            updateProgressIndicator(5);
-            
-            // Render subject list
-            renderSubjectList();
-            showStep('subject-allocation-step');
-        }
-
-        // Render subject list for allocation
-        function renderSubjectList() {
-            const subjectList = document.getElementById('subject-list');
-            subjectList.innerHTML = '';
-
-            const subjects = subjectData[currentSelection.semester] || [];
-            
-            subjects.forEach(subject => {
-                // Check if subject is already allocated to another faculty for this semester and section
-                const isAllocated = Object.values(subjectAllocations).some(allocation => 
-                    allocation.subjectId === subject.id && 
-                    allocation.semester === currentSelection.semester && 
-                    allocation.section === currentSelection.section &&
-                    allocation.facultyId !== currentSelection.facultyId
-                );
-                
-                // Check if subject is allocated to current faculty
-                const isAllocatedToCurrent = Object.values(subjectAllocations).some(allocation => 
-                    allocation.subjectId === subject.id && 
-                    allocation.semester === currentSelection.semester && 
-                    allocation.section === currentSelection.section &&
-                    allocation.facultyId === currentSelection.facultyId
-                );
-
-                const subjectCard = document.createElement('div');
-                subjectCard.className = `subject-card ${isAllocatedToCurrent ? 'selected' : ''} ${isAllocated ? 'blocked' : ''}`;
-                
-                if (!isAllocated) {
-                    subjectCard.onclick = () => toggleSubjectSelection(subject.id);
-                }
-
-                subjectCard.innerHTML = `
-                    <h5 class="mb-2">${subject.code} - ${subject.name}</h5>
-                    <p class="mb-2">${subject.credits} Credits</p>
-                    ${isAllocated ? 
-                        '<div class="mt-2"><span class="badge bg-danger">Already Assigned to Another Faculty</span></div>' : 
-                        ''
-                    }
-                    ${isAllocatedToCurrent ? 
-                        '<div class="mt-2"><span class="badge bg-success">Currently Assigned to You</span></div>' : 
-                        ''
-                    }
-                `;
-
-                subjectList.appendChild(subjectCard);
-            });
-        }
-
-        // Toggle subject selection
-        function toggleSubjectSelection(subjectId) {
-            const existingAllocationKey = Object.keys(subjectAllocations).find(key => 
-                subjectAllocations[key].subjectId === subjectId && 
-                subjectAllocations[key].semester === currentSelection.semester && 
-                subjectAllocations[key].section === currentSelection.section &&
-                subjectAllocations[key].facultyId === currentSelection.facultyId
-            );
-
-            if (existingAllocationKey) {
-                // Remove allocation
-                delete subjectAllocations[existingAllocationKey];
-            } else {
-                // Add allocation with unique ID
-                const allocationId = `alloc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-                subjectAllocations[allocationId] = {
-                    id: allocationId,
-                    subjectId: subjectId,
-                    semester: currentSelection.semester,
-                    section: currentSelection.section,
-                    facultyId: currentSelection.facultyId,
-                    assignedAt: new Date().toISOString()
-                };
-            }
-
-            // Save to localStorage
-            localStorage.setItem('subjectAllocations', JSON.stringify(subjectAllocations));
-            
-            renderSubjectList();
-        }
-
-        // Remove allocation
-        function removeAllocation(allocationId) {
-            if (confirm('Are you sure you want to remove this subject allocation?')) {
-                delete subjectAllocations[allocationId];
-                localStorage.setItem('subjectAllocations', JSON.stringify(subjectAllocations));
-                renderAllocationsTable();
-                renderFacultyList();
-                updateAllocationSummary();
-                
-                // If we're currently in the subject allocation step, refresh the subject list
-                if (document.getElementById('subject-allocation-step').style.display !== 'none') {
-                    renderSubjectList();
-                }
-            }
-        }
-
-        // Save subject allocation
-        function saveSubjectAllocation() {
-            // Allocation is already saved when toggling subjects
-            alert('Subject allocation saved successfully!');
-            resetSelection();
-            renderFacultyList();
-            renderAllocationsTable();
-            updateAllocationSummary();
-        }
-
-        // Helper function to get all semesters
         function getAllSemesters() {
             return [...semesterData[1], ...semesterData[2]];
         }
 
-        // Navigation functions
-        function backToFacultySelection() {
-            updateProgressIndicator(1);
-            showStep('faculty-selection-step');
-        }
-
-        function backToYearSelection() {
+        function selectFaculty(facultyId) {
+            currentSelection.facultyId = facultyId;
+            const faculty = facultyData.find((f) => f._id === facultyId);
+            byId("selected-faculty-name").textContent = faculty ? faculty.name : "";
             updateProgressIndicator(2);
-            showStep('year-selection-step');
+            showStep("year-selection-step");
         }
 
-        function backToSemesterSelection() {
+        function selectYear(year) {
+            currentSelection.year = year;
+            byId("selected-year-name").textContent = `Year ${year}`;
             updateProgressIndicator(3);
-            showStep('semester-selection-step');
+            byId("semester-list").innerHTML = semesterData[year].map((s) => `
+                <div class="col-md-6 mb-4">
+                    <div class="selection-card" onclick="selectSemester(${s.id})">
+                        <i class="fas fa-book-open"></i>
+                        <h4>${s.name}</h4>
+                        <p class="text-muted">Year ${year}</p>
+                    </div>
+                </div>`).join("");
+            showStep("semester-selection-step");
         }
 
-        function backToSectionSelection() {
+        function selectSemester(semesterId) {
+            currentSelection.semester = semesterId;
+            const semester = getAllSemesters().find((s) => s.id === semesterId);
+            byId("selected-semester-name").textContent = `${semester.name} (Year ${semester.year})`;
             updateProgressIndicator(4);
-            showStep('section-selection-step');
+            showStep("section-selection-step");
         }
 
-        // Show/hide steps
-        function showStep(stepId) {
-            document.querySelectorAll('.step-content').forEach(step => {
-                step.style.display = 'none';
-            });
-            document.getElementById(stepId).style.display = 'block';
+        function selectSection(section) {
+            currentSelection.section = section;
+            const semester = getAllSemesters().find((s) => s.id === currentSelection.semester);
+            byId("selected-section-name").textContent = `${semester.name}, Section ${section} (Year ${semester.year})`;
+            updateProgressIndicator(5);
+            renderSubjectList();
+            showStep("subject-allocation-step");
         }
 
-        // Update progress indicator
-        function updateProgressIndicator(activeStep) {
-            const steps = document.querySelectorAll('.progress-step');
-            steps.forEach((step, index) => {
-                const circle = step.querySelector('.step-circle');
-                const label = step.querySelector('.step-label');
-                
-                if (index < activeStep) {
-                    circle.classList.add('active');
-                    label.classList.add('active');
-                } else {
-                    circle.classList.remove('active');
-                    label.classList.remove('active');
-                }
-            });
-        }
-
-        // Reset selection
-        function resetSelection() {
-            currentSelection = {
-                facultyId: null,
-                year: null,
-                semester: null,
-                section: null
-            };
-            updateProgressIndicator(1);
-            showStep('faculty-selection-step');
-        }
-
-        // Show/hide sections
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
-            });
-            
-            // Show selected section
-            document.getElementById(sectionId).style.display = 'block';
-            
-            // Update active menu item
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
-            
-            // Update page title
-            const titles = {
-                'dashboard': 'Dashboard',
-                'attendance': 'Attendance Management',
-                'internal-marks': 'Internal Marks',
-                'assignments': 'Assignments Management',
-                'student-details': 'Student Details',
-                'regulations': 'Faculty Subject Allocation',
-                'profile': 'Profile Settings'
-            };
-            document.getElementById('page-title').textContent = titles[sectionId];
-            
-            // Initialize faculty data if needed
-            if (sectionId === 'regulations') {
-                initializeData();
-            }
-            
-            // Initialize charts if needed
-            if (sectionId === 'dashboard') {
-                initializeCharts();
-            }
-        }
-
-        // Initialize charts
-        function initializeCharts() {
-            // Attendance Chart
-            const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
-            new Chart(attendanceCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Present (%)',
-                        data: [85, 78, 92, 88, 76, 95],
-                        backgroundColor: [
-                            'rgba(106, 17, 203, 0.7)',
-                            'rgba(37, 117, 252, 0.7)',
-                            'rgba(0, 180, 219, 0.7)',
-                            'rgba(0, 201, 255, 0.7)',
-                            'rgba(142, 45, 226, 0.7)',
-                            'rgba(255, 126, 95, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(106, 17, 203, 1)',
-                            'rgba(37, 117, 252, 1)',
-                            'rgba(0, 180, 219, 1)',
-                            'rgba(0, 201, 255, 1)',
-                            'rgba(142, 45, 226, 1)',
-                            'rgba(255, 126, 95, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-
-            // Attendance Summary Chart
-            const attendanceSummaryCtx = document.getElementById('attendanceSummaryChart').getContext('2d');
-            new Chart(attendanceSummaryCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Present', 'Absent'],
-                    datasets: [{
-                        data: [85, 15],
-                        backgroundColor: [
-                            'rgba(0, 180, 219, 0.8)',
-                            'rgba(255, 65, 108, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(0, 180, 219, 1)',
-                            'rgba(255, 65, 108, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-
-            // Marks Distribution Chart
-            const marksDistributionCtx = document.getElementById('marksDistributionChart').getContext('2d');
-            new Chart(marksDistributionCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['A (21-25)', 'B (16-20)', 'C (11-15)', 'D (0-10)'],
-                    datasets: [{
-                        data: [18, 22, 8, 2],
-                        backgroundColor: [
-                            'rgba(0, 180, 219, 0.8)',
-                            'rgba(0, 201, 255, 0.8)',
-                            'rgba(255, 154, 0, 0.8)',
-                            'rgba(255, 65, 108, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(0, 180, 219, 1)',
-                            'rgba(0, 201, 255, 1)',
-                            'rgba(255, 154, 0, 1)',
-                            'rgba(255, 65, 108, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-
-            // Assignment Stats Chart
-            const assignmentStatsCtx = document.getElementById('assignmentStatsChart').getContext('2d');
-            new Chart(assignmentStatsCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
-                    datasets: [{
-                        label: 'Assignments Created',
-                        data: [3, 5, 2, 4, 6, 4],
-                        borderColor: 'rgba(106, 17, 203, 1)',
-                        backgroundColor: 'rgba(106, 17, 203, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'Assignments Submitted',
-                        data: [2, 3, 1, 3, 5, 4],
-                        borderColor: 'rgba(0, 180, 219, 1)',
-                        backgroundColor: 'rgba(0, 180, 219, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeData();
-            initializeCharts();
-        });
-    </script>
-
-    <script>
-        const SESSION_STORAGE_KEY = "collegeErpLoggedInUser";
-
-        function getLoggedInUser() {
-            try {
-                return JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || sessionStorage.getItem(SESSION_STORAGE_KEY) || "null");
-            } catch (error) {
-                return null;
-            }
-        }
-
-        function saveLoggedInUser(userData, useSession = false) {
-            const storage = useSession ? sessionStorage : localStorage;
-            storage.setItem(SESSION_STORAGE_KEY, JSON.stringify(userData));
-        }
-
-        function clearLoggedInUser() {
-            localStorage.removeItem(SESSION_STORAGE_KEY);
-            sessionStorage.removeItem(SESSION_STORAGE_KEY);
-        }
-
-        function toTitleCase(value) {
-            return String(value || "")
-                .replace(/[_-]+/g, " ")
-                .replace(/\s+/g, " ")
-                .trim()
-                .replace(/\b\w/g, char => char.toUpperCase());
-        }
-
-        function buildAvatarUrl(name, size = 150) {
-            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "User")}&background=6a11cb&color=fff&size=${size}`;
-        }
-
-        function splitName(fullName) {
-            const cleanName = String(fullName || "").trim();
-            if (!cleanName) {
-                return { firstName: "", lastName: "" };
-            }
-            const parts = cleanName.split(/\s+/);
-            return {
-                firstName: parts[0] || "",
-                lastName: parts.slice(1).join(" ")
-            };
-        }
-
-        function resolveDisplayName(user) {
-            return user.name || user.username || user.fullName || user.email || "User";
-        }
-
-        function resolveRoleText(user) {
-            const role = toTitleCase(user.role || user.accountType || "Faculty");
-            const department = user.department ? ` - ${user.department}` : "";
-            const designation = user.designation ? `${user.designation}${department}` : `${role}${department}`;
-            return designation || role;
-        }
-
-        function applyLoggedInUserToDashboard() {
-            const user = getLoggedInUser();
-
-            if (!user) {
-                window.location.href = "login-dynamic.html";
+        function renderSubjectList() {
+            const subjects = subjectData[currentSelection.semester] || [];
+            const list = byId("subject-list");
+            if (!subjects.length) {
+                list.innerHTML = '<p class="text-muted">No subjects exist for this semester yet. Run <code>npm run seed</code> in the Backend folder to add the default subject list.</p>';
                 return;
             }
+            list.innerHTML = subjects.map((subject) => {
+                const match = allocations.find((a) => a.subjectCode === subject.code && a.semester === currentSelection.semester && a.section === currentSelection.section);
+                const mine = match && allocFacultyId(match) === currentSelection.facultyId;
+                const blocked = match && !mine;
+                return `
+                <div class="subject-card ${mine ? "selected" : ""} ${blocked ? "blocked" : ""}" ${blocked ? "" : `onclick="toggleSubjectSelection('${escapeHtml(subject.code)}')"`}>
+                    <h5 class="mb-2">${escapeHtml(subject.code)} - ${escapeHtml(subject.name)}</h5>
+                    <p class="mb-2">${subject.credits} Credits</p>
+                    ${blocked ? `<div class="mt-2"><span class="badge bg-danger">Assigned to ${escapeHtml(match.faculty ? match.faculty.name : "another faculty")}</span></div>` : ""}
+                    ${mine ? '<div class="mt-2"><span class="badge bg-success">Assigned to this faculty</span></div>' : ""}
+                </div>`;
+            }).join("");
+        }
 
-            const displayName = resolveDisplayName(user);
-            const roleText = resolveRoleText(user);
-            const avatarSmall = buildAvatarUrl(displayName, 128);
-            const avatarLarge = buildAvatarUrl(displayName, 150);
-            const nameParts = splitName(displayName);
-
-            const nameElement = document.getElementById("loggedInUserName");
-            const roleElement = document.getElementById("loggedInUserRole");
-            const smallAvatarElement = document.getElementById("loggedInUserAvatar");
-            const largeAvatarElement = document.getElementById("profileAvatar");
-
-            if (nameElement) nameElement.textContent = displayName;
-            if (roleElement) roleElement.textContent = roleText;
-            if (smallAvatarElement) {
-                smallAvatarElement.src = avatarSmall;
-                smallAvatarElement.alt = displayName;
-            }
-            if (largeAvatarElement) {
-                largeAvatarElement.src = avatarLarge;
-                largeAvatarElement.alt = displayName;
-            }
-
-            const firstNameInput = document.getElementById("profileFirstName");
-            const lastNameInput = document.getElementById("profileLastName");
-            const emailInput = document.getElementById("profileEmail");
-            const departmentInput = document.getElementById("profileDepartment");
-            const designationInput = document.getElementById("profileDesignation");
-            const bioInput = document.getElementById("profileBio");
-
-            if (firstNameInput) firstNameInput.value = user.firstName || nameParts.firstName;
-            if (lastNameInput) lastNameInput.value = user.lastName || nameParts.lastName;
-            if (emailInput) emailInput.value = user.email || "";
-            if (departmentInput) departmentInput.value = user.department || "";
-            if (designationInput) designationInput.value = user.designation || toTitleCase(user.role || user.accountType || "Faculty");
-            if (bioInput && user.bio) bioInput.value = user.bio;
-
-            const pageTitle = document.title;
-            if (pageTitle && !pageTitle.includes(displayName)) {
-                document.title = `${displayName} - Faculty Dashboard`;
+        async function toggleSubjectSelection(subjectCode) {
+            try {
+                await api("/api/allocations/toggle", {
+                    method: "POST",
+                    body: { faculty: currentSelection.facultyId, subjectCode, semester: currentSelection.semester, section: currentSelection.section }
+                });
+                await refreshAllocations();
+                renderSubjectList();
+            } catch (error) {
+                toast(error.message, "error");
             }
         }
 
-        function setupLogout() {
-            const logoutLink = document.getElementById("logoutLink");
-            if (!logoutLink) return;
+        async function removeAllocation(allocationId) {
+            if (!confirm("Are you sure you want to remove this subject allocation?")) return;
+            try {
+                await api(`/api/allocations/${allocationId}`, { method: "DELETE" });
+                await refreshAllocations();
+                if (byId("subject-allocation-step").style.display !== "none") renderSubjectList();
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
 
-            logoutLink.addEventListener("click", function (event) {
-                event.preventDefault();
-                clearLoggedInUser();
-                window.location.href = "login.html";
+        function saveSubjectAllocation() {
+            // Each click is saved to the server immediately; this just finishes the workflow.
+            toast("Subject allocation saved", "success");
+            resetSelection();
+        }
+
+        function backToFacultySelection() { updateProgressIndicator(1); showStep("faculty-selection-step"); }
+        function backToYearSelection() { updateProgressIndicator(2); showStep("year-selection-step"); }
+        function backToSemesterSelection() { updateProgressIndicator(3); showStep("semester-selection-step"); }
+        function backToSectionSelection() { updateProgressIndicator(4); showStep("section-selection-step"); }
+
+        function showStep(stepId) {
+            document.querySelectorAll(".step-content").forEach((step) => { step.style.display = "none"; });
+            byId(stepId).style.display = "block";
+        }
+
+        function updateProgressIndicator(activeStep) {
+            document.querySelectorAll(".progress-step").forEach((step, index) => {
+                step.querySelector(".step-circle").classList.toggle("active", index < activeStep);
+                step.querySelector(".step-label").classList.toggle("active", index < activeStep);
             });
         }
 
+        function resetSelection() {
+            currentSelection = { facultyId: null, year: null, semester: null, section: null };
+            updateProgressIndicator(1);
+            showStep("faculty-selection-step");
+        }
+
+        // ===================== ACTIVITY, DEADLINES & NOTIFICATIONS =====================
+        const fmtDate = (d) => ErpAuth.formatDate(d);
+
+        async function loadActivity() {
+            try {
+                const data = await api("/api/faculty-portal/activity");
+                byId("statToGrade").textContent = data.pendingToGrade;
+                const icons = { attendance: "fa-calendar-check", marks: "fa-edit", assignment: "fa-tasks", submission: "fa-file-upload", leave: "fa-plane" };
+                byId("activityList").innerHTML = data.items.length
+                    ? data.items.map((a) => `
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0" role="button" onclick="showSection('${a.section}')">
+                            <div><h6 class="mb-1"><i class="fas ${icons[a.type] || "fa-circle"} me-2 text-primary"></i>${escapeHtml(a.title)}</h6><small class="text-muted">${escapeHtml(a.detail)}</small></div>
+                            <span class="badge bg-light text-dark">${ErpAuth.timeAgo(a.at)}</span>
+                        </div>`).join("")
+                    : '<p class="text-muted mb-0">No activity in the last 30 days.</p>';
+
+                const items = data.upcoming.map((a) => {
+                    const days = Math.ceil((new Date(a.dueDate) - new Date()) / 864e5);
+                    return `<div class="d-flex justify-content-between align-items-center mb-3" role="button" onclick="showSection('assignments')">
+                        <div><h6 class="mb-0">${escapeHtml(a.title)}</h6><small class="text-muted">${escapeHtml(a.subjectName)} · due ${fmtDate(a.dueDate)}</small></div>
+                        <span class="badge ${days <= 1 ? "bg-danger" : days <= 3 ? "bg-warning" : "bg-info"}">${days <= 0 ? "Today" : `${days} day${days > 1 ? "s" : ""}`}</span>
+                    </div>`;
+                });
+                if (data.pendingToGrade) {
+                    items.unshift(`<div class="d-flex justify-content-between align-items-center mb-3" role="button" onclick="showSection('assignments')">
+                        <div><h6 class="mb-0">Grade submissions</h6><small class="text-muted">${data.pendingToGrade} waiting for marks</small></div>
+                        <span class="badge bg-danger">To do</span></div>`);
+                }
+                byId("facultyDeadlines").innerHTML = items.join("") || '<p class="text-muted mb-0">No upcoming deadlines.</p>';
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        async function loadNotifications() {
+            try {
+                const items = await api("/api/notifications");
+                const badge = byId("notifBadge");
+                badge.textContent = items.length;
+                badge.style.display = items.length ? "" : "none";
+                byId("notificationList").innerHTML = items.length
+                    ? items.map((n) => `<div class="mb-3" role="button" onclick="showSection('${["leave", "assignments"].includes(n.section) ? n.section : "notices"}')">
+                        <div class="small fw-semibold">${escapeHtml(n.message)}</div><small class="text-muted">${ErpAuth.timeAgo(n.at)}</small></div>`).join("")
+                    : '<p class="text-muted mb-0">You are all caught up.</p>';
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        async function loadNotices() {
+            try {
+                const [notices, events] = await Promise.all([api("/api/announcements"), api("/api/events?upcoming=1")]);
+                const prio = { high: "danger", medium: "warning", low: "secondary" };
+                byId("noticeList").innerHTML = notices.length
+                    ? notices.map((n) => `<div class="border-start border-4 border-${prio[n.priority]} ps-3 mb-3">
+                        <div class="d-flex justify-content-between"><h6 class="mb-1">${escapeHtml(n.title)}</h6><span class="badge bg-light text-dark">${escapeHtml(n.audience)}</span></div>
+                        ${n.message ? `<p class="small mb-1">${escapeHtml(n.message)}</p>` : ""}
+                        <small class="text-muted">${escapeHtml(n.createdByName || "")} · ${fmtDate(n.createdAt)}</small></div>`).join("")
+                    : '<p class="text-muted mb-0">No notices.</p>';
+                byId("facultyEvents").innerHTML = events.length
+                    ? events.slice(0, 6).map((e) => `<div class="mb-3"><h6 class="mb-0">${escapeHtml(e.title)}</h6><small class="text-muted">${fmtDate(e.date)}${e.time ? ` · ${escapeHtml(e.time)}` : ""}${e.location ? ` · ${escapeHtml(e.location)}` : ""}</small></div>`).join("")
+                    : '<p class="text-muted mb-0">No upcoming events.</p>';
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        // ===================== ASSIGNMENTS =====================
+        let myAssignments = [];
+        let asgFilter = "";
+
+        async function loadAssignments() {
+            try {
+                myAssignments = await api("/api/faculty-portal/assignments");
+                renderAssignmentCards();
+                const submitted = myAssignments.reduce((s, a) => s + a.submitted, 0);
+                const graded = myAssignments.reduce((s, a) => s + a.graded, 0);
+                byId("asgTotal").textContent = myAssignments.length;
+                byId("asgSubmitted").textContent = submitted;
+                byId("asgToGrade").textContent = submitted - graded;
+                renderAssignmentChart();
+            } catch (error) {
+                byId("assignmentCards").innerHTML = `<div class="col-12 text-danger">${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        function setAssignmentFilter(btn) {
+            document.querySelectorAll("#asgFilters .btn").forEach((b) => b.classList.toggle("active", b === btn));
+            asgFilter = btn.dataset.filter;
+            renderAssignmentCards();
+        }
+
+        function renderAssignmentCards() {
+            const now = new Date(new Date().toDateString());
+            const list = myAssignments.filter((a) => {
+                const closed = new Date(a.dueDate) < now;
+                if (asgFilter === "active") return !closed;
+                if (asgFilter === "closed") return closed;
+                if (asgFilter === "grade") return a.submitted > a.graded;
+                return true;
+            });
+            byId("assignmentCards").innerHTML = list.length
+                ? list.map((a) => {
+                    const closed = new Date(a.dueDate) < now;
+                    const toGrade = a.submitted - a.graded;
+                    const cls = toGrade ? "submitted" : closed ? "late" : "pending";
+                    const badge = toGrade ? `<span class="badge bg-success">${toGrade} to grade</span>` : closed ? '<span class="badge bg-secondary">Closed</span>' : '<span class="badge bg-warning">Open</span>';
+                    return `<div class="col-md-4 mb-4"><div class="assignment-card ${cls}">
+                        <div class="d-flex justify-content-between align-items-start mb-3"><h5 class="mb-0">${escapeHtml(a.title)}</h5>${badge}</div>
+                        <p class="text-muted mb-2">${escapeHtml(a.subjectName)} - Sem ${a.semester}${a.section ? `, Section ${escapeHtml(a.section)}` : ""}</p>
+                        <p class="small mb-2">Submitted <strong>${a.submitted}/${a.students}</strong> · Graded <strong>${a.graded}</strong> · Max ${a.maxMarks}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Due: ${fmtDate(a.dueDate)}</small>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="openSubmissions('${a._id}')">${toGrade ? "Grade" : "View"}</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteAssignment('${a._id}')">Delete</button>
+                            </div>
+                        </div></div></div>`;
+                }).join("")
+                : '<div class="col-12 text-muted">No assignments here yet. Click "Create New Assignment" to add one.</div>';
+        }
+
+        function renderAssignmentChart() {
+            const recent = myAssignments.slice(0, 8).reverse();
+            renderChart("assignments", "assignmentStatsChart", {
+                type: "bar",
+                data: {
+                    labels: recent.map((a) => a.title.length > 18 ? `${a.title.slice(0, 18)}…` : a.title),
+                    datasets: [
+                        { label: "Students", data: recent.map((a) => a.students), backgroundColor: "rgba(106, 17, 203, 0.25)" },
+                        { label: "Submitted", data: recent.map((a) => a.submitted), backgroundColor: "rgba(0, 180, 219, 0.8)" },
+                        { label: "Graded", data: recent.map((a) => a.graded), backgroundColor: "rgba(0, 176, 155, 0.8)" }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+            });
+        }
+
+        function openCreateAssignment() {
+            ["asgTitle", "asgInstructions"].forEach((id) => { byId(id).value = ""; });
+            byId("asgMax").value = 10;
+            const due = new Date(Date.now() + 7 * 864e5);
+            byId("asgDue").value = due.toISOString().slice(0, 10);
+            byId("asgDue").min = todayStr();
+            bootstrap.Modal.getOrCreateInstance(byId("createAssignmentModal")).show();
+        }
+
+        function onAsgSubjectChange() {
+            const { allocatedSection } = readClass("asg");
+            byId("asgSection").value = allocatedSection || "";
+        }
+
+        async function createAssignment() {
+            const { subjectCode, semester } = readClass("asg");
+            const body = {
+                title: byId("asgTitle").value.trim(),
+                subjectCode,
+                semester,
+                section: byId("asgSection").value,
+                dueDate: byId("asgDue").value,
+                maxMarks: Number(byId("asgMax").value) || 10,
+                instructions: byId("asgInstructions").value.trim()
+            };
+            if (!body.title || !subjectCode || !body.dueDate) return toast("Title, subject and due date are required", "warning");
+            byId("asgCreateBtn").disabled = true;
+            try {
+                await api("/api/assignments", { method: "POST", body });
+                bootstrap.Modal.getInstance(byId("createAssignmentModal")).hide();
+                toast("Assignment created and visible to students", "success");
+                loadAssignments();
+                loadActivity();
+            } catch (error) {
+                toast(error.message, "error");
+            } finally {
+                byId("asgCreateBtn").disabled = false;
+            }
+        }
+
+        async function deleteAssignment(id) {
+            if (!confirm("Delete this assignment and all its submissions?")) return;
+            try {
+                await api(`/api/assignments/${id}`, { method: "DELETE" });
+                toast("Assignment deleted", "success");
+                loadAssignments();
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        let currentSubmissions = null;
+
+        async function openSubmissions(id) {
+            try {
+                currentSubmissions = await api(`/api/assignments/${id}/submissions`);
+                renderSubmissions();
+                bootstrap.Modal.getOrCreateInstance(byId("submissionsModal")).show();
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        function renderSubmissions() {
+            const { assignment: a, roster } = currentSubmissions;
+            byId("subModalTitle").textContent = a.title;
+            byId("subModalInfo").textContent = `${a.subjectName} · Sem ${a.semester}${a.section ? `, Section ${a.section}` : ""} · Due ${fmtDate(a.dueDate)} · Max ${a.maxMarks} marks · ${roster.filter((r) => r.submission).length}/${roster.length} submitted`;
+            const linkify = (t) => /^https?:\/\/\S+$/.test(t) ? `<a href="${escapeHtml(t)}" target="_blank" rel="noopener">${escapeHtml(t)}</a>` : escapeHtml(t);
+            byId("subTableBody").innerHTML = roster.length
+                ? roster.map((r, i) => {
+                    const s = r.submission;
+                    return `<tr>
+                        <td><strong>${escapeHtml(r.student.name)}</strong><br><small class="text-muted">${escapeHtml(r.student.studentId || "")}</small></td>
+                        <td class="small" style="max-width:320px;word-break:break-word">${s ? linkify(s.content) : '<span class="text-muted">Not submitted</span>'}</td>
+                        <td class="small">${s ? fmtDate(s.submittedAt) : "—"}</td>
+                        <td>${s ? `<input type="number" class="form-control form-control-sm" id="gradeMarks${i}" min="0" max="${a.maxMarks}" value="${s.marks ?? ""}">` : ""}</td>
+                        <td>${s ? `<input type="text" class="form-control form-control-sm" id="gradeFeedback${i}" value="${escapeHtml(s.feedback || "")}">` : ""}</td>
+                        <td>${s ? `<button class="btn btn-sm ${s.status === "graded" ? "btn-outline-success" : "btn-success"}" onclick="gradeSubmission(${i})">${s.status === "graded" ? "Update" : "Save"}</button>` : ""}</td>
+                    </tr>`;
+                }).join("")
+                : '<tr><td colspan="6" class="text-center text-muted">No students in this class.</td></tr>';
+        }
+
+        async function gradeSubmission(i) {
+            const row = currentSubmissions.roster[i];
+            try {
+                const res = await api(`/api/submissions/${row.submission._id}/grade`, {
+                    method: "PATCH",
+                    body: { marks: byId(`gradeMarks${i}`).value, feedback: byId(`gradeFeedback${i}`).value }
+                });
+                row.submission = res.submission;
+                renderSubmissions();
+                toast(`Graded ${row.student.name}`, "success");
+                loadAssignments();
+                loadActivity();
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        // ===================== STUDY MATERIALS =====================
+        async function loadResources() {
+            try {
+                const myId = ERP_SESSION._id;
+                const list = (await api("/api/resources")).filter((r) => r.addedBy === myId);
+                const label = { notes: "Notes", syllabus: "Syllabus", "lab-manual": "Lab manual", "question-paper": "Question paper", textbook: "Textbook" };
+                byId("resTableBody").innerHTML = list.length
+                    ? list.map((r) => `<tr><td>${escapeHtml(r.title)}</td><td>${escapeHtml(r.subjectCode || "—")}</td><td>${label[r.category] || escapeHtml(r.category)}</td>
+                        <td><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">Open</a></td>
+                        <td><button class="btn btn-sm btn-outline-danger" onclick="deleteResource('${r._id}')"><i class="fas fa-trash"></i></button></td></tr>`).join("")
+                    : '<tr><td colspan="5" class="text-center text-muted">You have not shared any material yet.</td></tr>';
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        async function addResource() {
+            const { subjectCode, semester } = readClass("res");
+            const body = { title: byId("resTitle").value.trim(), url: byId("resUrl").value.trim(), category: byId("resCategory").value, subjectCode, semester };
+            if (!body.title || !body.url || !subjectCode) return toast("Title, subject and link are required", "warning");
+            try {
+                await api("/api/resources", { method: "POST", body });
+                byId("resTitle").value = "";
+                byId("resUrl").value = "";
+                toast("Material shared with students", "success");
+                loadResources();
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        async function deleteResource(id) {
+            if (!confirm("Remove this material?")) return;
+            try {
+                await api(`/api/resources/${id}`, { method: "DELETE" });
+                loadResources();
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        // ===================== LEAVE =====================
+        async function loadLeaves() {
+            try {
+                const list = await api("/api/leaves/mine");
+                const badge = { pending: "bg-warning", approved: "bg-success", rejected: "bg-danger" };
+                byId("leaveTableBody").innerHTML = list.length
+                    ? list.map((l) => `<tr>
+                        <td class="text-capitalize">${escapeHtml(l.type)}</td>
+                        <td>${fmtDate(l.from)} → ${fmtDate(l.to)}</td>
+                        <td>${l.days}</td>
+                        <td><span class="badge ${badge[l.status]}">${l.status}</span></td>
+                        <td class="small">${escapeHtml(l.reviewNote || (l.reviewerName ? `by ${l.reviewerName}` : ""))}</td>
+                        <td>${l.status === "pending" ? `<button class="btn btn-sm btn-outline-danger" onclick="cancelLeave('${l._id}')">Cancel</button>` : ""}</td>
+                    </tr>`).join("")
+                    : '<tr><td colspan="6" class="text-center text-muted">No leave requests yet.</td></tr>';
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        async function applyLeave() {
+            const body = { type: byId("leaveType").value, from: byId("leaveFrom").value, to: byId("leaveTo").value, reason: byId("leaveReason").value.trim() };
+            if (!body.from || !body.to || !body.reason) return toast("Fill in the dates and a reason", "warning");
+            try {
+                await api("/api/leaves", { method: "POST", body });
+                byId("leaveReason").value = "";
+                toast("Leave request sent to your HOD", "success");
+                loadLeaves();
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        async function cancelLeave(id) {
+            if (!confirm("Cancel this leave request?")) return;
+            try {
+                await api(`/api/leaves/${id}`, { method: "DELETE" });
+                loadLeaves();
+            } catch (error) {
+                toast(error.message, "error");
+            }
+        }
+
+        // ===================== STARTUP =====================
         document.addEventListener("DOMContentLoaded", function () {
-            applyLoggedInUserToDashboard();
-            setupLogout();
+            if (!ERP_SESSION) return; // redirecting to login
+
+            applyHeader(ERP_SESSION);
+            byId("logoutLink").addEventListener("click", (event) => {
+                event.preventDefault();
+                ErpAuth.logout();
+            });
+
+            const date = byId("attDate");
+            date.value = todayStr();
+            date.max = todayStr();
+
+            loadMe();
+            loadMySubjects();
+            loadOverview();
+            loadAttendanceSummary();
+            updateMarksDistribution();
+            loadActivity();
+            loadNotifications();
+            loadAssignments();
+            byId("leaveFrom").min = todayStr();
+            byId("leaveTo").min = todayStr();
         });
     </script>
 

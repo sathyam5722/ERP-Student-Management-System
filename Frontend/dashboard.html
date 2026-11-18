@@ -1,1765 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Management Dashboard</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
-    :root {
-      --primary-color: #2563eb;
-      --secondary-color: #1e40af;
-      --background-color: #f1f5f9;
-      --text-color: #1e293b;
-      --sidebar-width: 250px;
-    }
-    body { background-color: var(--background-color); }
-    .container { display: flex; min-height: 100vh; }
-    .sidebar {
-      width: var(--sidebar-width); background-color: white; padding: 20px;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); position: fixed; height: 100vh; overflow-y: auto;
-    }
-    .logo {
-      font-size: 24px; font-weight: bold; color: var(--primary-color);
-      margin-bottom: 40px; display: flex; align-items: center; gap: 10px;
-    }
-    .nav-item {
-      padding: 12px 15px; margin: 5px 0; border-radius: 8px; cursor: pointer;
-      display: flex; align-items: center; gap: 10px; color: var(--text-color); transition: all 0.3s ease;
-    }
-    .nav-item:hover, .nav-item.active { background-color: var(--primary-color); color: white; }
-    .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 20px; }
-    .header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
-      background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    .search-bar {
-      display: flex; align-items: center; gap: 10px; background-color: var(--background-color);
-      padding: 10px 15px; border-radius: 8px; width: 300px;
-    }
-    .search-bar input { border: none; background: none; outline: none; width: 100%; }
-    .user-profile { display: flex; align-items: center; gap: 10px; }
-    .user-avatar {
-      width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-color);
-      display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;
-    }
-    .dashboard-cards {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;
-    }
-    .card, .student-list, .course-list, .admin-list {
-      background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    .card-header, .table-header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; flex-wrap: wrap;
-    }
-    .card-icon {
-      width: 40px; height: 40px; background-color: var(--primary-color); border-radius: 8px;
-      display: flex; align-items: center; justify-content: center; color: white;
-    }
-    .card-title { font-size: 14px; color: #64748b; }
-    .card-value { font-size: 24px; font-weight: bold; color: var(--text-color); }
-    .add-student-btn, .reactivate-btn {
-      background-color: var(--primary-color); color: white; border: none; padding: 10px 20px;
-      border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;
-    }
-    .add-student-btn:hover, .reactivate-btn:hover { background-color: var(--secondary-color); }
-    table { width: 100%; border-collapse: collapse; }
-    th, td {
-      padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: top;
-    }
-    th { background-color: #f8fafc; color: #64748b; font-weight: 600; }
-    tr:hover { background-color: #f8fafc; }
-    .status-badge {
-      padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: 500; white-space: nowrap;
-    }
-    .status-active { background-color: #dcfce7; color: #166534; }
-    .status-inactive { background-color: #fee2e2; color: #991b1b; }
-    .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
-    .action-btn, .icon-btn {
-      padding: 6px 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; background: transparent;
-    }
-    .edit-btn { color: #1e88e5; }
-    .delete-btn { color: #e53935; }
-    .modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;
-    }
-    .modal.show, .modal[style*="flex"] { display: flex; }
-    .modal-content {
-      background-color: white; padding: 30px; border-radius: 10px; width: 500px; max-width: 90%;
-      max-height: 90vh; overflow-y: auto;
-    }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #64748b; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; color: var(--text-color); }
-    .form-group input, .form-group select, textarea {
-      width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 5px; outline: none;
-    }
-    .submit-btn {
-      background-color: var(--primary-color); color: white; border: none; padding: 10px 20px;
-      border-radius: 5px; cursor: pointer; width: 100%; margin-top: 20px;
-    }
-    .notification {
-      position: fixed; top: 20px; right: 20px; padding: 15px 25px; color: white; border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 2000; opacity: 1; transition: opacity 0.5s ease;
-    }
-    .notification.success { background-color: #4caf50; }
-    .notification.error { background-color: #f44336; }
-    .notification.warning { background-color: #ff9800; }
-    .notification.info { background-color: #2196f3; }
-    .empty-state { text-align: center; padding: 40px 20px; color: #64748b; }
-    .section { display: none; }
-    .section.active { display: block; }
-    .dashboard.active { display: block; }
-    .loading-spinner {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background-color: rgba(255,255,255,0.8); z-index: 1500; justify-content: center; align-items: center;
-    }
-    .loading-spinner.active { display: flex; }
-    .spinner {
-      width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-color);
-      border-radius: 50%; animation: spin 1s linear infinite;
-    }
-    .filter-buttons { display: flex; gap: 10px; }
-    .filter-btn {
-      padding: 8px 18px; border-radius: 6px; border: none; background: #e0e0e0; cursor: pointer; margin-right: 6px;
-    }
-    .filter-btn.active { background: #0b59e9; color: white; }
-    @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="sidebar">
-      <div class="logo"><i class="fas fa-graduation-cap"></i>EduManager</div>
-
-      <div class="nav-item active" data-section="dashboard"><i class="fas fa-chart-pie"></i>Dashboard</div>
-      <div class="nav-item" data-section="admins"><i class="fas fa-user-shield"></i>Admins</div>
-      <div class="nav-item" data-section="principle"><i class="fas fa-user-tie"></i>Principel</div>
-      <div class="nav-item" data-section="HOD"><i class="fas fa-user-tie"></i>HOD</div>
-      <div class="nav-item" data-section="faculty"><i class="fas fa-user"></i>Faculty</div>
-      <div class="nav-item" data-section="students"><i class="fas fa-users"></i>Students</div>
-      <div class="nav-item" data-section="staff"><i class="fas fa-user-tie"></i>Saporting Staff</div>
-      <div class="nav-item" data-section="payment"><i class="fas -receipt"></i>Payment</div>
-      <div class="nav-item" data-section="departments"><i class="fas fa-building"></i>Departments</div>
-      <div class="nav-item" data-section="courses"><i class="fas fa-book"></i>Courses</div>
-      <div class="nav-item" data-section="reports"><i class="fas fa-chart-bar"></i>Reports</div>
-      <div class="nav-item" id="sidebarLogoutBtn"><i class="fas fa-sign-out-alt"></i>Logout</div>
-    </div>
-
-    <div class="main-content">
-      <div class="header">
-        <div class="search-bar">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search students..." />
-        </div>
-        <div class="user-profile">
-          <div class="user-avatar" id="loggedInUserAvatar"><i class="fas fa-user"></i></div>
-          <div>
-            <div id="loggedInUserName">Admin</div>
-            <small id="loggedInUserRole">Dashboard</small>
-          </div>
-          <button class="action-btn delete-btn" id="logoutBtn" style="margin-left:12px;">Logout</button>
-        </div>
-      </div>
-
-      <div id="dashboardSection" class="section dashboard active">
-        <div class="dashboard-cards">
-          <div class="card">
-            <div class="card-header"><div class="card-icon"><i class="fas fa-users"></i></div></div>
-            <div class="card-title">Total Students</div><div class="card-value">0</div>
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-icon"><i class="fas fa-book"></i></div></div>
-            <div class="card-title">Active Courses</div><div class="card-value">0</div>
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-icon"><i class="fas fa-user-shield"></i></div></div>
-            <div class="card-title">Active Admins</div><div class="card-value" id="activeAdminsCard">0</div>
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-icon"><i class="fas fa-chart-line"></i></div></div>
-            <div class="card-title">Success Rate</div><div class="card-value">0%</div>
-          </div>
-        </div>
-
-        <div class="student-list">
-          <div class="table-header">
-            <h2>Recent Students</h2>
-            <button class="add-student-btn" onclick="openModal()"><i class="fas fa-plus"></i>Add Student</button>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Student Name</th>
-                <th>Email</th>
-                <th>Student ID</th>
-                <th>Department</th>
-                <th>Course Name</th>
-                <th>College Type</th>
-                <th>Enrollment Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="studentTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="studentsSection" class="section">
-        <div class="student-list">
-          <div class="table-header">
-            <h2>All Students</h2>
-            <button class="add-student-btn" onclick="openModal()"><i class="fas fa-plus"></i>Add Student</button>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Student Name</th>
-                <th>Email</th>
-                <th>Student ID</th>
-                <th>Department</th>
-                <th>Course Name</th>
-                <th>College Type</th>
-                <th>Enrollment Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="allStudentsTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="facultySection" class="section">
-        <div class="student-list">
-          <div class="table-header">
-            <h2>All Faculties</h2>
-            <div class="filter-buttons">
-              <button id="activeBtn" class="filter-btn active" onclick="loadFaculties('active')">Active</button>
-              <button id="inactiveBtn" class="filter-btn" onclick="loadFaculties('inactive')">Inactive</button>
-            </div>
-            <button class="add-student-btn" onclick="openFacultyModal()"><i class="fas fa-plus"></i>Add Faculty</button>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Faculty Name</th>
-                <th>Email</th>
-                <th>Faculty ID</th>
-                <th>Department</th>
-                <th>College Type</th>
-                <th>Enrollment Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="allfacultyTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="staffSection" class="section">
-        <div class="student-list">
-          <div class="table-header">
-            <h2>All Staff</h2>
-            <div class="filter-buttons">
-              <button id="staffActiveBtn" class="filter-btn active" onclick="loadStaff('active')">Active</button>
-              <button id="staffInactiveBtn" class="filter-btn" onclick="loadStaff('inactive')">Inactive</button>
-            </div>
-            <button class="add-student-btn" onclick="openStaffModal()"><i class="fas fa-plus"></i>Add Staff</button>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Staff Name</th>
-                <th>Email</th>
-                <th>Staff ID</th>
-                <th>Department</th>
-                <th>College Type</th>
-                <th>Enrollment Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="allStaffTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="adminsSection" class="section">
-        <div class="admin-list">
-          <div class="table-header">
-            <h2>All Admins</h2>
-            <div class="filter-buttons">
-              <button id="adminActiveBtn" class="filter-btn active" onclick="loadAdmins('active')">Active</button>
-              <button id="adminInactiveBtn" class="filter-btn" onclick="loadAdmins('inactive')">Inactive</button>
-            </div>
-            <button class="add-student-btn" onclick="openAdminModal()"><i class="fas fa-plus"></i>Add Admin</button>
-          </div>
-          <table>
-            <thead>
-              <tr><th>ID</th><th>Username</th><th>Email</th><th>Account Type</th><th>Status</th><th>Actions</th></tr>
-            </thead>
-            <tbody id="allAdminsTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="departmentsSection" class="section">
-        <div class="course-list">
-          <div class="table-header">
-            <h2>Department Management</h2>
-            <button class="add-student-btn" onclick="openDepartmentModal()"><i class="fas fa-plus"></i>Add Department</button>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Department ID</th>
-                <th>Department Name</th>
-                <th>College Type</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="departmentTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="coursesSection" class="section">
-        <div class="course-list">
-          <div class="table-header">
-            <h2>Course Management</h2>
-            <button class="add-student-btn" onclick="openCourseModal()"><i class="fas fa-plus"></i>Add Course</button>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Course ID</th>
-                <th>Course Name</th>
-                <th>Department</th>
-                <th>College Type</th>
-                <th>Description</th>
-                <th>Duration (months)</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="courseTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="reportsSection" class="section"><h2>Reports Coming Soon</h2></div>
-      <div id="settingsSection" class="section"><h2>Settings Coming Soon</h2></div>
-    </div>
-  </div>
-
-  <div class="modal" id="studentModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="modalTitle">Add New Student</h2>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
-      </div>
-      <form id="studentForm">
-        <div class="form-group"><label for="studentName">Student Name</label><input type="text" id="studentName" required /></div>
-        <div class="form-group"><label for="studentEmail">Email</label><input type="email" id="studentEmail" required /></div>
-        <div class="form-group"><label for="studentId">Student ID</label><input type="text" id="studentId" required /></div>
-
-        <div class="form-group">
-          <label for="studentDepartment">Department</label>
-          <select id="studentDepartment" required>
-            <option value="">Select Department</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="studentCourse">Course</label>
-          <select id="studentCourse" required>
-            <option value="">Select Course</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="studentCollegeType">College Type</label>
-          <select id="studentCollegeType" required>
-            <option value="">Select College Type</option>
-            <option value="AMCEC">AMCEC</option>
-            <option value="AMCDC">AMCDC</option>
-          </select>
-        </div>
-
-        <div class="form-group"><label for="enrollmentDate">Enrollment Date</label><input type="date" id="enrollmentDate" required /></div>
-        <button type="submit" class="submit-btn">Save Student</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal" id="FacultyModel">
-    <div class="modal-content">
-      <div class="modal-header"><h2 id="modelTitle"></h2><button class="close-btn" onclick="closeFacultyModal()">&times;</button></div>
-      <form id="facultyForm">
-        <div class="form-group"><label for="facultyName">Faculty Name</label><input type="text" id="facultyName" required /></div>
-        <div class="form-group"><label for="facultyEmail">Email</label><input type="email" id="facultyEmail" required /></div>
-        <div class="form-group"><label for="facultyId">Faculty ID</label><input type="text" id="facultyId" required /></div>
-
-        <div class="form-group">
-          <label for="facultyDepartment">Department</label>
-          <select id="facultyDepartment" required>
-            <option value="">Select Department</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="facultyCollegeType">College Type</label>
-          <select id="facultyCollegeType" required>
-            <option value="">Select College Type</option>
-            <option value="AMCEC">AMCEC</option>
-            <option value="AMCDC">AMCDC</option>
-          </select>
-        </div>
-
-        <div class="form-group"><label for="facultyEnrollmentDate">Enrollment Date</label><input type="date" id="facultyEnrollmentDate" required /></div>
-        <button type="submit" id="submitBtn" class="submit-btn"></button>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal" id="staffModal">
-    <div class="modal-content">
-      <div class="modal-header"><h2 id="staffModalTitle">Add New Staff</h2><button class="close-btn" onclick="closeStaffModal()">&times;</button></div>
-      <form id="staffForm">
-        <div class="form-group"><label for="staffName">Staff Name</label><input type="text" id="staffName" required /></div>
-        <div class="form-group"><label for="staffEmail">Email</label><input type="email" id="staffEmail" required /></div>
-        <div class="form-group"><label for="staffId">Staff ID</label><input type="text" id="staffId" required /></div>
-
-        <div class="form-group">
-          <label for="staffDepartment">Department</label>
-          <select id="staffDepartment" required>
-            <option value="">Select Department</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="staffCollegeType">College Type</label>
-          <select id="staffCollegeType" required>
-            <option value="">Select College Type</option>
-            <option value="AMCEC">AMCEC</option>
-            <option value="AMCDC">AMCDC</option>
-          </select>
-        </div>
-
-        <div class="form-group"><label for="staffEnrollmentDate">Enrollment Date</label><input type="date" id="staffEnrollmentDate" required /></div>
-        <div class="form-group"><label for="staffPassword">Password</label><input type="text" id="staffPassword" required /></div>
-        <button type="submit" id="staffSubmitBtn" class="submit-btn">Add Staff</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal" id="adminModal">
-    <div class="modal-content">
-      <div class="modal-header"><h2 id="adminModalTitle">Add New Admin</h2><button class="close-btn" onclick="closeAdminModal()">&times;</button></div>
-      <form id="adminForm">
-        <div class="form-group"><label for="adminAccountType">Account Type</label>
-          <select id="adminAccountType" required>
-            <option value="Admin">Admin</option>
-            <option value="SuperAdmin">SuperAdmin</option>
-          </select>
-        </div>
-        <div class="form-group"><label for="adminUsername">Username</label><input type="text" id="adminUsername" required /></div>
-        <div class="form-group"><label for="adminEmail">Email</label><input type="email" id="adminEmail" required /></div>
-        <div class="form-group"><label for="adminPassword">Password</label><input type="text" id="adminPassword" required /></div>
-        <button type="submit" id="adminSubmitBtn" class="submit-btn">Add Admin</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal" id="departmentModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="departmentModalTitle">Add New Department</h2>
-        <button class="close-btn" onclick="closeDepartmentModal()">&times;</button>
-      </div>
-      <form id="departmentForm">
-        <div class="form-group"><label for="departmentId">Department ID</label><input type="text" id="departmentId" required /></div>
-        <div class="form-group"><label for="departmentName">Department Name</label><input type="text" id="departmentName" required /></div>
-        <div class="form-group">
-          <label for="departmentCollegeType">College Type</label>
-          <select id="departmentCollegeType" required>
-            <option value="">Select College Type</option>
-            <option value="AMCEC">AMCEC</option>
-            <option value="AMCDC">AMCDC</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="departmentStatus">Status</label>
-          <select id="departmentStatus" required>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-        <button type="submit" class="submit-btn">Save Department</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal" id="deleteConfirmationModal">
-    <div class="modal-content">
-      <div class="modal-header"><h2>Confirm Deletion</h2><button class="close-btn" onclick="closeDeleteModal()">&times;</button></div>
-      <div style="margin: 20px 0"><p>Are you sure you want to delete this item? This action cannot be undone.</p></div>
-      <div style="display: flex; gap: 10px; justify-content: flex-end">
-        <button class="action-btn" onclick="closeDeleteModal()" style="padding: 8px 16px">Cancel</button>
-        <button class="action-btn delete-btn" onclick="confirmDelete()" style="padding: 8px 16px">Delete</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal" id="courseModal">
-    <div class="modal-content">
-      <div class="modal-header"><h2 id="courseModalTitle">Add New Course</h2><button class="close-btn" onclick="closeCourseModal()">&times;</button></div>
-      <form id="courseForm">
-        <div class="form-group"><label for="courseId">Course ID</label><input type="text" id="courseId" required /></div>
-        <div class="form-group"><label for="courseName">Course Name</label><input type="text" id="courseName" required /></div>
-
-        <div class="form-group">
-          <label for="courseDepartment">Department</label>
-          <select id="courseDepartment" required>
-            <option value="">Select Department</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="courseCollegeType">College Type</label>
-          <select id="courseCollegeType" required>
-            <option value="">Select College Type</option>
-            <option value="AMCEC">AMCEC</option>
-            <option value="AMCDC">AMCDC</option>
-          </select>
-        </div>
-
-        <div class="form-group"><label for="courseDescription">Description</label><textarea id="courseDescription" required rows="3"></textarea></div>
-        <div class="form-group"><label for="courseDuration">Duration (months)</label><input type="number" id="courseDuration" required min="1" /></div>
-        <div class="form-group"><label for="courseStatus">Status</label><select id="courseStatus" required><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
-        <button type="submit" class="submit-btn">Save Course</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="loading-spinner"><div class="spinner"></div></div>
-
-  <script>
-    const API_BASE_URL = "http://localhost:3000";
-    const ERP_SESSION_STORAGE_KEY = "collegeErpLoggedInUser";
-
-    let students = [];
-    let courses = [];
-    let departments = [];
-
-    let currentSection = "dashboard";
-    let editingId = null;
-    let editingCourseId = null;
-    let editingAdminId = null;
-    let editingDepartmentId = null;
-    let deleteType = "";
-    let deleteId = null;
-
-    const studentTableBody = document.getElementById("studentTableBody");
-    const allStudentsTableBody = document.getElementById("allStudentsTableBody");
-    const courseTableBody = document.getElementById("courseTableBody");
-    const departmentTableBody = document.getElementById("departmentTableBody");
-
-    const studentModal = document.getElementById("studentModal");
-    const courseModal = document.getElementById("courseModal");
-    const staffModal = document.getElementById("staffModal");
-    const departmentModal = document.getElementById("departmentModal");
-
-    const studentForm = document.getElementById("studentForm");
-    const courseForm = document.getElementById("courseForm");
-    const departmentForm = document.getElementById("departmentForm");
-
-    const searchInput = document.querySelector(".search-bar input");
-    const loadingSpinner = document.querySelector(".loading-spinner");
-
-    function getErpLoggedInUser() {
-      try {
-        return JSON.parse(localStorage.getItem(ERP_SESSION_STORAGE_KEY) || sessionStorage.getItem(ERP_SESSION_STORAGE_KEY) || "null");
-      } catch (error) {
-        return null;
-      }
-    }
-
-    function clearErpLoggedInUser() {
-      localStorage.removeItem(ERP_SESSION_STORAGE_KEY);
-      sessionStorage.removeItem(ERP_SESSION_STORAGE_KEY);
-    }
-
-    function getUserDisplayName(user) {
-      return user?.name || user?.username || user?.fullName || user?.email || "User";
-    }
-
-    function getUserRoleText(user) {
-      const role = user?.loginType || user?.role || user?.accountType || "Admin";
-      return String(role).charAt(0).toUpperCase() + String(role).slice(1);
-    }
-
-    function buildUserInitials(name) {
-      return String(name || "U")
-        .split(/\s+/)
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((part) => part[0].toUpperCase())
-        .join("") || "U";
-    }
-
-    function applyLoggedInUserToAdminDashboard() {
-      const user = getErpLoggedInUser();
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
-
-      const name = getUserDisplayName(user);
-      const roleText = getUserRoleText(user);
-
-      document.getElementById("loggedInUserName").textContent = name;
-      document.getElementById("loggedInUserRole").textContent = roleText;
-      document.getElementById("loggedInUserAvatar").innerHTML = buildUserInitials(name);
-    }
-
-    function attachLogoutHandlers() {
-      [document.getElementById("logoutBtn"), document.getElementById("sidebarLogoutBtn")].forEach((btn) => {
-        if (!btn) return;
-        btn.addEventListener("click", function (event) {
-          event.preventDefault();
-          clearErpLoggedInUser();
-          window.location.href = "login.html";
-        });
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      applyLoggedInUserToAdminDashboard();
-      attachLogoutHandlers();
-      initializeEventListeners();
-      initializeFacultyModule();
-      initializeStaffModule();
-      initializeAdminModule();
-      await checkAndLoadData();
-    });
-
-    function initializeEventListeners() {
-      studentForm.addEventListener("submit", handleFormSubmit);
-      courseForm.addEventListener("submit", handleCourseFormSubmit);
-      departmentForm.addEventListener("submit", handleDepartmentFormSubmit);
-      searchInput.addEventListener("input", handleSearch);
-
-      document.querySelectorAll(".nav-item").forEach((item) => {
-        item.addEventListener("click", () => {
-          const section = item.dataset.section;
-          if (section) navigateToSection(section);
-        });
-      });
-
-      window.onclick = (event) => {
-        if (event.target === studentModal) closeModal();
-        if (event.target === courseModal) closeCourseModal();
-        if (event.target === staffModal) closeStaffModal();
-        if (event.target === departmentModal) closeDepartmentModal();
-        if (event.target === document.getElementById("FacultyModel")) closeFacultyModal();
-        if (event.target === document.getElementById("adminModal")) closeAdminModal();
-        if (event.target === document.getElementById("deleteConfirmationModal")) closeDeleteModal();
-      };
-    }
-
-    async function checkAndLoadData() {
-      showLoading();
-      try {
-        await loadDepartments();
-        await loadCourses();
-        await Promise.all([loadStudents(), updateDashboardStats(), loadAdmins("active")]);
-      } catch (error) {
-        console.error("Error during initialization:", error);
-        showNotification("Error initializing application", "error");
-      } finally {
-        hideLoading();
-      }
-    }
-
-    function navigateToSection(section) {
-      currentSection = section;
-
-      document.querySelectorAll(".nav-item").forEach((item) => {
-        item.classList.remove("active");
-        if (item.dataset.section === section) item.classList.add("active");
-      });
-
-      document.querySelectorAll(".section").forEach((sectionEl) => sectionEl.classList.remove("active"));
-      document.getElementById(`${section}Section`).classList.add("active");
-
-      if (section === "courses") {
-        loadCourses();
-      } else if (section === "students" || section === "dashboard") {
-        loadStudents();
-        updateDashboardStats();
-      } else if (section === "faculty") {
-        loadFaculties("active");
-      } else if (section === "staff") {
-        loadStaff("active");
-      } else if (section === "admins") {
-        loadAdmins("active");
-      } else if (section === "departments") {
-        loadDepartments();
-      }
-    }
-
-    async function updateDashboardStats() {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`);
-        if (!response.ok) throw new Error("Failed to fetch dashboard stats");
-        const stats = await response.json();
-
-        document.querySelector(".card:nth-child(1) .card-value").textContent = (stats.totalStudents || 0).toLocaleString();
-        document.querySelector(".card:nth-child(2) .card-value").textContent = (stats.activeCourses || 0).toLocaleString();
-        document.querySelector(".card:nth-child(4) .card-value").textContent = `${stats.successRate || 0}%`;
-      } catch (error) {
-        console.error("Error updating dashboard stats:", error);
-        showNotification("Error updating statistics", "error");
-      }
-    }
-
-    async function updateAdminCardCount() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/active`);
-        const admins = await res.json();
-        const count = Array.isArray(admins) ? admins.length : 0;
-        document.getElementById("activeAdminsCard").textContent = count;
-      } catch (error) {
-        document.getElementById("activeAdminsCard").textContent = "0";
-      }
-    }
-
-    async function loadStudents() {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/students`);
-        if (!response.ok) throw new Error("Failed to fetch students");
-        students = await response.json();
-        renderStudentTables(students);
-      } catch (error) {
-        console.error("Error loading students:", error);
-        showNotification("Error loading students", "error");
-        students = [];
-        renderStudentTables([]);
-      }
-    }
-
-    async function loadCourses() {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/courses`);
-        if (!response.ok) throw new Error("Failed to fetch courses");
-        courses = await response.json();
-        updateCourseDropdown(courses);
-        renderCourseTable(courses);
-        return courses;
-      } catch (error) {
-        console.error("Error loading courses:", error);
-        showNotification("Error loading courses", "error");
-        courses = [];
-        renderCourseTable([]);
-      }
-    }
-
-    async function loadDepartments() {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/departments`);
-        if (!response.ok) throw new Error("Failed to fetch departments");
-        departments = await response.json();
-        renderDepartmentTable(departments);
-        updateDepartmentDropdowns(departments);
-      } catch (error) {
-        console.error("Error loading departments:", error);
-        showNotification("Error loading departments", "error");
-        departments = [];
-        renderDepartmentTable([]);
-      }
-    }
-
-    async function createStudent(studentData) {
-      const response = await fetch(`${API_BASE_URL}/api/students`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(studentData),
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to create student");
-      }
-      return response.json();
-    }
-
-    async function updateStudent(id, studentData) {
-      const response = await fetch(`${API_BASE_URL}/api/students/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(studentData),
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to update student");
-      }
-      return response.json();
-    }
-
-    async function createCourse(courseData) {
-      const response = await fetch(`${API_BASE_URL}/api/courses`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(courseData),
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to create course");
-      }
-      return response.json();
-    }
-
-    async function updateCourse(id, courseData) {
-      const response = await fetch(`${API_BASE_URL}/api/courses/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(courseData),
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to update course");
-      }
-      return response.json();
-    }
-
-    async function createDepartment(departmentData) {
-      const response = await fetch(`${API_BASE_URL}/api/departments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(departmentData),
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to create department");
-      }
-      return response.json();
-    }
-
-    async function updateDepartment(id, departmentData) {
-      const response = await fetch(`${API_BASE_URL}/api/departments/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(departmentData),
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to update department");
-      }
-      return response.json();
-    }
-
-    function deleteStudent(id) {
-      deleteType = "student";
-      deleteId = id;
-      document.getElementById("deleteConfirmationModal").style.display = "flex";
-    }
-
-    function deleteCourse(id) {
-      deleteType = "course";
-      deleteId = id;
-      document.getElementById("deleteConfirmationModal").style.display = "flex";
-    }
-
-    function deleteDepartment(id) {
-      deleteType = "department";
-      deleteId = id;
-      document.getElementById("deleteConfirmationModal").style.display = "flex";
-    }
-
-    function closeDeleteModal() {
-      document.getElementById("deleteConfirmationModal").style.display = "none";
-      deleteType = "";
-      deleteId = null;
-    }
-
-    async function confirmDelete() {
-      showLoading();
-      try {
-        if (deleteType === "student") {
-          const response = await fetch(`${API_BASE_URL}/api/students/${deleteId}`, { method: "DELETE" });
-          if (!response.ok) throw new Error("Failed to delete student");
-          showNotification("Student deleted successfully", "success");
-          await loadStudents();
-          await updateDashboardStats();
-        } else if (deleteType === "course") {
-          const response = await fetch(`${API_BASE_URL}/api/courses/${deleteId}`, { method: "DELETE" });
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || "Failed to delete course");
-          }
-          showNotification("Course deleted successfully", "success");
-          await loadCourses();
-          await updateDashboardStats();
-        } else if (deleteType === "department") {
-          const response = await fetch(`${API_BASE_URL}/api/departments/${deleteId}`, { method: "DELETE" });
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || "Failed to delete department");
-          }
-          showNotification("Department deleted successfully", "success");
-          await loadDepartments();
-        }
-      } catch (error) {
-        showNotification(error.message || "Error during deletion", "error");
-      } finally {
-        hideLoading();
-        closeDeleteModal();
-      }
-    }
-
-    async function handleFormSubmit(e) {
-      e.preventDefault();
-      showLoading();
-
-      const selectedCourse = courses.find(c => c._id === document.getElementById("studentCourse").value);
-
-      const studentData = {
-        name: document.getElementById("studentName").value.trim(),
-        email: document.getElementById("studentEmail").value.trim(),
-        studentId: document.getElementById("studentId").value.trim(),
-        department: document.getElementById("studentDepartment").value,
-        course: document.getElementById("studentCourse").value,
-        courseName: selectedCourse ? selectedCourse.name : "",
-        collegeType: document.getElementById("studentCollegeType").value,
-        enrollmentDate: document.getElementById("enrollmentDate").value,
-        status: "active",
-      };
-
-      try {
-        if (editingId) {
-          await updateStudent(editingId, studentData);
-          showNotification("Student updated successfully", "success");
-        } else {
-          await createStudent(studentData);
-          showNotification("Student created successfully", "success");
-        }
-
-        closeModal();
-        await loadStudents();
-        await updateDashboardStats();
-      } catch (error) {
-        showNotification(error.message || "Error saving student data", "error");
-      } finally {
-        hideLoading();
-      }
-    }
-
-    async function handleCourseFormSubmit(e) {
-      e.preventDefault();
-      showLoading();
-
-      const courseData = {
-        courseId: document.getElementById("courseId").value.trim(),
-        name: document.getElementById("courseName").value.trim(),
-        department: document.getElementById("courseDepartment").value,
-        collegeType: document.getElementById("courseCollegeType").value,
-        description: document.getElementById("courseDescription").value.trim(),
-        duration: parseInt(document.getElementById("courseDuration").value),
-        durationMonths: parseInt(document.getElementById("courseDuration").value),
-        status: document.getElementById("courseStatus").value,
-      };
-
-      try {
-        if (editingCourseId) {
-          await updateCourse(editingCourseId, courseData);
-          showNotification("Course updated successfully", "success");
-        } else {
-          await createCourse(courseData);
-          showNotification("Course created successfully", "success");
-        }
-
-        closeCourseModal();
-        await loadCourses();
-        await updateDashboardStats();
-      } catch (error) {
-        showNotification(error.message || "Error saving course data", "error");
-      } finally {
-        hideLoading();
-      }
-    }
-
-    async function handleDepartmentFormSubmit(e) {
-      e.preventDefault();
-      showLoading();
-
-      const departmentData = {
-        departmentId: document.getElementById("departmentId").value.trim(),
-        name: document.getElementById("departmentName").value.trim(),
-        collegeType: document.getElementById("departmentCollegeType").value,
-        status: document.getElementById("departmentStatus").value
-      };
-
-      try {
-        if (editingDepartmentId) {
-          await updateDepartment(editingDepartmentId, departmentData);
-          showNotification("Department updated successfully", "success");
-        } else {
-          await createDepartment(departmentData);
-          showNotification("Department created successfully", "success");
-        }
-
-        closeDepartmentModal();
-        await loadDepartments();
-      } catch (error) {
-        showNotification(error.message || "Error saving department", "error");
-      } finally {
-        hideLoading();
-      }
-    }
-
-    function renderStudentTables(studentsToRender) {
-      [studentTableBody, allStudentsTableBody].forEach((table) => {
-        if (!table) return;
-        table.innerHTML = "";
-
-        if (studentsToRender.length === 0) {
-          table.innerHTML = `
-            <tr>
-              <td colspan="9" class="empty-state">
-                <i class="fas fa-users"></i>
-                <h3>No Students Found</h3>
-                <p>Click "Add Student" to add your first student</p>
-              </td>
-            </tr>`;
-          return;
-        }
-
-        studentsToRender.forEach((student) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${escapeHtml(student.name || "")}</td>
-            <td>${escapeHtml(student.email || "")}</td>
-            <td>${escapeHtml(student.studentId || "")}</td>
-            <td>${escapeHtml(student.department || "")}</td>
-            <td>${escapeHtml(student.courseName || "")}</td>
-            <td>${escapeHtml(student.collegeType || "")}</td>
-            <td>${formatDate(student.enrollmentDate)}</td>
-            <td><span class="status-badge status-${student.status || "active"}">${capitalizeFirstLetter(student.status || "active")}</span></td>
-            <td class="action-buttons">
-              <button class="action-btn edit-btn" onclick="editStudent('${student._id}')"><i class="fas fa-edit"></i> Edit</button>
-              <button class="action-btn delete-btn" onclick="deleteStudent('${student._id}')"><i class="fas fa-trash"></i> Delete</button>
-            </td>`;
-          table.appendChild(row);
-        });
-      });
-    }
-
-    function renderCourseTable(coursesToRender) {
-      courseTableBody.innerHTML = "";
-
-      if (coursesToRender.length === 0) {
-        courseTableBody.innerHTML = `
-          <tr>
-            <td colspan="8" class="empty-state">
-              <i class="fas fa-book"></i>
-              <h3>No Courses Found</h3>
-              <p>Click "Add Course" to add your first course</p>
-            </td>
-          </tr>`;
-        return;
-      }
-
-      coursesToRender.forEach((course) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${escapeHtml(course.courseId || "")}</td>
-          <td>${escapeHtml(course.name || "")}</td>
-          <td>${escapeHtml(course.department || "")}</td>
-          <td>${escapeHtml(course.collegeType || "")}</td>
-          <td>${escapeHtml(course.description || "")}</td>
-          <td>${course.durationMonths || course.duration || ""}</td>
-          <td><span class="status-badge status-${course.status}">${capitalizeFirstLetter(course.status)}</span></td>
-          <td class="action-buttons">
-            <button class="action-btn edit-btn" onclick="editCourse('${course._id}')"><i class="fas fa-edit"></i> Edit</button>
-            <button class="action-btn delete-btn" onclick="deleteCourse('${course._id}')"><i class="fas fa-trash"></i> Delete</button>
-          </td>`;
-        courseTableBody.appendChild(row);
-      });
-    }
-
-    function renderDepartmentTable(departmentsToRender) {
-      if (!departmentTableBody) return;
-
-      departmentTableBody.innerHTML = "";
-
-      if (departmentsToRender.length === 0) {
-        departmentTableBody.innerHTML = `
-          <tr>
-            <td colspan="5" class="empty-state">
-              <i class="fas fa-building"></i>
-              <h3>No Departments Found</h3>
-              <p>Click "Add Department" to add your first department</p>
-            </td>
-          </tr>`;
-        return;
-      }
-
-      departmentsToRender.forEach((department) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${escapeHtml(department.departmentId || "")}</td>
-          <td>${escapeHtml(department.name || "")}</td>
-          <td>${escapeHtml(department.collegeType || "")}</td>
-          <td><span class="status-badge status-${department.status || "active"}">${capitalizeFirstLetter(department.status || "active")}</span></td>
-          <td class="action-buttons">
-            <button class="action-btn edit-btn" onclick="editDepartment('${department._id}')"><i class="fas fa-edit"></i> Edit</button>
-            <button class="action-btn delete-btn" onclick="deleteDepartment('${department._id}')"><i class="fas fa-trash"></i> Delete</button>
-          </td>`;
-        departmentTableBody.appendChild(row);
-      });
-    }
-
-    function updateCourseDropdown(courses) {
-      const courseSelect = document.getElementById("studentCourse");
-      courseSelect.innerHTML = '<option value="">Select Course</option>';
-
-      courses
-        .filter((course) => (course.status || "").toLowerCase() === "active")
-        .forEach((course) => {
-          const option = document.createElement("option");
-          option.value = course._id;
-          option.textContent = course.name;
-          courseSelect.appendChild(option);
-        });
-    }
-
-    function updateDepartmentDropdowns(departments) {
-      const dropdownIds = ["studentDepartment", "courseDepartment", "facultyDepartment", "staffDepartment"];
-
-      dropdownIds.forEach((id) => {
-        const select = document.getElementById(id);
-        if (!select) return;
-
-        select.innerHTML = '<option value="">Select Department</option>';
-
-        departments
-          .filter((department) => (department.status || "").toLowerCase() === "active")
-          .forEach((department) => {
-            const option = document.createElement("option");
-            option.value = department.name;
-            option.textContent = department.name;
-            select.appendChild(option);
-          });
-      });
-    }
-
-    function openModal() {
-      studentModal.style.display = "flex";
-      editingId = null;
-      studentForm.reset();
-      document.getElementById("modalTitle").textContent = "Add New Student";
-    }
-
-    function closeModal() {
-      studentModal.style.display = "none";
-      editingId = null;
-      studentForm.reset();
-    }
-
-    function openCourseModal() {
-      courseModal.style.display = "flex";
-      editingCourseId = null;
-      courseForm.reset();
-      document.getElementById("courseModalTitle").textContent = "Add New Course";
-    }
-
-    function closeCourseModal() {
-      courseModal.style.display = "none";
-      editingCourseId = null;
-      courseForm.reset();
-    }
-
-    function openDepartmentModal() {
-      departmentModal.style.display = "flex";
-      editingDepartmentId = null;
-      departmentForm.reset();
-      document.getElementById("departmentModalTitle").textContent = "Add New Department";
-    }
-
-    function closeDepartmentModal() {
-      departmentModal.style.display = "none";
-      editingDepartmentId = null;
-      departmentForm.reset();
-    }
-
-    async function editStudent(id) {
-      showLoading();
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/students/${id}`);
-        if (!response.ok) throw new Error("Failed to fetch student");
-        const student = await response.json();
-
-        editingId = id;
-        document.getElementById("modalTitle").textContent = "Edit Student";
-        document.getElementById("studentName").value = student.name || "";
-        document.getElementById("studentEmail").value = student.email || "";
-        document.getElementById("studentId").value = student.studentId || "";
-        document.getElementById("studentDepartment").value = student.department || "";
-        document.getElementById("studentCourse").value = student.course || "";
-        document.getElementById("studentCollegeType").value = student.collegeType || "";
-        document.getElementById("enrollmentDate").value = formatDateForInput(student.enrollmentDate);
-
-        studentModal.style.display = "flex";
-      } catch (error) {
-        showNotification(error.message || "Error loading student data", "error");
-      } finally {
-        hideLoading();
-      }
-    }
-
-    async function editCourse(id) {
-      showLoading();
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/courses/${id}`);
-        if (!response.ok) throw new Error("Failed to fetch course");
-        const course = await response.json();
-
-        editingCourseId = id;
-        document.getElementById("courseModalTitle").textContent = "Edit Course";
-        document.getElementById("courseId").value = course.courseId || "";
-        document.getElementById("courseName").value = course.name || "";
-        document.getElementById("courseDepartment").value = course.department || "";
-        document.getElementById("courseCollegeType").value = course.collegeType || "";
-        document.getElementById("courseDescription").value = course.description || "";
-        document.getElementById("courseDuration").value = course.durationMonths || course.duration || "";
-        document.getElementById("courseStatus").value = course.status || "active";
-
-        courseModal.style.display = "flex";
-      } catch (error) {
-        showNotification(error.message || "Error loading course data", "error");
-      } finally {
-        hideLoading();
-      }
-    }
-
-    async function editDepartment(id) {
-      showLoading();
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/departments/${id}`);
-        if (!response.ok) throw new Error("Failed to fetch department");
-        const department = await response.json();
-
-        editingDepartmentId = id;
-        document.getElementById("departmentModalTitle").textContent = "Edit Department";
-        document.getElementById("departmentId").value = department.departmentId || "";
-        document.getElementById("departmentName").value = department.name || "";
-        document.getElementById("departmentCollegeType").value = department.collegeType || "";
-        document.getElementById("departmentStatus").value = department.status || "active";
-
-        departmentModal.style.display = "flex";
-      } catch (error) {
-        showNotification(error.message || "Error loading department data", "error");
-      } finally {
-        hideLoading();
-      }
-    }
-
-    let searchTimeout;
-    function handleSearch(e) {
-      clearTimeout(searchTimeout);
-      const searchTerm = e.target.value.trim();
-
-      searchTimeout = setTimeout(async () => {
-        if (searchTerm.length === 0) {
-          await loadStudents();
-          return;
-        }
-
-        showLoading();
-        try {
-          const response = await fetch(`${API_BASE_URL}/api/students/search?q=${encodeURIComponent(searchTerm)}`);
-          if (!response.ok) throw new Error("Search failed");
-          const filteredStudents = await response.json();
-          renderStudentTables(filteredStudents);
-        } catch (error) {
-          showNotification("Error searching students", "error");
-        } finally {
-          hideLoading();
-        }
-      }, 300);
-    }
-
-    function formatDate(dateString) {
-      if (!dateString) return "";
-      const options = { year: "numeric", month: "short", day: "numeric" };
-      return new Date(dateString).toLocaleDateString(undefined, options);
-    }
-
-    function formatDateForInput(dateString) {
-      if (!dateString) return "";
-      return new Date(dateString).toISOString().split("T")[0];
-    }
-
-    function capitalizeFirstLetter(string) {
-      return string ? string.charAt(0).toUpperCase() + string.slice(1) : "";
-    }
-
-    function escapeHtml(unsafe) {
-      if (!unsafe) return "";
-      return String(unsafe)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function showLoading() {
-      loadingSpinner.classList.add("active");
-    }
-
-    function hideLoading() {
-      loadingSpinner.classList.remove("active");
-    }
-
-    function showNotification(message, type = "info") {
-      document.querySelectorAll(".notification").forEach((notification) => notification.remove());
-
-      const notification = document.createElement("div");
-      notification.className = `notification ${type}`;
-      notification.textContent = message;
-      document.body.appendChild(notification);
-
-      setTimeout(() => {
-        notification.style.opacity = "0";
-        setTimeout(() => notification.remove(), 500);
-      }, 3000);
-    }
-
-    function initializeFacultyModule() {
-      const API_URL = `${API_BASE_URL}/api/faculty`;
-      let editingFacultyId = null;
-      const modalTitle = document.getElementById("modelTitle");
-      const submitBtn = document.getElementById("submitBtn");
-      const modal = document.getElementById("FacultyModel");
-
-      window.loadFaculties = async function (status = "active") {
-        try {
-          document.getElementById("activeBtn").classList.toggle("active", status === "active");
-          document.getElementById("inactiveBtn").classList.toggle("active", status === "inactive");
-
-          const res = await fetch(`${API_URL}/${status}`);
-          const faculties = await res.json();
-          const tableBody = document.getElementById("allfacultyTableBody");
-          tableBody.innerHTML = "";
-
-          if (!Array.isArray(faculties) || faculties.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No ${status} faculties found</td></tr>`;
-            return;
-          }
-
-          faculties.forEach((faculty, index) => {
-            tableBody.innerHTML += `
-              <tr>
-                <td>${faculty.name || ""}</td>
-                <td>${faculty.email || ""}</td>
-                <td>${faculty.facultyId || index + 1}</td>
-                <td>${faculty.department || ""}</td>
-                <td>${faculty.collegeType || ""}</td>
-                <td>${formatDate(faculty.enrollmentDate)}</td>
-                <td>${faculty.status || status}</td>
-                <td>${status === "active"
-                  ? `<button class="icon-btn edit-btn" onclick="editFaculty('${faculty._id}')"><i class="fa-solid fa-pen"></i></button>
-                     <button class="icon-btn delete-btn" onclick="deleteFaculty('${faculty._id}')"><i class="fa-solid fa-trash"></i></button>`
-                  : `<button class='add-student-btn' onclick="reactivateFaculty('${faculty._id}')">Reactivate</button>`}</td>
-              </tr>`;
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      };
-
-      window.reactivateFaculty = async function (id) {
-        if (!confirm("Are you sure you want to reactivate this faculty?")) return;
-        const res = await fetch(`${API_URL}/reactivate/${id}`, { method: "PATCH" });
-        if (res.ok) {
-          showNotification("Faculty reactivated successfully", "success");
-          loadFaculties("inactive");
-        }
-      };
-
-      window.openFacultyModal = function () {
-        editingFacultyId = null;
-        modal.classList.add("show");
-        modalTitle.innerText = "Add New Faculty";
-        submitBtn.innerText = "Add Faculty";
-        document.getElementById("facultyForm").reset();
-      };
-
-      window.closeFacultyModal = function () {
-        modal.classList.remove("show");
-        document.getElementById("facultyForm").reset();
-        modalTitle.innerText = "Add New Faculty";
-        submitBtn.innerText = "Add Faculty";
-        editingFacultyId = null;
-      };
-
-      window.editFaculty = async function (id) {
-        const res = await fetch(`${API_URL}/${id}`);
-        const data = await res.json();
-        const faculty = data.faculty || data;
-
-        editingFacultyId = id;
-        modalTitle.innerText = "Update Faculty";
-        submitBtn.innerText = "Edit Faculty";
-
-        document.getElementById("facultyName").value = faculty.name || "";
-        document.getElementById("facultyEmail").value = faculty.email || "";
-        document.getElementById("facultyId").value = faculty.facultyId || "";
-        document.getElementById("facultyDepartment").value = faculty.department || "";
-        document.getElementById("facultyCollegeType").value = faculty.collegeType || "";
-        document.getElementById("facultyEnrollmentDate").value = formatDateForInput(faculty.enrollmentDate);
-
-        modal.classList.add("show");
-      };
-
-      window.deleteFaculty = async function (id) {
-        if (!confirm("Are you sure you want to delete this faculty?")) return;
-        const res = await fetch(`${API_URL}/inactive/${id}`, { method: "PATCH" });
-        if (res.ok) {
-          showNotification("Faculty deleted", "success");
-          loadFaculties("active");
-        }
-      };
-
-      document.getElementById("facultyForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const facultyData = {
-          name: document.getElementById("facultyName").value,
-          email: document.getElementById("facultyEmail").value,
-          facultyId: document.getElementById("facultyId").value,
-          department: document.getElementById("facultyDepartment").value,
-          collegeType: document.getElementById("facultyCollegeType").value,
-          enrollmentDate: document.getElementById("facultyEnrollmentDate").value,
-          status: "active",
-          password: "faculty123"
-        };
-
-        const method = editingFacultyId ? "PATCH" : "POST";
-        const url = editingFacultyId ? `${API_URL}/${editingFacultyId}` : API_URL;
-
-        const res = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(facultyData)
-        });
-
-        if (!res.ok) {
-          showNotification("Operation failed", "error");
-          return;
-        }
-
-        showNotification(editingFacultyId ? "Faculty updated" : "Faculty added", "success");
-        closeFacultyModal();
-        loadFaculties("active");
-      });
-
-      loadFaculties("active");
-    }
-
-    function initializeStaffModule() {
-      const STAFF_API_URL = `${API_BASE_URL}/api/staff`;
-      let editingStaffId = null;
-
-      const staffModal = document.getElementById("staffModal");
-      const staffForm = document.getElementById("staffForm");
-      const staffModalTitle = document.getElementById("staffModalTitle");
-      const staffSubmitBtn = document.getElementById("staffSubmitBtn");
-
-      window.loadStaff = async function (status = "active") {
-        try {
-          document.getElementById("staffActiveBtn").classList.toggle("active", status === "active");
-          document.getElementById("staffInactiveBtn").classList.toggle("active", status === "inactive");
-
-          const res = await fetch(`${STAFF_API_URL}/${status}`);
-          const staffList = await res.json();
-          const tableBody = document.getElementById("allStaffTableBody");
-          tableBody.innerHTML = "";
-
-          if (!Array.isArray(staffList) || staffList.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No ${status} staff found</td></tr>`;
-            return;
-          }
-
-          staffList.forEach((staff, index) => {
-            tableBody.innerHTML += `
-              <tr>
-                <td>${staff.name || staff.username || ""}</td>
-                <td>${staff.email || ""}</td>
-                <td>${staff.staffId || index + 1}</td>
-                <td>${staff.department || ""}</td>
-                <td>${staff.collegeType || ""}</td>
-                <td>${formatDate(staff.enrollmentDate)}</td>
-                <td>${staff.isActive === false ? "inactive" : "active"}</td>
-                <td>${status === "active"
-                    ? `<button class="icon-btn edit-btn" onclick="editStaff('${staff._id}')"><i class="fa-solid fa-pen"></i></button>
-                       <button class="icon-btn delete-btn" onclick="deleteStaff('${staff._id}')"><i class="fa-solid fa-trash"></i></button>`
-                    : `<button class="add-student-btn" onclick="reactivateStaff('${staff._id}')">Reactivate</button>`}</td>
-              </tr>`;
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-      window.openStaffModal = function () {
-        editingStaffId = null;
-        staffForm.reset();
-        staffModalTitle.innerText = "Add New Staff";
-        staffSubmitBtn.innerText = "Add Staff";
-        document.getElementById("staffPassword").value = "staff123";
-        staffModal.classList.add("show");
-      };
-
-      window.closeStaffModal = function () {
-        editingStaffId = null;
-        staffForm.reset();
-        staffModalTitle.innerText = "Add New Staff";
-        staffSubmitBtn.innerText = "Add Staff";
-        staffModal.classList.remove("show");
-      };
-
-      window.editStaff = async function (id) {
-        const res = await fetch(`${STAFF_API_URL}/${id}`);
-        const data = await res.json();
-        const staff = data.staff || data;
-
-        editingStaffId = id;
-        staffModalTitle.innerText = "Edit Staff";
-        staffSubmitBtn.innerText = "Update Staff";
-
-        document.getElementById("staffName").value = staff.name || staff.username || "";
-        document.getElementById("staffEmail").value = staff.email || "";
-        document.getElementById("staffId").value = staff.staffId || "";
-        document.getElementById("staffDepartment").value = staff.department || "";
-        document.getElementById("staffCollegeType").value = staff.collegeType || "";
-        document.getElementById("staffEnrollmentDate").value = formatDateForInput(staff.enrollmentDate);
-        document.getElementById("staffPassword").value = "";
-
-        staffModal.classList.add("show");
-      };
-
-      window.deleteStaff = async function (id) {
-        if (!confirm("Are you sure you want to deactivate this staff?")) return;
-        const res = await fetch(`${STAFF_API_URL}/inactive/${id}`, { method: "PATCH" });
-        if (res.ok) {
-          showNotification("Staff deactivated successfully", "success");
-          loadStaff("active");
-        }
-      };
-
-      window.reactivateStaff = async function (id) {
-        if (!confirm("Are you sure you want to reactivate this staff?")) return;
-        const res = await fetch(`${STAFF_API_URL}/reactivate/${id}`, { method: "PATCH" });
-        if (res.ok) {
-          showNotification("Staff reactivated successfully", "success");
-          loadStaff("inactive");
-        }
-      };
-
-      staffForm.addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const payload = {
-          name: document.getElementById("staffName").value.trim(),
-          username: document.getElementById("staffName").value.trim(),
-          email: document.getElementById("staffEmail").value.trim(),
-          staffId: document.getElementById("staffId").value.trim(),
-          department: document.getElementById("staffDepartment").value,
-          collegeType: document.getElementById("staffCollegeType").value,
-          enrollmentDate: document.getElementById("staffEnrollmentDate").value,
-          password: document.getElementById("staffPassword").value.trim() || "staff123"
-        };
-
-        const method = editingStaffId ? "PATCH" : "POST";
-        const url = editingStaffId ? `${STAFF_API_URL}/${editingStaffId}` : STAFF_API_URL;
-
-        const res = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          showNotification(data.msg || data.message || "Operation failed", "error");
-          return;
-        }
-
-        showNotification(editingStaffId ? "Staff updated successfully" : "Staff added successfully", "success");
-        closeStaffModal();
-        loadStaff("active");
-      });
-
-      loadStaff("active");
-    }
-
-    function initializeAdminModule() {
-      const ADMIN_API_URL = `${API_BASE_URL}/api/admin`;
-      const adminModal = document.getElementById("adminModal");
-      const adminForm = document.getElementById("adminForm");
-      const adminModalTitle = document.getElementById("adminModalTitle");
-      const adminSubmitBtn = document.getElementById("adminSubmitBtn");
-
-      window.loadAdmins = async function (status = "active") {
-        try {
-          document.getElementById("adminActiveBtn").classList.toggle("active", status === "active");
-          document.getElementById("adminInactiveBtn").classList.toggle("active", status === "inactive");
-
-          const res = await fetch(`${ADMIN_API_URL}/${status}`);
-          const adminList = await res.json();
-          const tableBody = document.getElementById("allAdminsTableBody");
-          tableBody.innerHTML = "";
-
-          if (!Array.isArray(adminList) || adminList.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No ${status} admins found</td></tr>`;
-            await updateAdminCardCount();
-            return;
-          }
-
-          adminList.forEach((admin, index) => {
-            tableBody.innerHTML += `
-              <tr>
-                <td>${index + 1}</td>
-                <td>${escapeHtml(admin.username || "")}</td>
-                <td>${escapeHtml(admin.email || "")}</td>
-                <td>${escapeHtml(admin.accountType || "Admin")}</td>
-                <td>${admin.isActive ? "active" : "inactive"}</td>
-                <td>${status === "active"
-                    ? `<button class="icon-btn edit-btn" onclick="editAdmin('${admin._id}')"><i class="fa-solid fa-pen"></i></button>
-                       <button class="icon-btn delete-btn" onclick="deleteAdmin('${admin._id}')"><i class="fa-solid fa-trash"></i></button>`
-                    : `<button class="add-student-btn" onclick="reactivateAdmin('${admin._id}')">Reactivate</button>`}
-                </td>
-              </tr>`;
-          });
-
-          await updateAdminCardCount();
-        } catch (error) {
-          console.error("Error loading admins:", error);
-          document.getElementById("allAdminsTableBody").innerHTML = `<tr><td colspan="6" style="text-align:center;">Unable to load admins</td></tr>`;
-          await updateAdminCardCount();
-        }
-      };
-
-      window.openAdminModal = function () {
-        editingAdminId = null;
-        adminForm.reset();
-        adminModalTitle.innerText = "Add New Admin";
-        adminSubmitBtn.innerText = "Add Admin";
-        document.getElementById("adminPassword").value = "admin123";
-        adminModal.classList.add("show");
-      };
-
-      window.closeAdminModal = function () {
-        editingAdminId = null;
-        adminForm.reset();
-        adminModalTitle.innerText = "Add New Admin";
-        adminSubmitBtn.innerText = "Add Admin";
-        adminModal.classList.remove("show");
-      };
-
-      window.editAdmin = async function (id) {
-        try {
-          const res = await fetch(`${ADMIN_API_URL}/${id}`);
-          const data = await res.json();
-          const admin = data.admin;
-
-          editingAdminId = id;
-          adminModalTitle.innerText = "Edit Admin";
-          adminSubmitBtn.innerText = "Update Admin";
-
-          document.getElementById("adminAccountType").value = admin.accountType || "Admin";
-          document.getElementById("adminUsername").value = admin.username || "";
-          document.getElementById("adminEmail").value = admin.email || "";
-          document.getElementById("adminPassword").value = "";
-
-          adminModal.classList.add("show");
-        } catch (error) {
-          showNotification("Error loading admin data", "error");
-        }
-      };
-
-      window.deleteAdmin = async function (id) {
-        if (!confirm("Are you sure you want to deactivate this admin?")) return;
-        const res = await fetch(`${ADMIN_API_URL}/inactive/${id}`, { method: "PATCH" });
-        if (res.ok) {
-          showNotification("Admin deactivated successfully", "success");
-          loadAdmins("active");
-        } else {
-          showNotification("Deactivate failed", "error");
-        }
-      };
-
-      window.reactivateAdmin = async function (id) {
-        if (!confirm("Are you sure you want to reactivate this admin?")) return;
-        const res = await fetch(`${ADMIN_API_URL}/reactivate/${id}`, { method: "PATCH" });
-        if (res.ok) {
-          showNotification("Admin reactivated successfully", "success");
-          loadAdmins("inactive");
-        } else {
-          showNotification("Reactivate failed", "error");
-        }
-      };
-
-      adminForm.addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const payload = {
-          accountType: document.getElementById("adminAccountType").value,
-          username: document.getElementById("adminUsername").value.trim(),
-          email: document.getElementById("adminEmail").value.trim(),
-          password: document.getElementById("adminPassword").value.trim()
-        };
-
-        try {
-          const method = editingAdminId ? "PATCH" : "POST";
-          const url = editingAdminId ? `${ADMIN_API_URL}/${editingAdminId}` : ADMIN_API_URL;
-
-          const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            showNotification(data.message || data.msg || "Operation failed", "error");
-            return;
-          }
-
-          showNotification(editingAdminId ? "Admin updated successfully" : "Admin created successfully", "success");
-          closeAdminModal();
-          loadAdmins("active");
-        } catch (error) {
-          showNotification("Error saving admin", "error");
-        }
-      });
-
-      loadAdmins("active");
-    }
-  </script>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2380,6 +618,55 @@
       .bottom-shortcuts { grid-template-columns: 1fr 1fr; }
       .performer-section { grid-template-columns: 1fr; }
     }
+
+    /* ---- live dashboard widgets ---- */
+    .ov-click { cursor: pointer; }
+    .ov-pad { padding: 0 0 24px; }
+    .ov-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin: 20px 0; }
+    .ov-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin: 20px 0; }
+    @media (max-width: 1100px) { .ov-grid-3, .ov-grid-2 { grid-template-columns: 1fr; } }
+    .ov-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .ov-head h3 { font-size: 16px; margin: 0; }
+    .ov-head a { color: var(--primary-color); text-decoration: none; font-size: 13px; }
+    .ov-muted { color: #94a3b8; font-size: 12.5px; }
+    .ov-list { display: flex; flex-direction: column; gap: 12px; }
+    .ov-item { display: flex; align-items: flex-start; gap: 12px; }
+    .ov-item h4 { font-size: 14px; margin: 0 0 2px; }
+    .ov-item p { font-size: 12px; color: #64748b; margin: 0; }
+    .ov-icon, .ov-avatar { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #ede9fe; color: #7c3aed; flex-shrink: 0; font-weight: 700; }
+    .ov-icon.ov-red { background: #fee2e2; color: #dc2626; }
+    .ov-medal { font-size: 26px; }
+    .ov-score { font-weight: 700; color: #16a34a; }
+    .ov-actions { display: flex; gap: 6px; }
+    .ov-actions button { border: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; }
+    .ov-ok { background: #dcfce7; color: #16a34a; }
+    .ov-no { background: #fee2e2; color: #dc2626; }
+    .ov-donut-wrap { display: flex; align-items: center; gap: 24px; margin: 8px 0 16px; }
+    .ov-donut { width: 130px; height: 130px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e2e8f0; flex-shrink: 0; }
+    .ov-donut > div { width: 92px; height: 92px; border-radius: 50%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ov-donut strong { font-size: 22px; }
+    .ov-donut small { font-size: 11px; color: #64748b; }
+    .ov-legend { display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+    .ov-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+    .ov-bars { display: flex; align-items: flex-end; gap: 12px; height: 170px; padding: 0 4px 6px; border-bottom: 1px solid #e2e8f0; }
+    .ov-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; font-size: 11px; color: #64748b; gap: 4px; }
+    .ov-bar { width: 70%; background: linear-gradient(180deg, #22c55e, #16a34a); border-radius: 6px 6px 0 0; }
+    .ov-bar-val { font-size: 10px; color: #16a34a; }
+    .ov-fee-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
+    .ov-fee-summary h4 { font-size: 16px; margin: 0; }
+    .ov-fee-summary p { font-size: 11.5px; color: #64748b; margin: 2px 0 0; }
+    .ov-fee-summary a { color: var(--primary-color); text-decoration: none; display: block; }
+    .ov-search { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; min-width: 200px; }
+    .ov-form-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .ov-form-row input, .ov-form-row select { padding: 9px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; }
+    .ov-form-row input#afTitle { flex: 1 1 240px; }
+    .ov-report-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    .ov-report { border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; cursor: pointer; transition: all .2s; }
+    .ov-report:hover { border-color: var(--primary-color); box-shadow: 0 6px 18px rgba(79, 70, 229, .12); }
+    .ov-report i { font-size: 22px; color: var(--primary-color); }
+    .ov-report h4 { margin: 10px 0 4px; font-size: 15px; }
+    .ov-report p { margin: 0; font-size: 12px; color: #64748b; }
+    #crudModal textarea, #crudModal select, #crudModal input { width: 100%; }
   </style>
 </head>
 <body>
@@ -2390,15 +677,23 @@
 
       <div class="nav-item active" data-section="dashboard"><i class="fas fa-chart-pie"></i><span class="nav-text">Dashboard</span></div>
       <div class="nav-item" data-section="admins"><i class="fas fa-user-shield"></i><span class="nav-text">Admins</span></div>
-      <div class="nav-item" data-section="principle"><i class="fas fa-user-tie"></i><span class="nav-text">Principel</span></div>
+      <div class="nav-item" data-section="principle"><i class="fas fa-user-tie"></i><span class="nav-text">Principal</span></div>
       <div class="nav-item" data-section="HOD"><i class="fas fa-user-tie"></i><span class="nav-text">HOD</span></div>
       <div class="nav-item" data-section="faculty"><i class="fas fa-user"></i><span class="nav-text">Faculty</span></div>
       <div class="nav-item" data-section="students"><i class="fas fa-users"></i><span class="nav-text">Students</span></div>
-      <div class="nav-item" data-section="staff"><i class="fas fa-user-tie"></i><span class="nav-text">Saporting Staff</span></div>
-      <div class="nav-item" data-section="payment"><i class="fas fa-receipt"></i><span class="nav-text">Payment</span></div>
+      <div class="nav-item" data-section="staff"><i class="fas fa-user-tie"></i><span class="nav-text">Supporting Staff</span></div>
+      <div class="nav-item" data-section="payment"><i class="fas fa-receipt"></i><span class="nav-text">Fees &amp; Payments</span></div>
+      <div class="nav-item" data-section="admissions"><i class="fas fa-user-plus"></i><span class="nav-text">Admissions</span></div>
+      <div class="nav-item" data-section="leaves"><i class="fas fa-plane-departure"></i><span class="nav-text">Leave Requests</span></div>
       <div class="nav-item" data-section="departments"><i class="fas fa-building"></i><span class="nav-text">Departments</span></div>
       <div class="nav-item" data-section="courses"><i class="fas fa-book"></i><span class="nav-text">Courses</span></div>
+      <div class="nav-item" data-section="subjects"><i class="fas fa-book-reader"></i><span class="nav-text">Subjects</span></div>
+      <div class="nav-item" data-section="exams"><i class="fas fa-file-alt"></i><span class="nav-text">Exams</span></div>
+      <div class="nav-item" data-section="events"><i class="fas fa-calendar-alt"></i><span class="nav-text">Events</span></div>
+      <div class="nav-item" data-section="notices"><i class="fas fa-bullhorn"></i><span class="nav-text">Notices</span></div>
+      <div class="nav-item" data-section="library"><i class="fas fa-book-open"></i><span class="nav-text">Library</span></div>
       <div class="nav-item" data-section="reports"><i class="fas fa-chart-bar"></i><span class="nav-text">Reports</span></div>
+      <div class="nav-item" data-section="settings"><i class="fas fa-cog"></i><span class="nav-text">Settings</span></div>
       <div class="nav-item" id="sidebarLogoutBtn"><i class="fas fa-sign-out-alt"></i><span class="nav-text">Logout</span></div>
     </div>
 
@@ -2418,12 +713,16 @@
           <span id="currentDateTime">25 May 2024 - 10:15:36 AM</span>
         </div>
         <div class="top-bar-right">
-          <span class="academic-year">Academic Year : 2024 / 2025</span>
-          <div class="icon-group">
-            <i class="fas fa-desktop"></i>
-            <i class="fas fa-eye"></i>
-            <i class="fas fa-expand"></i>
-            <i class="fas fa-bell"></i>
+          <span class="academic-year" id="academicYear">Academic Year</span>
+          <div class="icon-group" style="position:relative">
+            <i class="fas fa-desktop" title="Dashboard home" style="cursor:pointer" onclick="navigateToSection('dashboard')"></i>
+            <i class="fas fa-eye" title="Open public website" style="cursor:pointer" onclick="window.open('index2.html','_blank')"></i>
+            <i class="fas fa-expand" title="Full screen" style="cursor:pointer" onclick="toggleFullscreen()"></i>
+            <span style="position:relative;cursor:pointer" title="Notifications" onclick="toggleNotifPanel(event)">
+              <i class="fas fa-bell"></i>
+              <span id="bellCount" style="display:none;position:absolute;top:-8px;right:-10px;background:#ef4444;color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;font-weight:700"></span>
+            </span>
+            <div id="notifPanel" style="display:none;position:absolute;right:0;top:30px;width:320px;max-height:380px;overflow:auto;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 32px rgba(15,23,42,.15);z-index:1000"></div>
           </div>
           <div class="user-profile">
             <div class="user-avatar" id="loggedInUserAvatar"><i class="fas fa-user"></i></div>
@@ -2442,672 +741,141 @@
         <div class="header">
           <div class="header-left">
             <h1>Admin Dashboard</h1>
-            <div class="breadcrumb">Dashboard / Dashboard / Admin Dashboard</div>
+            <div class="breadcrumb">Dashboard / Overview</div>
           </div>
           <div class="header-right">
             <button class="btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Add New Student</button>
-            <button class="btn-outline">Fees Details</button>
+            <button class="btn-outline" onclick="navigateToSection('payment')">Fees Details</button>
           </div>
         </div>
 
-        <!-- Notification Banner -->
-        <div class="notification-banner" id="notifBanner">
+        <!-- Notification Banner (latest payment / alert) -->
+        <div class="notification-banner" id="notifBanner" style="display:none">
           <i class="fas fa-info-circle"></i>
-          <span>Fahed IILC has paid Fees for the "Term1"</span>
+          <span id="notifBannerText"></span>
           <i class="fas fa-times close-banner" onclick="document.getElementById('notifBanner').style.display='none'"></i>
         </div>
 
         <div class="dashboard-content">
-          <!-- Welcome Banner -->
           <div class="welcome-banner">
             <h2 id="welcomeUserText">Welcome Back, Admin ✏️</h2>
-            <p>Have a Good day at work</p>
-            <div class="update-info"><i class="fas fa-sync-alt"></i> Updated Recently on 15 Jun 2024</div>
+            <p>Have a good day at work</p>
+            <div class="update-info"><i class="fas fa-sync-alt"></i> <span id="overviewUpdated">Loading live data...</span>
+              <a href="#" onclick="loadOverview(); return false;" style="color:inherit;margin-left:8px;">Refresh</a></div>
           </div>
 
           <!-- Stat Cards -->
           <div class="stat-cards">
-            <div class="stat-card">
+            <div class="stat-card ov-click" onclick="navigateToSection('students')">
               <div class="stat-icon blue"><i class="fas fa-users"></i></div>
               <div class="stat-info">
-                <h3 class="card-value">3654</h3>
+                <h3 id="ovStudents">—</h3>
                 <p>Total Students</p>
-                <div class="stat-meta">Active : 3643 &nbsp; Inactive : 11 &nbsp; <a href="#">View all</a></div>
+                <div class="stat-meta" id="ovStudentsMeta">&nbsp;</div>
               </div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card ov-click" onclick="navigateToSection('faculty')">
               <div class="stat-icon green"><i class="fas fa-chalkboard-teacher"></i></div>
               <div class="stat-info">
-                <h3 class="card-value">284</h3>
+                <h3 id="ovFaculty">—</h3>
                 <p>Total Teachers</p>
-                <div class="stat-meta">Active : 254 &nbsp; Inactive : 30 &nbsp; <a href="#">View all</a></div>
+                <div class="stat-meta" id="ovFacultyMeta">&nbsp;</div>
               </div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card ov-click" onclick="navigateToSection('staff')">
               <div class="stat-icon orange"><i class="fas fa-user-tie"></i></div>
               <div class="stat-info">
-                <h3 class="card-value">162</h3>
+                <h3 id="ovStaff">—</h3>
                 <p>Total Staff</p>
-                <div class="stat-meta">Active : 161 &nbsp; Inactive : 2 &nbsp; <a href="#">View all</a></div>
+                <div class="stat-meta" id="ovStaffMeta">&nbsp;</div>
               </div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card ov-click" onclick="navigateToSection('subjects')">
               <div class="stat-icon purple"><i class="fas fa-book"></i></div>
               <div class="stat-info">
-                <h3 id="activeAdminsCard" class="card-value">82</h3>
+                <h3 id="ovSubjects">—</h3>
                 <p>Total Subjects</p>
-                <div class="stat-meta">Active : 81 &nbsp; Inactive : 1 &nbsp; <a href="#">View all</a></div>
+                <div class="stat-meta" id="ovSubjectsMeta">&nbsp;</div>
               </div>
             </div>
           </div>
 
-          <!-- Middle Grid: Calendar | Attendance | Quick Links -->
-          <div class="dashboard-grid">
-            <!-- Schedules / Calendar -->
-            <div class="widget-card calendar-widget">
-              <div class="widget-header">
-                <h3>Schedules</h3>
-                <div class="widget-actions">
-                  <a href="#"><i class="fas fa-plus"></i> Add New</a>
-                  <span style="display:flex;gap:4px;">
-                    <i class="fas fa-chevron-left" style="cursor:pointer;color:#94a3b8;font-size:12px;"></i>
-                    <i class="fas fa-chevron-right" style="cursor:pointer;color:#94a3b8;font-size:12px;"></i>
-                  </span>
-                </div>
-              </div>
-              <p style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--text-color);">July 2024</p>
-              <table>
-                <thead>
-                  <tr><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td class="muted">27</td><td class="muted">28</td><td class="muted">29</td><td class="muted">30</td><td class="muted">31</td><td>1</td><td>2</td></tr>
-                  <tr><td>3</td><td>4</td><td>5</td><td class="today">6</td><td class="highlight">7</td><td>8</td><td>9</td></tr>
-                  <tr><td>10</td><td>11</td><td class="highlight">12</td><td>13</td><td>14</td><td>15</td><td>16</td></tr>
-                  <tr><td>17</td><td class="selected">27</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td></tr>
-                  <tr><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td></tr>
-                </tbody>
-              </table>
-
-              <!-- Upcoming Events -->
-              <h3 style="margin-top:20px;margin-bottom:12px;font-size:14px;">Upcoming Events</h3>
-              <div class="event-list">
-                <div class="event-item purple-bg">
-                  <div class="event-icon purple"><i class="fas fa-users"></i></div>
-                  <div class="event-info">
-                    <h4>Parents, Teacher Meet</h4>
-                    <p><i class="fas fa-calendar"></i> 15 July 2024</p>
-                    <p>09:10AM - 10:50PM</p>
-                  </div>
-                  <div class="event-avatars">
-                    <div class="avatar-small" style="background:#3b82f6;">A</div>
-                    <div class="avatar-small" style="background:#22c55e;">B</div>
-                    <div class="avatar-small" style="background:#f59e0b;">C</div>
-                  </div>
-                </div>
-                <div class="event-item red-bg">
-                  <div class="event-icon red"><i class="fas fa-umbrella-beach"></i></div>
-                  <div class="event-info">
-                    <h4>Vacation Meeting</h4>
-                    <p><i class="fas fa-calendar"></i> 07 July 2024 - 07 July 2024</p>
-                    <p>09:10AM - 10:50PM</p>
-                  </div>
-                  <div class="event-avatars">
-                    <div class="avatar-small" style="background:#ef4444;">D</div>
-                    <div class="avatar-small" style="background:#8b5cf6;">E</div>
-                  </div>
-                </div>
-                <div class="event-item">
-                  <div class="event-icon blue"><i class="fas fa-handshake"></i></div>
-                  <div class="event-info">
-                    <h4>Staff Meeting</h4>
-                    <p><i class="fas fa-calendar"></i> 10 July 2024</p>
-                    <p>09:10AM - 10:50PM</p>
-                  </div>
-                </div>
-                <div class="event-item">
-                  <div class="event-icon green"><i class="fas fa-graduation-cap"></i></div>
-                  <div class="event-info">
-                    <h4>Admission Camp</h4>
-                    <p><i class="fas fa-calendar"></i> 16 July 2024</p>
-                  </div>
-                </div>
-              </div>
+          <div class="ov-grid-3">
+            <!-- Upcoming events -->
+            <div class="widget-card">
+              <div class="ov-head"><h3>Upcoming Events</h3>
+                <span><a href="#" onclick="openCrudForm('events'); return false;"><i class="fas fa-plus"></i> Add New</a> · <a href="#" onclick="navigateToSection('events'); return false;">View All</a></span></div>
+              <div id="ovEvents" class="ov-list"><p class="ov-muted">Loading...</p></div>
             </div>
 
-            <!-- Attendance -->
-            <div style="display:flex;flex-direction:column;gap:16px;">
-              <div class="widget-card attendance-widget">
-                <div class="widget-header">
-                  <h3>Attendance</h3>
-                  <div class="widget-actions">
-                    <button><i class="fas fa-calendar"></i> Today</button>
-                  </div>
-                </div>
-                <div class="tabs">
-                  <span class="active">Students</span>
-                  <span>Teachers</span>
-                  <span>Staff</span>
-                </div>
-                <div class="attendance-stats">
-                  <div class="attendance-stat-item">
-                    <div class="stat-number">28</div>
-                    <div class="stat-label">Emergency</div>
-                  </div>
-                  <div class="attendance-stat-item">
-                    <div class="stat-number">15</div>
-                    <div class="stat-label">Medical</div>
-                  </div>
-                  <div class="attendance-stat-item">
-                    <div class="stat-number">1</div>
-                    <div class="stat-label">Absent</div>
-                  </div>
-                  <div class="attendance-stat-item">
-                    <div class="stat-number">1</div>
-                    <div class="stat-label">Late</div>
-                  </div>
-                </div>
-                <div class="donut-container">
-                  <div class="donut-chart"></div>
-                  <div class="donut-center">
-                    <div class="donut-value">3610</div>
-                    <div class="donut-label">Present</div>
-                  </div>
-                </div>
-                <div class="donut-legend">
-                  <div class="donut-legend-item">
-                    <div class="legend-value" style="color:#22c55e;">3610</div>
-                    <div class="legend-label">Present</div>
-                  </div>
-                  <div class="donut-legend-item">
-                    <div class="legend-value" style="color:#ef4444;">44</div>
-                    <div class="legend-label">Absent</div>
-                  </div>
-                </div>
-                <div style="text-align:center;margin-top:12px;">
-                  <a href="#" class="widget-link"><i class="fas fa-list"></i> View All Student Attendance</a>
+            <!-- Today's attendance -->
+            <div class="widget-card">
+              <div class="ov-head"><h3>Today's Attendance</h3><span class="ov-muted" id="ovAttDate"></span></div>
+              <div class="ov-donut-wrap">
+                <div class="ov-donut" id="ovDonut"><div><strong id="ovPresent">0</strong><small>Present</small></div></div>
+                <div class="ov-legend">
+                  <div><span class="ov-dot" style="background:#22c55e"></span> Present <strong id="ovPresent2">0</strong></div>
+                  <div><span class="ov-dot" style="background:#ef4444"></span> Absent <strong id="ovAbsent">0</strong></div>
+                  <div class="ov-muted" id="ovAttNote"></div>
                 </div>
               </div>
-
-              <!-- Best Performer / Star Students -->
-              <div class="performer-section">
-                <div class="performer-card">
-                  <div class="performer-label">⭐ Best Performer</div>
-                  <div class="performer-avatar">👨‍🏫</div>
-                  <div class="medals">
-                    <span class="medal-gold">1</span>
-                    <span class="medal-silver">2</span>
-                    <span class="medal-bronze">3</span>
-                  </div>
-                  <h3>Adrian Rubell</h3>
-                  <p>Physics Teacher</p>
-                </div>
-                <div class="performer-card star-card">
-                  <div class="performer-label">⭐ Star Students</div>
-                  <div class="performer-avatar">👩‍🎓</div>
-                  <div class="medals">
-                    <span class="medal-gold">1</span>
-                    <span class="medal-silver">2</span>
-                    <span class="medal-bronze">3</span>
-                  </div>
-                  <h3>Tenesa</h3>
-                  <p>XII, A</p>
-                  <div class="score">98%</div>
-                </div>
-              </div>
+              <a href="#" class="widget-link" onclick="navigateToSection('reports'); return false;"><i class="fas fa-list"></i> Attendance reports</a>
             </div>
 
-            <!-- Quick Links + Class Routine + Performance -->
-            <div style="display:flex;flex-direction:column;gap:16px;">
-              <!-- Quick Links -->
-              <div class="widget-card">
-                <div class="widget-header">
-                  <h3>Quick Links</h3>
-                  <div class="widget-actions">
-                    <i class="fas fa-chevron-left" style="cursor:pointer;color:#94a3b8;font-size:12px;"></i>
-                    <i class="fas fa-chevron-right" style="cursor:pointer;color:#94a3b8;font-size:12px;"></i>
-                  </div>
-                </div>
-                <div class="quick-links-grid">
-                  <div class="quick-link-item"><i class="fas fa-calendar-alt"></i><span>Calendar</span></div>
-                  <div class="quick-link-item"><i class="fas fa-file-alt"></i><span>Exam Result</span></div>
-                  <div class="quick-link-item"><i class="fas fa-clipboard-check"></i><span>Attendance</span></div>
-                  <div class="quick-link-item active"><i class="fas fa-money-bill-wave"></i><span>Fees</span></div>
-                  <div class="quick-link-item"><i class="fas fa-book-open"></i><span>Home Works</span></div>
-                  <div class="quick-link-item"><i class="fas fa-chart-bar"></i><span>Reports</span></div>
-                </div>
-              </div>
-
-              <!-- Class Routine -->
-              <div class="widget-card">
-                <div class="widget-header">
-                  <h3>Class Routine</h3>
-                  <a href="#" class="widget-link"><i class="fas fa-plus"></i> Create New Routine</a>
-                </div>
-                <div class="routine-filters">
-                  <span style="font-size:12px;color:#64748b;">Filter</span>
-                  <div class="filter-radio"><input type="radio" name="routine" checked /> Class</div>
-                  <select><option>-</option></select>
-                  <div class="filter-radio"><input type="radio" name="routine" /> Section</div>
-                  <select><option>-</option></select>
-                </div>
-                <div class="routine-item">
-                  <div style="display:flex;align-items:center;gap:10px;">
-                    <div class="routine-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-calendar"></i></div>
-                    <div class="routine-info">
-                      <h4>October 2024</h4>
-                      <p>October month Class routine</p>
-                    </div>
-                  </div>
-                  <button class="download-btn"><i class="fas fa-download"></i> Download</button>
-                </div>
-                <div class="routine-item">
-                  <div style="display:flex;align-items:center;gap:10px;">
-                    <div class="routine-icon" style="background:#ede9fe;color:#7c3aed;"><i class="fas fa-calendar"></i></div>
-                    <div class="routine-info">
-                      <h4>Nov 2024</h4>
-                      <p>Nov month Class routine</p>
-                    </div>
-                  </div>
-                  <button class="download-btn"><i class="fas fa-download"></i> Download</button>
-                </div>
-              </div>
-
-              <!-- Class Wise Performance -->
-              <div class="widget-card">
-                <div class="widget-header">
-                  <h3>Class Wise Performance</h3>
-                  <i class="fas fa-ellipsis-v" style="cursor:pointer;color:#94a3b8;"></i>
-                </div>
-                <div class="performance-chart">
-                  <div class="performance-donut">
-                    <div class="perf-center">
-                      <div class="perf-value">95%</div>
-                      <div class="perf-label">Good</div>
-                    </div>
-                  </div>
-                  <div class="performance-stats">
-                    <div class="perf-stat-row"><span>Top Students</span><span>45</span></div>
-                    <div class="perf-stat-row"><span>Average Students</span><span>11</span></div>
-                    <div class="perf-stat-row"><span>Below Average Students</span><span>02</span></div>
-                  </div>
-                </div>
+            <!-- Quick links -->
+            <div class="widget-card">
+              <div class="ov-head"><h3>Quick Links</h3></div>
+              <div class="quick-links-grid">
+                <div class="quick-link-item" onclick="navigateToSection('events')"><i class="fas fa-calendar-alt"></i><span>Calendar</span></div>
+                <div class="quick-link-item" onclick="navigateToSection('exams')"><i class="fas fa-file-alt"></i><span>Exams</span></div>
+                <div class="quick-link-item" onclick="navigateToSection('reports')"><i class="fas fa-clipboard-check"></i><span>Attendance</span></div>
+                <div class="quick-link-item" onclick="navigateToSection('payment')"><i class="fas fa-money-bill-wave"></i><span>Fees</span></div>
+                <div class="quick-link-item" onclick="navigateToSection('library')"><i class="fas fa-book-open"></i><span>Library</span></div>
+                <div class="quick-link-item" onclick="navigateToSection('notices')"><i class="fas fa-bullhorn"></i><span>Notices</span></div>
+                <div class="quick-link-item" onclick="navigateToSection('leaves')"><i class="fas fa-plane-departure"></i><span>Leaves</span></div>
+                <div class="quick-link-item" onclick="navigateToSection('admissions')"><i class="fas fa-user-plus"></i><span>Admissions</span></div>
+                <div class="quick-link-item" onclick="navigateToSection('reports')"><i class="fas fa-chart-bar"></i><span>Reports</span></div>
               </div>
             </div>
           </div>
 
-          <!-- Fees Chart + Leave Requests -->
-          <div class="fees-chart-area">
-            <div style="display:flex;flex-direction:column;gap:16px;">
-              <div class="widget-card">
-                <div class="widget-header">
-                  <h3>Fees Collection</h3>
-                  <div class="chart-legend">
-                    <span><span class="dot blue"></span> Total Fee</span>
-                    <span><span class="dot green"></span> Collected Fee</span>
-                    <span style="margin-left:auto;"><i class="fas fa-chart-bar"></i> Last 8 Quarter</span>
-                  </div>
-                </div>
-                <div style="display:flex;gap:16px;">
-                  <div style="flex:2;">
-                    <div class="bar-chart">
-                      <div class="bar-group"><div class="bar total" style="height:45%;"></div><div class="bar collected" style="height:35%;"></div></div>
-                      <div class="bar-group"><div class="bar total" style="height:55%;"></div><div class="bar collected" style="height:45%;"></div></div>
-                      <div class="bar-group"><div class="bar total" style="height:65%;"></div><div class="bar collected" style="height:50%;"></div></div>
-                      <div class="bar-group"><div class="bar total" style="height:50%;"></div><div class="bar collected" style="height:40%;"></div></div>
-                      <div class="bar-group"><div class="bar total" style="height:70%;"></div><div class="bar collected" style="height:55%;"></div></div>
-                      <div class="bar-group"><div class="bar total" style="height:60%;"></div><div class="bar collected" style="height:48%;"></div></div>
-                      <div class="bar-group"><div class="bar total" style="height:80%;"></div><div class="bar collected" style="height:65%;"></div></div>
-                      <div class="bar-group"><div class="bar total" style="height:75%;"></div><div class="bar collected" style="height:60%;"></div></div>
-                    </div>
-                    <div style="display:flex;justify-content:space-around;margin-top:4px;">
-                      <span class="bar-label">Q1: 2023</span>
-                      <span class="bar-label">Q1: 2023</span>
-                      <span class="bar-label">Q1: 2023</span>
-                      <span class="bar-label">Q1: 2023</span>
-                      <span class="bar-label">Q1: 2023</span>
-                      <span class="bar-label">Q1: 2023</span>
-                      <span class="bar-label">Q1: 2023</span>
-                      <span class="bar-label">Q1: 2023</span>
-                    </div>
-                  </div>
-                  <div class="fees-summary" style="flex:1;">
-                    <div class="fees-summary-item">
-                      <h4>$25,000.02</h4>
-                      <p>Total Fees Collected</p>
-                    </div>
-                    <div class="fees-summary-item">
-                      <h4>$4,56,64</h4>
-                      <p>Fine Collected till date</p>
-                    </div>
-                    <div class="fees-summary-item highlight">
-                      <h4>545</h4>
-                      <p>Student Not Paid</p>
-                      <span class="remind-link"><i class="fas fa-bell"></i> Remind All</span>
-                    </div>
-                    <div class="fees-summary-item">
-                      <h4>$6,545,454</h4>
-                      <p>Total Outstanding</p>
-                    </div>
-                  </div>
-                </div>
+          <div class="ov-grid-2">
+            <!-- Fees -->
+            <div class="widget-card">
+              <div class="ov-head"><h3>Fees Collection</h3><span class="ov-muted">Collected per month (last 6 months)</span></div>
+              <div class="ov-bars" id="ovFeeBars"></div>
+              <div class="ov-fee-summary">
+                <div><h4 id="ovFeeCollected">₹0</h4><p>Total Fees Collected</p></div>
+                <div><h4 id="ovFeeOutstanding">₹0</h4><p>Total Outstanding</p></div>
+                <div><h4 id="ovFeeDue">0</h4><p>Students Not Paid <a href="#" onclick="remindFees(); return false;"><i class="fas fa-bell"></i> Remind All</a></p></div>
+                <div><h4 id="ovFeeOverdue">0</h4><p>Overdue Fee Items</p></div>
               </div>
             </div>
 
-            <!-- Leave Requests -->
+            <!-- Leave requests -->
             <div class="widget-card">
-              <div class="widget-header">
-                <h3>Leave Requests</h3>
-                <div class="widget-actions">
-                  <button><i class="fas fa-calendar"></i> This Month</button>
-                </div>
-              </div>
-              <div class="leave-tabs">
-                <span class="active">Students</span>
-                <span>Teachers & Staffs</span>
-              </div>
-              <div class="leave-item">
-                <div class="leave-avatar" style="background:#8b5cf6;">J</div>
-                <div class="leave-info">
-                  <h4>James <span class="leave-type emergency">Emergency</span></h4>
-                  <p>Physics Teacher</p>
-                  <p>Leave : 12 -13 May &nbsp;&nbsp; Apply on : 12 May</p>
-                </div>
-                <div class="leave-actions">
-                  <button class="approve"><i class="fas fa-check"></i></button>
-                  <button class="reject"><i class="fas fa-times"></i></button>
-                </div>
-              </div>
-              <div class="leave-item">
-                <div class="leave-avatar" style="background:#22c55e;">R</div>
-                <div class="leave-info">
-                  <h4>Ramien <span class="leave-type casual">Casual</span></h4>
-                  <p>Accountant</p>
-                  <p>Leave : 12 -13 May &nbsp;&nbsp; Apply on : 11 May</p>
-                </div>
-                <div class="leave-actions">
-                  <button class="approve"><i class="fas fa-check"></i></button>
-                  <button class="reject"><i class="fas fa-times"></i></button>
-                </div>
-              </div>
-              <div class="leave-item">
-                <div class="leave-avatar" style="background:#f59e0b;">H</div>
-                <div class="leave-info">
-                  <h4>Hendrita <span class="leave-type medical">Medical</span></h4>
-                  <p>...</p>
-                </div>
-                <div class="leave-actions">
-                  <button class="approve"><i class="fas fa-check"></i></button>
-                  <button class="reject"><i class="fas fa-times"></i></button>
-                </div>
-              </div>
+              <div class="ov-head"><h3>Leave Requests</h3><a href="#" onclick="navigateToSection('leaves'); return false;">View All</a></div>
+              <div id="ovLeaves" class="ov-list"><p class="ov-muted">Loading...</p></div>
             </div>
           </div>
 
-          <!-- Bottom Shortcuts -->
-          <div class="bottom-shortcuts">
-            <div class="shortcut-item">
-              <div class="shortcut-icon blue"><i class="fas fa-users"></i></div>
-              <span>Human Resources</span>
-              <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="shortcut-item">
-              <div class="shortcut-icon green"><i class="fas fa-calendar-plus"></i></div>
-              <span>New Events</span>
-              <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="shortcut-item">
-              <div class="shortcut-icon purple"><i class="fas fa-file-invoice"></i></div>
-              <span>Membership Plans</span>
-              <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="shortcut-item">
-              <div class="shortcut-icon orange"><i class="fas fa-coins"></i></div>
-              <span>Finance & Accounts</span>
-              <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="shortcut-item">
-              <div class="shortcut-icon cyan"><i class="fas fa-money-check-alt"></i></div>
-              <span>Fees Collection</span>
-              <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="shortcut-item">
-              <div class="shortcut-icon red"><i class="fas fa-school"></i></div>
-              <span>Academic & Classes</span>
-              <i class="fas fa-chevron-right"></i>
-            </div>
-          </div>
-
-          <!-- Notice Board + Activities -->
-          <div class="dashboard-grid-2" style="margin-top:16px;">
+          <div class="ov-grid-2">
+            <!-- Notice board -->
             <div class="widget-card">
-              <div class="widget-header">
-                <h3>Notice Board</h3>
-                <div class="widget-actions">
-                  <a href="#"><i class="fas fa-plus"></i> Add New</a>
-                  <a href="#">View All</a>
-                </div>
-              </div>
-              <div class="notice-item">
-                <div class="notice-checkbox"></div>
-                <div class="notice-content">
-                  <h4>World Environment Day Program.....!!!</h4>
-                  <p><i class="fas fa-calendar"></i> Added on : 21 Apr 2024</p>
-                </div>
-              </div>
-              <div class="notice-item">
-                <div class="notice-checkbox"></div>
-                <div class="notice-content">
-                  <h4>New Syllabus Instructions</h4>
-                  <p><i class="fas fa-calendar"></i> Added on : 11 Mar 2024</p>
-                </div>
-              </div>
-              <div class="notice-item">
-                <div class="notice-checkbox"></div>
-                <div class="notice-content">
-                  <h4>Exam Preparation Notification!</h4>
-                  <p><i class="fas fa-calendar"></i> Added on : 18 Mar 2024</p>
-                </div>
-              </div>
-              <div class="notice-item">
-                <div class="notice-checkbox"></div>
-                <div class="notice-content">
-                  <h4>Online Classes Preparation</h4>
-                  <p><i class="fas fa-calendar"></i> Added on : 24 May 2024</p>
-                </div>
-              </div>
+              <div class="ov-head"><h3>Notice Board</h3>
+                <span><a href="#" onclick="openCrudForm('notices'); return false;"><i class="fas fa-plus"></i> Add New</a> · <a href="#" onclick="navigateToSection('notices'); return false;">View All</a></span></div>
+              <div id="ovNotices" class="ov-list"><p class="ov-muted">Loading...</p></div>
             </div>
 
+            <!-- Star students -->
             <div class="widget-card">
-              <div class="widget-header">
-                <h3>Activities</h3>
-                <div class="widget-actions">
-                  <button>2024 - 2025</button>
-                </div>
-              </div>
-              <div style="display:flex;gap:12px;margin-bottom:12px;">
-                <span style="font-size:12px;color:#94a3b8;">Library</span>
-                <span style="font-size:12px;color:#94a3b8;">Transports</span>
-                <span style="font-size:12px;color:var(--primary-color);font-weight:600;border-bottom:2px solid var(--primary-color);padding-bottom:2px;">Reports</span>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon"></div>
-                <div class="activity-content">
-                  <h4>Class IV, A 1st quarter Result</h4>
-                  <p>Uploaded on : 25 May 2024</p>
-                </div>
-                <div class="activity-actions">
-                  <i class="fas fa-download"></i>
-                  <i class="fas fa-eye"></i>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon"></div>
-                <div class="activity-content">
-                  <h4>Class IV, B 2st quarter Result</h4>
-                  <p>Uploaded on : 21 Apr 2024</p>
-                </div>
-                <div class="activity-actions">
-                  <i class="fas fa-download"></i>
-                  <i class="fas fa-eye"></i>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon"></div>
-                <div class="activity-content">
-                  <h4>Class III, C Assignment</h4>
-                  <p></p>
-                </div>
-                <div class="activity-actions">
-                  <i class="fas fa-download"></i>
-                  <i class="fas fa-eye"></i>
-                </div>
-              </div>
-              <button class="upload-btn"><i class="fas fa-upload"></i> Upload New Report</button>
-            </div>
-          </div>
-
-          <!-- Todo + Inbox + Student Activity -->
-          <div class="dashboard-grid-3" style="margin-top:16px;">
-            <div class="widget-card">
-              <div class="widget-header">
-                <h3>Todo</h3>
-                <div class="widget-actions">
-                  <button><i class="fas fa-calendar"></i> Today</button>
-                </div>
-              </div>
-              <div class="todo-item">
-                <div class="todo-checkbox checked"></div>
-                <div class="todo-content">
-                  <h4><s>Send Fees Reminder to All Students</s></h4>
-                  <p>01:00 PM</p>
-                </div>
-              </div>
-              <div class="todo-item">
-                <div class="todo-checkbox"></div>
-                <div class="todo-content">
-                  <h4>Create Routine to new staff</h4>
-                  <p>04:50 PM</p>
-                </div>
-              </div>
-              <div class="todo-item">
-                <div class="todo-checkbox"></div>
-                <div class="todo-content">
-                  <h4>Extra Class Info to Students & Teachers</h4>
-                  <p>04:55 PM</p>
-                </div>
-              </div>
-              <div class="todo-item">
-                <div class="todo-checkbox"></div>
-                <div class="todo-content">
-                  <h4>Fees Creation for Upcoming Academics Year</h4>
-                  <p>04:55 PM</p>
-                </div>
-              </div>
-              <div class="todo-item">
-                <div class="todo-checkbox"></div>
-                <div class="todo-content">
-                  <h4>English - Essay on Visited Place</h4>
-                  <p>05:55 PM</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="widget-card">
-              <div class="widget-header">
-                <h3>Inbox</h3>
-                <div class="widget-actions">
-                  <a href="#">All Mails</a>
-                  <a href="#">View All</a>
-                </div>
-              </div>
-              <div class="inbox-item">
-                <div class="inbox-avatar" style="background:#e879f9;">A</div>
-                <div class="inbox-content">
-                  <h4>Adam Lee <span class="inbox-time">08:00 PM</span></h4>
-                  <p>After you've generated your first response, you might realize that it's not quite perfect</p>
-                </div>
-                <div class="inbox-date">05 May 2024</div>
-              </div>
-              <div class="inbox-item highlighted">
-                <div class="inbox-avatar" style="background:#22c55e;">T</div>
-                <div class="inbox-content">
-                  <h4>Taphina <span class="inbox-time">03:00 PM</span></h4>
-                  <p>Edit Your Email Copy ...</p>
-                </div>
-                <div class="inbox-date">03 May 2024</div>
-              </div>
-              <div class="inbox-item">
-                <div class="inbox-avatar" style="background:#3b82f6;">H</div>
-                <div class="inbox-content">
-                  <h4>Hendrita <span class="inbox-time">03:00 PM</span></h4>
-                  <p></p>
-                </div>
-                <div class="inbox-date">04 May 2024</div>
-              </div>
-            </div>
-
-            <div class="widget-card">
-              <div class="widget-header">
-                <h3>Student Activity</h3>
-              </div>
-              <div class="student-activity-item">
-                <div class="activity-img"><i class="fas fa-chess"></i></div>
-                <div class="activity-detail">
-                  <h4>1st place in "Chess"</h4>
-                  <p>This event took place in Our School for...</p>
-                </div>
-                <div class="activity-time">A Day ago</div>
-              </div>
-              <div class="student-activity-item">
-                <div class="activity-img" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-gamepad"></i></div>
-                <div class="activity-detail">
-                  <h4>Participated in "Carrom"</h4>
-                  <p>Austin Lee participated in "Carrom"</p>
-                </div>
-                <div class="activity-time">4 Week ago</div>
-              </div>
-              <div class="student-activity-item">
-                <div class="activity-img" style="background:#fef3c7;color:#d97706;"><i class="fas fa-globe"></i></div>
-                <div class="activity-detail">
-                  <h4>International conference</h4>
-                  <p>We attended international conference</p>
-                </div>
-                <div class="activity-time">2 Week ago</div>
-              </div>
-              <div class="student-activity-item">
-                <div class="activity-img" style="background:#ede9fe;color:#7c3aed;"><i class="fas fa-table-tennis"></i></div>
-                <div class="activity-detail">
-                  <h4>1st place in "Tennis"</h4>
-                  <p>This event took place in Our School for...</p>
-                </div>
-                <div class="activity-time">4 Week ago</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hidden original dashboard cards for JS compatibility -->
-          <div class="dashboard-cards" style="display:none !important;">
-            <div class="card">
-              <div class="card-header"><div class="card-icon"><i class="fas fa-users"></i></div></div>
-              <div class="card-title">Total Students</div><div class="card-value">0</div>
-            </div>
-            <div class="card">
-              <div class="card-header"><div class="card-icon"><i class="fas fa-book"></i></div></div>
-              <div class="card-title">Active Courses</div><div class="card-value">0</div>
-            </div>
-            <div class="card">
-              <div class="card-header"><div class="card-icon"><i class="fas fa-user-shield"></i></div></div>
-              <div class="card-title">Active Admins</div><div class="card-value">0</div>
-            </div>
-            <div class="card">
-              <div class="card-header"><div class="card-icon"><i class="fas fa-chart-line"></i></div></div>
-              <div class="card-title">Success Rate</div><div class="card-value">0%</div>
+              <div class="ov-head"><h3>⭐ Star Students</h3><span class="ov-muted">Highest internal marks</span></div>
+              <div id="ovTop" class="ov-list"><p class="ov-muted">Loading...</p></div>
             </div>
           </div>
 
           <!-- Recent Students Table -->
-          <div class="student-list" style="margin-top:16px;">
+          <div class="student-list">
             <div class="table-header">
               <h2>Recent Students</h2>
               <button class="add-student-btn" onclick="openModal()"><i class="fas fa-plus"></i>Add Student</button>
@@ -3115,15 +883,8 @@
             <table>
               <thead>
                 <tr>
-                  <th>Student Name</th>
-                  <th>Email</th>
-                  <th>Student ID</th>
-                  <th>Department</th>
-                  <th>Course Name</th>
-                  <th>College Type</th>
-                  <th>Enrollment Date</th>
-                  <th>Status</th>
-                  <th>Actions</th>
+                  <th>Student Name</th><th>Email</th><th>Student ID</th><th>Department</th><th>Course Name</th>
+                  <th>College Type</th><th>Enrollment Date</th><th>Status</th><th>Actions</th>
                 </tr>
               </thead>
               <tbody id="studentTableBody"></tbody>
@@ -3132,7 +893,6 @@
         </div>
       </div>
 
-      <!-- ===== OTHER SECTIONS (unchanged) ===== -->
       <div id="studentsSection" class="section">
         <div class="student-list">
           <div class="table-header">
@@ -3247,11 +1007,189 @@
         </div>
       </div>
 
-      <div id="reportsSection" class="section"><div class="widget-card" style="margin:24px;"><h2>Reports Coming Soon</h2></div></div>
-      <div id="settingsSection" class="section"><div class="widget-card" style="margin:24px;"><h2>Settings Coming Soon</h2></div></div>
-      <div id="principleSection" class="section"><div class="widget-card" style="margin:24px;"><h2>Principal Section Coming Soon</h2></div></div>
-      <div id="HODSection" class="section"><div class="widget-card" style="margin:24px;"><h2>HOD Section Coming Soon</h2></div></div>
-      <div id="paymentSection" class="section"><div class="widget-card" style="margin:24px;"><h2>Payment Section Coming Soon</h2></div></div>
+      <div id="principleSection" class="section">
+        <div class="student-list">
+          <div class="table-header">
+            <h2>Principals</h2>
+            <div class="filter-buttons">
+              <button id="principalActiveBtn" class="filter-btn active" onclick="loadLeaders('principal', 'active')">Active</button>
+              <button id="principalInactiveBtn" class="filter-btn" onclick="loadLeaders('principal', 'inactive')">Inactive</button>
+            </div>
+            <button class="add-student-btn" onclick="openLeaderModal('principal')"><i class="fas fa-plus"></i>Add Principal</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Principal ID</th><th>College Type</th>
+                <th>Appointed On</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="principalTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="HODSection" class="section">
+        <div class="student-list">
+          <div class="table-header">
+            <h2>Heads of Department</h2>
+            <div class="filter-buttons">
+              <button id="hodActiveBtn" class="filter-btn active" onclick="loadLeaders('hod', 'active')">Active</button>
+              <button id="hodInactiveBtn" class="filter-btn" onclick="loadLeaders('hod', 'inactive')">Inactive</button>
+            </div>
+            <button class="add-student-btn" onclick="openLeaderModal('hod')"><i class="fas fa-plus"></i>Add HOD</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>HOD ID</th><th>Department</th><th>College Type</th>
+                <th>Appointed On</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="hodTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Generic list sections (filled by the CRUD module) -->
+      <div id="subjectsSection" class="section"><div class="student-list" id="subjectsMount"></div></div>
+      <div id="eventsSection" class="section"><div class="student-list" id="eventsMount"></div></div>
+      <div id="noticesSection" class="section"><div class="student-list" id="noticesMount"></div></div>
+      <div id="examsSection" class="section"><div class="student-list" id="examsMount"></div></div>
+      <div id="librarySection" class="section"><div class="student-list" id="libraryMount"></div></div>
+
+      <!-- Fees & payments -->
+      <div id="paymentSection" class="section">
+        <div class="ov-pad">
+          <div class="stat-cards">
+            <div class="stat-card"><div class="stat-icon green"><i class="fas fa-rupee-sign"></i></div><div class="stat-info"><h3 id="feeCollected">—</h3><p>Collected</p></div></div>
+            <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-hourglass-half"></i></div><div class="stat-info"><h3 id="feeOutstanding">—</h3><p>Outstanding</p></div></div>
+            <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-percentage"></i></div><div class="stat-info"><h3 id="feePercent">—</h3><p>Collection rate</p></div></div>
+            <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-user-clock"></i></div><div class="stat-info"><h3 id="feeDueStudents">—</h3><p>Students with dues <a href="#" onclick="remindFees(); return false;">Remind</a></p></div></div>
+          </div>
+
+          <div class="widget-card" style="margin-top:20px">
+            <div class="ov-head"><h3>Assign a Fee</h3><span class="ov-muted">Creates a fee for every active student matching the filters</span></div>
+            <form id="assignFeeForm" class="ov-form-row">
+              <input id="afTitle" placeholder="Fee title, e.g. Tuition Fee - Sem 3" required>
+              <select id="afCategory"><option value="tuition">Tuition</option><option value="exam">Exam</option><option value="library">Library</option><option value="hostel">Hostel</option><option value="transport">Transport</option><option value="other">Other</option></select>
+              <input id="afAmount" type="number" min="1" placeholder="Amount ₹" required>
+              <input id="afDue" type="date" title="Due date">
+              <select id="afDepartment"><option value="">All departments</option></select>
+              <select id="afSemester"><option value="">All semesters</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+              <select id="afSection"><option value="">All sections</option><option>A</option><option>B</option><option>C</option><option>D</option></select>
+              <button type="submit" class="add-student-btn"><i class="fas fa-plus"></i>Assign</button>
+            </form>
+          </div>
+
+          <div class="student-list" style="margin-top:20px">
+            <div class="table-header">
+              <h2>Student Fees</h2>
+              <div class="filter-buttons">
+                <button class="filter-btn active" data-status="" onclick="setFeeFilter(this)">All</button>
+                <button class="filter-btn" data-status="pending" onclick="setFeeFilter(this)">Pending</button>
+                <button class="filter-btn" data-status="paid" onclick="setFeeFilter(this)">Paid</button>
+              </div>
+              <input id="feeSearch" class="ov-search" placeholder="Search student / fee..." oninput="renderFees()">
+            </div>
+            <table>
+              <thead><tr><th>Student</th><th>Department</th><th>Fee</th><th>Amount</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="feeTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="student-list" style="margin-top:20px">
+            <div class="table-header"><h2>Recent Payments</h2></div>
+            <table>
+              <thead><tr><th>Receipt</th><th>Date</th><th>Student</th><th>Description</th><th>Method</th><th>Amount</th><th></th></tr></thead>
+              <tbody id="paymentTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leave requests -->
+      <div id="leavesSection" class="section">
+        <div class="student-list">
+          <div class="table-header">
+            <h2>Leave Requests</h2>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-status="pending" onclick="setLeaveFilter(this)">Pending</button>
+              <button class="filter-btn" data-status="approved" onclick="setLeaveFilter(this)">Approved</button>
+              <button class="filter-btn" data-status="rejected" onclick="setLeaveFilter(this)">Rejected</button>
+              <button class="filter-btn" data-status="" onclick="setLeaveFilter(this)">All</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>Applicant</th><th>Role</th><th>Department</th><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="leaveTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admissions -->
+      <div id="admissionsSection" class="section">
+        <div class="student-list">
+          <div class="table-header">
+            <h2>Admission Applications</h2>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-status="pending" onclick="setAdmissionFilter(this)">Pending</button>
+              <button class="filter-btn" data-status="approved" onclick="setAdmissionFilter(this)">Approved</button>
+              <button class="filter-btn" data-status="rejected" onclick="setAdmissionFilter(this)">Rejected</button>
+              <button class="filter-btn" data-status="" onclick="setAdmissionFilter(this)">All</button>
+            </div>
+            <button class="add-student-btn" onclick="openCrudForm('admissions')"><i class="fas fa-plus"></i>Add Application</button>
+          </div>
+          <p class="ov-muted" style="margin:0 0 12px">Approving an application enrolls the applicant as a student (semester 1, section A, password <strong>student123</strong>). Public application form: <a href="apply.html" target="_blank">apply.html</a></p>
+          <table>
+            <thead><tr><th>Applied</th><th>Name</th><th>Email</th><th>Department</th><th>Program</th><th>Score</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="admissionTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reports -->
+      <div id="reportsSection" class="section">
+        <div class="ov-pad">
+          <div class="widget-card">
+            <div class="ov-head"><h3>Download Reports (CSV, opens in Excel)</h3>
+              <select id="reportDepartment" class="ov-search"><option value="">All departments</option></select></div>
+            <div class="ov-report-grid">
+              <div class="ov-report" onclick="downloadReport('students')"><i class="fas fa-users"></i><h4>Students</h4><p>Profile, semester, attendance % and marks %</p></div>
+              <div class="ov-report" onclick="downloadReport('attendance')"><i class="fas fa-clipboard-check"></i><h4>Attendance</h4><p>Per student, per subject</p></div>
+              <div class="ov-report" onclick="downloadReport('marks')"><i class="fas fa-chart-line"></i><h4>Internal Marks</h4><p>Every assessment entered by faculty</p></div>
+              <div class="ov-report" onclick="downloadReport('faculty')"><i class="fas fa-chalkboard-teacher"></i><h4>Faculty</h4><p>All faculty with designation</p></div>
+              <div class="ov-report" onclick="downloadReport('fees')"><i class="fas fa-file-invoice"></i><h4>Fees</h4><p>Assigned fees and their status</p></div>
+              <div class="ov-report" onclick="downloadReport('payments')"><i class="fas fa-receipt"></i><h4>Payments</h4><p>All payments with receipt numbers</p></div>
+              <div class="ov-report" onclick="downloadReport('admissions')"><i class="fas fa-user-plus"></i><h4>Admissions</h4><p>Applications and their status</p></div>
+              <div class="ov-report" onclick="downloadReport('leaves')"><i class="fas fa-plane-departure"></i><h4>Leave</h4><p>All leave requests</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div id="settingsSection" class="section">
+        <div class="ov-pad ov-grid-2">
+          <div class="widget-card">
+            <div class="ov-head"><h3>My Profile</h3></div>
+            <form id="profileForm">
+              <div class="form-group"><label for="setName">Full Name</label><input id="setName" type="text"></div>
+              <div class="form-group" id="setUsernameGroup"><label for="setUsername">Username</label><input id="setUsername" type="text"></div>
+              <div class="form-group"><label for="setEmail">Email</label><input id="setEmail" type="email" required></div>
+              <button type="submit" class="submit-btn">Save Profile</button>
+            </form>
+          </div>
+          <div class="widget-card">
+            <div class="ov-head"><h3>Change Password</h3></div>
+            <form id="passwordForm">
+              <div class="form-group"><label for="setPwCurrent">Current Password</label><input id="setPwCurrent" type="password" required autocomplete="current-password"></div>
+              <div class="form-group"><label for="setPwNew">New Password (min 6 characters)</label><input id="setPwNew" type="password" required minlength="6" autocomplete="new-password"></div>
+              <div class="form-group"><label for="setPwConfirm">Confirm New Password</label><input id="setPwConfirm" type="password" required autocomplete="new-password"></div>
+              <button type="submit" class="submit-btn">Change Password</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -3270,6 +1208,9 @@
         <div class="form-group"><label for="studentCourse">Course</label><select id="studentCourse" required><option value="">Select Course</option></select></div>
         <div class="form-group"><label for="studentCollegeType">College Type</label><select id="studentCollegeType" required><option value="">Select College Type</option><option value="AMCEC">AMCEC</option><option value="AMCDC">AMCDC</option></select></div>
         <div class="form-group"><label for="enrollmentDate">Enrollment Date</label><input type="date" id="enrollmentDate" required /></div>
+        <div class="form-group"><label for="studentSemester">Semester</label><select id="studentSemester" required><option value="">Select Semester</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></div>
+        <div class="form-group"><label for="studentSection">Section</label><select id="studentSection" required><option value="">Select Section</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+        <p style="font-size:12px;color:#6b7280;margin:-4px 0 12px;">New students log in with their email or Student ID. Default password: <strong>student123</strong></p>
         <button type="submit" class="submit-btn">Save Student</button>
       </form>
     </div>
@@ -3284,7 +1225,9 @@
         <div class="form-group"><label for="facultyId">Faculty ID</label><input type="text" id="facultyId" required /></div>
         <div class="form-group"><label for="facultyDepartment">Department</label><select id="facultyDepartment" required><option value="">Select Department</option></select></div>
         <div class="form-group"><label for="facultyCollegeType">College Type</label><select id="facultyCollegeType" required><option value="">Select College Type</option><option value="AMCEC">AMCEC</option><option value="AMCDC">AMCDC</option></select></div>
+        <div class="form-group"><label for="facultyDesignation">Designation</label><input type="text" id="facultyDesignation" placeholder="e.g. Assistant Professor" /></div>
         <div class="form-group"><label for="facultyEnrollmentDate">Enrollment Date</label><input type="date" id="facultyEnrollmentDate" required /></div>
+        <p style="font-size:12px;color:#6b7280;margin:-4px 0 12px;">New faculty log in with their email or Faculty ID. Default password: <strong>faculty123</strong></p>
         <button type="submit" id="submitBtn" class="submit-btn"></button>
       </form>
     </div>
@@ -3310,11 +1253,41 @@
     <div class="modal-content">
       <div class="modal-header"><h2 id="adminModalTitle">Add New Admin</h2><button class="close-btn" onclick="closeAdminModal()">&times;</button></div>
       <form id="adminForm">
-        <div class="form-group"><label for="adminAccountType">Account Type</label><select id="adminAccountType" required><option value="Admin">Admin</option><option value="SuperAdmin">SuperAdmin</option></select></div>
+        <div class="form-group"><label for="adminAccountType">Account Type</label><select id="adminAccountType" required><option value="Admin">Admin</option><option value="SuperAdmin">SuperAdmin</option><option value="Staff">Staff (cannot manage admins)</option></select></div>
         <div class="form-group"><label for="adminUsername">Username</label><input type="text" id="adminUsername" required /></div>
         <div class="form-group"><label for="adminEmail">Email</label><input type="email" id="adminEmail" required /></div>
         <div class="form-group"><label for="adminPassword">Password</label><input type="text" id="adminPassword" required /></div>
         <button type="submit" id="adminSubmitBtn" class="submit-btn">Add Admin</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shared modal for HOD and Principal accounts -->
+  <div class="modal" id="leaderModal">
+    <div class="modal-content">
+      <div class="modal-header"><h2 id="leaderModalTitle">Add HOD</h2><button class="close-btn" onclick="closeLeaderModal()">&times;</button></div>
+      <form id="leaderForm">
+        <div class="form-group"><label for="leaderName">Full Name</label><input type="text" id="leaderName" required /></div>
+        <div class="form-group"><label for="leaderEmail">Email</label><input type="email" id="leaderEmail" required /></div>
+        <div class="form-group"><label for="leaderCode" id="leaderCodeLabel">HOD ID</label><input type="text" id="leaderCode" required /></div>
+        <div class="form-group" id="leaderDepartmentGroup"><label for="leaderDepartment">Department</label><select id="leaderDepartment"><option value="">Select Department</option></select></div>
+        <div class="form-group"><label for="leaderCollegeType">College Type</label><select id="leaderCollegeType" required><option value="">Select College Type</option><option value="AMCEC">AMCEC</option><option value="AMCDC">AMCDC</option></select></div>
+        <div class="form-group"><label for="leaderPhone">Phone</label><input type="tel" id="leaderPhone" /></div>
+        <div class="form-group"><label for="leaderAppointedDate">Appointed On</label><input type="date" id="leaderAppointedDate" /></div>
+        <div class="form-group"><label for="leaderPassword">Password</label><input type="text" id="leaderPassword" /></div>
+        <p id="leaderPasswordHint" style="font-size:12px;color:#6b7280;margin:-4px 0 12px;"></p>
+        <button type="submit" id="leaderSubmitBtn" class="submit-btn">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Generic add/edit modal (events, notices, exams, library, subjects, applications) -->
+  <div class="modal" id="crudModal">
+    <div class="modal-content">
+      <div class="modal-header"><h2 id="crudModalTitle">Add</h2><button class="close-btn" onclick="closeCrudModal()">&times;</button></div>
+      <form id="crudForm">
+        <div id="crudFields"></div>
+        <button type="submit" class="submit-btn">Save</button>
       </form>
     </div>
   </div>
@@ -3361,9 +1334,10 @@
 
   <div class="loading-spinner"><div class="spinner"></div></div>
 
+  <script src="auth.js"></script>
   <script>
-    const API_BASE_URL = "http://localhost:3000";
-    const ERP_SESSION_STORAGE_KEY = "collegeErpLoggedInUser";
+    const ERP_SESSION = ErpAuth.requireRole(["admin", "staff"]);
+    const API_BASE_URL = ErpAuth.API_BASE_URL;
 
     let students = [];
     let courses = [];
@@ -3406,25 +1380,12 @@
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    function getErpLoggedInUser() {
-      try {
-        return JSON.parse(localStorage.getItem(ERP_SESSION_STORAGE_KEY) || sessionStorage.getItem(ERP_SESSION_STORAGE_KEY) || "null");
-      } catch (error) {
-        return null;
-      }
-    }
-
-    function clearErpLoggedInUser() {
-      localStorage.removeItem(ERP_SESSION_STORAGE_KEY);
-      sessionStorage.removeItem(ERP_SESSION_STORAGE_KEY);
-    }
-
     function getUserDisplayName(user) {
       return user?.name || user?.username || user?.fullName || user?.email || "User";
     }
 
     function getUserRoleText(user) {
-      const role = user?.loginType || user?.role || user?.accountType || "Admin";
+      const role = user?.accountType || user?.role || "Admin";
       return String(role).charAt(0).toUpperCase() + String(role).slice(1);
     }
 
@@ -3438,12 +1399,15 @@
     }
 
     function applyLoggedInUserToAdminDashboard() {
-      const user = getErpLoggedInUser();
-      if (!user) {
-        window.location.href = "login.html";
-        return;
+      const user = ERP_SESSION;
+      if (!user) return;
+
+      // Staff can manage everything except admin accounts.
+      if (user.role !== "admin") {
+        const adminsNav = document.querySelector('.nav-item[data-section="admins"]');
+        if (adminsNav) adminsNav.style.display = "none";
       }
-    
+
       const name = getUserDisplayName(user);
       const roleText = getUserRoleText(user);
     
@@ -3462,20 +1426,24 @@
         if (!btn) return;
         btn.addEventListener("click", function (event) {
           event.preventDefault();
-          clearErpLoggedInUser();
-          window.location.href = "login.html";
+          ErpAuth.logout();
         });
       });
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
+      if (!ERP_SESSION) return; // redirecting to login
       applyLoggedInUserToAdminDashboard();
       attachLogoutHandlers();
       initializeEventListeners();
       initializeFacultyModule();
       initializeStaffModule();
       initializeAdminModule();
+      initializeLeaderModule();
+      initializeExtraModules();
+      setAcademicYear();
       await checkAndLoadData();
+      loadOverview();
     });
 
     function initializeEventListeners() {
@@ -3498,6 +1466,8 @@
         if (event.target === departmentModal) closeDepartmentModal();
         if (event.target === document.getElementById("FacultyModel")) closeFacultyModal();
         if (event.target === document.getElementById("adminModal")) closeAdminModal();
+        if (event.target === document.getElementById("leaderModal")) closeLeaderModal();
+        if (event.target === document.getElementById("crudModal")) closeCrudModal();
         if (event.target === document.getElementById("deleteConfirmationModal")) closeDeleteModal();
       };
     }
@@ -3507,7 +1477,9 @@
       try {
         await loadDepartments();
         await loadCourses();
-        await Promise.all([loadStudents(), updateDashboardStats(), loadAdmins("active")]);
+        const loads = [loadStudents(), updateDashboardStats()];
+        if (ERP_SESSION.role === "admin") loads.push(loadAdmins("active"));
+        await Promise.all(loads);
       } catch (error) {
         console.error("Error during initialization:", error);
         showNotification("Error initializing application", "error");
@@ -3532,7 +1504,7 @@
         loadCourses();
       } else if (section === "students" || section === "dashboard") {
         loadStudents();
-        updateDashboardStats();
+        if (section === "dashboard") loadOverview();
       } else if (section === "faculty") {
         loadFaculties("active");
       } else if (section === "staff") {
@@ -3541,37 +1513,29 @@
         loadAdmins("active");
       } else if (section === "departments") {
         loadDepartments();
+      } else if (["subjects", "events", "notices", "exams", "library"].includes(section)) {
+        loadCrud(section);
+      } else if (section === "payment") {
+        loadFeesSection();
+      } else if (section === "leaves") {
+        loadLeaves();
+      } else if (section === "admissions") {
+        loadAdmissions();
+      } else if (section === "settings") {
+        loadSettings();
+      } else if (section === "HOD") {
+        loadLeaders("hod", "active");
+      } else if (section === "principle") {
+        loadLeaders("principal", "active");
       }
     }
 
     async function updateDashboardStats() {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`);
-        if (!response.ok) throw new Error("Failed to fetch dashboard stats");
-        const stats = await response.json();
-
-        document.querySelector(".card:nth-child(1) .card-value").textContent = (stats.totalStudents || 0).toLocaleString();
-        document.querySelector(".card:nth-child(2) .card-value").textContent = (stats.activeCourses || 0).toLocaleString();
-        document.querySelector(".card:nth-child(4) .card-value").textContent = `${stats.successRate || 0}%`;
-
-        // Also update the visible stat cards
-        const statValues = document.querySelectorAll('.stat-card .stat-info h3');
-        if(statValues[0]) statValues[0].textContent = (stats.totalStudents || 3654).toLocaleString();
-      } catch (error) {
-        console.error("Error updating dashboard stats:", error);
-      }
+      // Kept for older call sites: the home page numbers come from loadOverview().
+      if (currentSection === "dashboard") loadOverview();
     }
 
-    async function updateAdminCardCount() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/active`);
-        const admins = await res.json();
-        const count = Array.isArray(admins) ? admins.length : 0;
-        document.getElementById("activeAdminsCard").textContent = count;
-      } catch (error) {
-        document.getElementById("activeAdminsCard").textContent = "82";
-      }
-    }
+    async function updateAdminCardCount() { /* admin count is shown in the Admins section */ }
 
     async function loadStudents() {
       try {
@@ -3608,6 +1572,7 @@
         departments = await response.json();
         renderDepartmentTable(departments);
         updateDepartmentDropdowns(departments);
+        fillDepartmentFilters();
       } catch (error) {
         console.error("Error loading departments:", error);
         departments = [];
@@ -3767,6 +1732,8 @@
         courseName: selectedCourse ? selectedCourse.name : "",
         collegeType: document.getElementById("studentCollegeType").value,
         enrollmentDate: document.getElementById("enrollmentDate").value,
+        semester: Number(document.getElementById("studentSemester").value) || null,
+        section: document.getElementById("studentSection").value,
         status: "active",
       };
 
@@ -3969,7 +1936,7 @@
     }
 
     function updateDepartmentDropdowns(departments) {
-      const dropdownIds = ["studentDepartment", "courseDepartment", "facultyDepartment", "staffDepartment"];
+      const dropdownIds = ["studentDepartment", "courseDepartment", "facultyDepartment", "staffDepartment", "leaderDepartment"];
 
       dropdownIds.forEach((id) => {
         const select = document.getElementById(id);
@@ -4043,6 +2010,8 @@
         document.getElementById("studentCourse").value = student.course || "";
         document.getElementById("studentCollegeType").value = student.collegeType || "";
         document.getElementById("enrollmentDate").value = formatDateForInput(student.enrollmentDate);
+        document.getElementById("studentSemester").value = student.semester ? String(student.semester) : "";
+        document.getElementById("studentSection").value = student.section || "";
 
         studentModal.style.display = "flex";
       } catch (error) {
@@ -4102,6 +2071,7 @@
     let searchTimeout;
     function handleSearch(e) {
       clearTimeout(searchTimeout);
+      if (currentSection !== "students" && e.target.value.trim()) navigateToSection("students");
       const searchTerm = e.target.value.trim();
 
       searchTimeout = setTimeout(async () => {
@@ -4254,6 +2224,7 @@
         document.getElementById("facultyDepartment").value = faculty.department || "";
         document.getElementById("facultyCollegeType").value = faculty.collegeType || "";
         document.getElementById("facultyEnrollmentDate").value = formatDateForInput(faculty.enrollmentDate);
+        document.getElementById("facultyDesignation").value = faculty.designation || "";
 
         modal.classList.add("show");
       };
@@ -4277,9 +2248,11 @@
           department: document.getElementById("facultyDepartment").value,
           collegeType: document.getElementById("facultyCollegeType").value,
           enrollmentDate: document.getElementById("facultyEnrollmentDate").value,
-          status: "active",
-          password: "faculty123"
+          designation: document.getElementById("facultyDesignation").value.trim(),
+          status: "active"
         };
+        // New faculty get the default password; editing never resets an existing password.
+        if (!editingFacultyId) facultyData.password = "faculty123";
 
         const method = editingFacultyId ? "PATCH" : "POST";
         const url = editingFacultyId ? `${API_URL}/${editingFacultyId}` : API_URL;
@@ -4291,7 +2264,8 @@
         });
 
         if (!res.ok) {
-          showNotification("Operation failed", "error");
+          const err = await res.json().catch(() => ({}));
+          showNotification(err.message || "Operation failed", "error");
           return;
         }
 
@@ -4354,6 +2328,8 @@
         staffModalTitle.innerText = "Add New Staff";
         staffSubmitBtn.innerText = "Add Staff";
         document.getElementById("staffPassword").value = "staff123";
+        document.getElementById("staffPassword").required = true;
+        document.getElementById("staffPassword").placeholder = "";
         staffModal.classList.add("show");
       };
 
@@ -4381,6 +2357,8 @@
         document.getElementById("staffCollegeType").value = staff.collegeType || "";
         document.getElementById("staffEnrollmentDate").value = formatDateForInput(staff.enrollmentDate);
         document.getElementById("staffPassword").value = "";
+        document.getElementById("staffPassword").required = false;
+        document.getElementById("staffPassword").placeholder = "Leave blank to keep current password";
 
         staffModal.classList.add("show");
       };
@@ -4414,7 +2392,7 @@
           department: document.getElementById("staffDepartment").value,
           collegeType: document.getElementById("staffCollegeType").value,
           enrollmentDate: document.getElementById("staffEnrollmentDate").value,
-          password: document.getElementById("staffPassword").value.trim() || "staff123"
+          password: document.getElementById("staffPassword").value.trim() || (editingStaffId ? "" : "staff123")
         };
 
         const method = editingStaffId ? "PATCH" : "POST";
@@ -4494,6 +2472,8 @@
         adminModalTitle.innerText = "Add New Admin";
         adminSubmitBtn.innerText = "Add Admin";
         document.getElementById("adminPassword").value = "admin123";
+        document.getElementById("adminPassword").required = true;
+        document.getElementById("adminPassword").placeholder = "";
         adminModal.classList.add("show");
       };
 
@@ -4509,7 +2489,7 @@
         try {
           const res = await fetch(`${ADMIN_API_URL}/${id}`);
           const data = await res.json();
-          const admin = data.admin;
+          const admin = data.admin || data;
 
           editingAdminId = id;
           adminModalTitle.innerText = "Edit Admin";
@@ -4519,6 +2499,8 @@
           document.getElementById("adminUsername").value = admin.username || "";
           document.getElementById("adminEmail").value = admin.email || "";
           document.getElementById("adminPassword").value = "";
+          document.getElementById("adminPassword").required = false;
+          document.getElementById("adminPassword").placeholder = "Leave blank to keep current password";
 
           adminModal.classList.add("show");
         } catch (error) {
@@ -4584,6 +2566,683 @@
       });
 
       loadAdmins("active");
+    }
+
+    // ===================== LIVE OVERVIEW (home page) =====================
+    const api = ErpAuth.api;
+    const esc = ErpAuth.escapeHtml;
+    const fmt = (d) => ErpAuth.formatDate(d);
+    const money = (n) => ErpAuth.rupees(n);
+    const byId = (id) => document.getElementById(id);
+
+    async function loadOverview() {
+      try {
+        const ov = await api("/api/admin-portal/overview");
+        const c = ov.counts;
+        byId("ovStudents").textContent = c.students;
+        byId("ovStudentsMeta").innerHTML = `Active : ${c.students} &nbsp; Inactive : ${c.studentsInactive} &nbsp; <a href="#" onclick="navigateToSection('students'); return false;">View all</a>`;
+        byId("ovFaculty").textContent = c.faculty;
+        byId("ovFacultyMeta").innerHTML = `Active : ${c.faculty} &nbsp; Inactive : ${c.facultyInactive} &nbsp; <a href="#" onclick="navigateToSection('faculty'); return false;">View all</a>`;
+        byId("ovStaff").textContent = c.staff;
+        byId("ovStaffMeta").innerHTML = `Active : ${c.staff} &nbsp; Inactive : ${c.staffInactive} &nbsp; <a href="#" onclick="navigateToSection('staff'); return false;">View all</a>`;
+        byId("ovSubjects").textContent = c.subjects;
+        byId("ovSubjectsMeta").innerHTML = `Departments : ${c.departments} &nbsp; <a href="#" onclick="navigateToSection('subjects'); return false;">View all</a>`;
+
+        // Attendance donut
+        const a = ov.attendance;
+        byId("ovPresent").textContent = a.present;
+        byId("ovPresent2").textContent = a.present;
+        byId("ovAbsent").textContent = a.absent;
+        byId("ovAttDate").textContent = fmt(new Date());
+        byId("ovAttNote").textContent = a.total ? `${a.percentage}% present across ${a.total} class entries` : "No attendance marked yet today";
+        byId("ovDonut").style.background = a.total
+          ? `conic-gradient(#22c55e 0 ${a.percentage}%, #ef4444 ${a.percentage}% 100%)`
+          : "conic-gradient(#e2e8f0 0 100%)";
+
+        // Events
+        const typeIcon = { meeting: "fa-users", holiday: "fa-umbrella-beach", sports: "fa-running", tech: "fa-laptop-code", cultural: "fa-music", exam: "fa-file-alt", workshop: "fa-tools", academic: "fa-graduation-cap", other: "fa-calendar" };
+        byId("ovEvents").innerHTML = ov.upcomingEvents.length
+          ? ov.upcomingEvents.map((e) => `<div class="ov-item"><div class="ov-icon"><i class="fas ${typeIcon[e.type] || "fa-calendar"}"></i></div>
+              <div><h4>${esc(e.title)}</h4><p><i class="fas fa-calendar"></i> ${fmt(e.date)}${e.endDate ? ` - ${fmt(e.endDate)}` : ""}${e.time ? ` · ${esc(e.time)}` : ""}</p>${e.location ? `<p>${esc(e.location)}</p>` : ""}</div></div>`).join("")
+          : '<p class="ov-muted">No upcoming events. <a href="#" onclick="openCrudForm(\'events\'); return false;">Add one</a></p>';
+
+        // Fees
+        const f = ov.fees;
+        byId("ovFeeCollected").textContent = money(f.collected);
+        byId("ovFeeOutstanding").textContent = money(f.outstanding);
+        byId("ovFeeDue").textContent = f.studentsWithDues;
+        byId("ovFeeOverdue").textContent = f.overdueFees;
+        const max = Math.max(1, ...f.monthly.map((m) => m.collected));
+        byId("ovFeeBars").innerHTML = f.monthly.map((m) => `<div class="ov-bar-col" title="${money(m.collected)}">
+            <span class="ov-bar-val">${m.collected ? money(m.collected) : ""}</span>
+            <div class="ov-bar" style="height:${Math.max(2, (m.collected / max) * 100)}%"></div><span>${esc(m.label)}</span></div>`).join("");
+
+        // Leaves
+        byId("ovLeaves").innerHTML = ov.pendingLeaves.length
+          ? ov.pendingLeaves.map((l) => `<div class="ov-item"><div class="ov-avatar">${esc((l.applicantName || "?")[0])}</div>
+              <div style="flex:1"><h4>${esc(l.applicantName)} <span class="leave-type ${l.type === "sick" ? "medical" : l.type === "emergency" ? "emergency" : "casual"}">${esc(l.type)}</span></h4>
+              <p>${esc(l.applicantTitle || l.applicantKind)}${l.department ? ` · ${esc(l.department)}` : ""}</p>
+              <p>Leave : ${fmt(l.from)} - ${fmt(l.to)} · Applied ${fmt(l.createdAt)}</p></div>
+              <div class="ov-actions"><button class="ov-ok" title="Approve" onclick="reviewLeave('${l._id}','approved')"><i class="fas fa-check"></i></button>
+              <button class="ov-no" title="Reject" onclick="reviewLeave('${l._id}','rejected')"><i class="fas fa-times"></i></button></div></div>`).join("")
+          : '<p class="ov-muted">No pending leave requests.</p>';
+
+        // Notices
+        byId("ovNotices").innerHTML = ov.notices.length
+          ? ov.notices.map((n) => `<div class="ov-item"><div class="ov-icon ${n.priority === "high" ? "ov-red" : ""}"><i class="fas fa-bullhorn"></i></div>
+              <div><h4>${esc(n.title)}</h4><p><i class="fas fa-calendar"></i> Added on : ${fmt(n.createdAt)} · ${esc(n.audience)}</p></div></div>`).join("")
+          : '<p class="ov-muted">No notices yet.</p>';
+
+        // Top students
+        const medals = ["🥇", "🥈", "🥉"];
+        byId("ovTop").innerHTML = ov.topStudents.length
+          ? ov.topStudents.map((s, i) => `<div class="ov-item"><div class="ov-medal">${medals[i]}</div>
+              <div style="flex:1"><h4>${esc(s.name)}</h4><p>${esc(s.studentId || "")} · ${esc(s.department || "")}${s.semester ? ` · Sem ${s.semester}${s.section || ""}` : ""}</p></div>
+              <div class="ov-score">${s.marksPct}%</div></div>`).join("")
+          : '<p class="ov-muted">No marks entered yet.</p>';
+
+        byId("overviewUpdated").textContent = `Live data · updated ${new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`;
+        updateBanner();
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    const NOTIF_TARGET = { leaves: "leaves", admissions: "admissions", payment: "payment", notices: "notices" };
+
+    function toggleFullscreen() {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen().catch(() => {});
+    }
+
+    function toggleNotifPanel(event) {
+      event.stopPropagation();
+      const p = byId("notifPanel");
+      p.style.display = p.style.display === "none" ? "block" : "none";
+    }
+    document.addEventListener("click", (e) => {
+      const p = document.getElementById("notifPanel");
+      if (p && p.style.display === "block" && !p.contains(e.target)) p.style.display = "none";
+    });
+
+    function setAcademicYear() {
+      const now = new Date();
+      const start = now.getMonth() >= 5 ? now.getFullYear() : now.getFullYear() - 1; // academic year starts in June
+      byId("academicYear").textContent = `Academic Year : ${start} / ${start + 1}`;
+    }
+
+    async function updateBanner() {
+      try {
+        const items = await api("/api/notifications");
+        const count = byId("bellCount");
+        count.textContent = items.length;
+        count.style.display = items.length ? "" : "none";
+        byId("notifPanel").innerHTML = items.length
+          ? items.map((n) => `<div style="padding:10px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer" onclick="byId('notifPanel').style.display='none'; navigateToSection('${NOTIF_TARGET[n.section] || "dashboard"}')">
+              <div style="font-size:13px;color:#334155">${esc(n.message)}</div><div style="font-size:11px;color:#94a3b8">${ErpAuth.timeAgo(n.at)}</div></div>`).join("")
+          : '<p style="padding:16px;font-size:13px;color:#94a3b8;margin:0">You are all caught up</p>';
+        const top = items.find((n) => ["payment", "leave", "admission", "fee"].includes(n.type));
+        if (top) {
+          byId("notifBannerText").textContent = top.message;
+          byId("notifBanner").style.display = "";
+        }
+      } catch (_) { /* banner is optional */ }
+    }
+
+    // ===================== GENERIC LIST + FORM MODULE =====================
+    const DEPT_FIELD = { name: "department", label: "Department", type: "department", allLabel: "All departments" };
+    const EVENT_TYPES = ["academic", "cultural", "sports", "tech", "meeting", "exam", "workshop", "holiday", "other"];
+    const AUDIENCES = [["all", "Everyone"], ["students", "Students"], ["faculty", "Faculty"], ["staff", "Staff"]];
+    const opt = (list) => list.map((x) => (Array.isArray(x) ? { value: x[0], label: x[1] } : { value: x, label: x[0].toUpperCase() + x.slice(1) }));
+
+    const CRUD = {
+      subjects: {
+        title: "Subjects", singular: "Subject", api: "/api/subjects", icon: "fa-book",
+        columns: [["Code", (r) => r.code], ["Name", (r) => r.name], ["Semester", (r) => r.semester], ["Credits", (r) => r.credits], ["Department", (r) => r.department || "All"]],
+        fields: [
+          { name: "code", label: "Subject Code", required: true },
+          { name: "name", label: "Subject Name", required: true },
+          { name: "semester", label: "Semester", type: "number", required: true, min: 1, max: 8 },
+          { name: "credits", label: "Credits", type: "number", min: 1, max: 6, default: 3 },
+          DEPT_FIELD,
+        ],
+        sort: (a, b) => a.semester - b.semester || a.code.localeCompare(b.code),
+      },
+      events: {
+        title: "Events Calendar", singular: "Event", api: "/api/events", icon: "fa-calendar-alt",
+        columns: [["Title", (r) => r.title], ["Date", (r) => fmt(r.date) + (r.endDate ? ` - ${fmt(r.endDate)}` : "")], ["Time", (r) => r.time || "—"], ["Location", (r) => r.location || "—"], ["Type", (r) => r.type], ["Audience", (r) => r.audience], ["Department", (r) => r.department || "All"]],
+        fields: [
+          { name: "title", label: "Event Title", required: true },
+          { name: "date", label: "Date", type: "date", required: true },
+          { name: "endDate", label: "End Date (optional)", type: "date" },
+          { name: "time", label: "Time", placeholder: "e.g. 10:00 AM" },
+          { name: "location", label: "Location" },
+          { name: "type", label: "Type", type: "select", options: opt(EVENT_TYPES), default: "academic" },
+          { name: "audience", label: "Visible to", type: "select", options: opt(AUDIENCES), default: "all" },
+          DEPT_FIELD,
+          { name: "description", label: "Description", type: "textarea" },
+        ],
+      },
+      notices: {
+        title: "Notice Board", singular: "Notice", api: "/api/announcements", icon: "fa-bullhorn",
+        columns: [["Title", (r) => r.title], ["Category", (r) => r.category], ["Priority", (r) => r.priority], ["Audience", (r) => r.audience], ["Department", (r) => r.department || "All"], ["Posted", (r) => `${fmt(r.createdAt)} · ${r.createdByName || ""}`]],
+        fields: [
+          { name: "title", label: "Title", required: true },
+          { name: "message", label: "Message", type: "textarea" },
+          { name: "category", label: "Category", type: "select", options: opt(["general", "academic", "exam", "fees", "event", "research", "infrastructure"]), default: "general" },
+          { name: "priority", label: "Priority", type: "select", options: opt(["high", "medium", "low"]), default: "medium" },
+          { name: "audience", label: "Visible to", type: "select", options: opt(AUDIENCES), default: "all" },
+          DEPT_FIELD,
+        ],
+      },
+      exams: {
+        title: "Exam Timetable", singular: "Exam", api: "/api/exams", icon: "fa-file-alt",
+        columns: [["Date", (r) => fmt(r.date)], ["Subject", (r) => `${r.subjectName || ""} (${r.subjectCode})`], ["Semester", (r) => r.semester], ["Type", (r) => r.examType], ["Time", (r) => [r.startTime, r.endTime].filter(Boolean).join(" - ") || "—"], ["Venue", (r) => r.venue || "—"], ["Department", (r) => r.department || "All"]],
+        fields: [
+          { name: "subjectCode", label: "Subject", type: "subject", required: true },
+          { name: "semester", label: "Semester", type: "number", required: true, min: 1, max: 8 },
+          { name: "examType", label: "Exam Type", type: "select", options: opt([["semester", "Semester End"], ["internal", "Internal"], ["practical", "Practical"]]), default: "semester" },
+          { name: "date", label: "Date", type: "date", required: true },
+          { name: "startTime", label: "Start Time", type: "time" },
+          { name: "endTime", label: "End Time", type: "time" },
+          { name: "venue", label: "Venue" },
+          DEPT_FIELD,
+        ],
+      },
+      library: {
+        title: "Library & Study Materials", singular: "Resource", api: "/api/resources", icon: "fa-book-open",
+        columns: [["Title", (r) => r.title], ["Category", (r) => r.category], ["Subject", (r) => r.subjectCode || "—"], ["Author", (r) => r.author || "—"], ["Link", (r) => ({ html: `<a href="${esc(r.url)}" target="_blank" rel="noopener">Open</a>` })], ["Added by", (r) => r.addedByName || ""]],
+        fields: [
+          { name: "title", label: "Title", required: true },
+          { name: "category", label: "Category", type: "select", options: opt([["textbook", "Textbook"], ["notes", "Notes"], ["syllabus", "Syllabus"], ["lab-manual", "Lab manual"], ["research-paper", "Research paper"], ["question-paper", "Question paper"]]), default: "textbook" },
+          { name: "url", label: "Link (https://...)", type: "url", required: true },
+          { name: "subjectCode", label: "Subject (optional)", type: "subject" },
+          { name: "semester", label: "Semester (optional)", type: "number", min: 1, max: 8 },
+          { name: "author", label: "Author" },
+          { name: "description", label: "Description", type: "textarea" },
+        ],
+      },
+      admissions: {
+        singular: "Application", api: "/api/admissions", createOnly: true, onSaved: () => loadAdmissions(),
+        fields: [
+          { name: "name", label: "Applicant Name", required: true },
+          { name: "email", label: "Email", type: "email", required: true },
+          { name: "phone", label: "Phone" },
+          DEPT_FIELD,
+          { name: "program", label: "Program / Course", type: "course" },
+          { name: "score", label: "Qualifying exam score (%)", type: "number", min: 0, max: 100 },
+        ],
+      },
+    };
+
+    const crudData = {};
+    let crudEditing = null; // { key, id }
+
+    async function loadCrud(key) {
+      const cfg = CRUD[key];
+      const mount = byId(`${key}Mount`);
+      try {
+        let rows = await api(cfg.api);
+        if (cfg.sort) rows = rows.sort(cfg.sort);
+        crudData[key] = rows;
+        const cell = (v) => (v && typeof v === "object" && "html" in v ? v.html : esc(v ?? ""));
+        mount.innerHTML = `
+          <div class="table-header">
+            <h2><i class="fas ${cfg.icon}"></i> ${cfg.title} <span class="ov-muted">(${rows.length})</span></h2>
+            <input class="ov-search" placeholder="Search..." oninput="filterCrud('${key}', this.value)">
+            <button class="add-student-btn" onclick="openCrudForm('${key}')"><i class="fas fa-plus"></i>Add ${cfg.singular}</button>
+          </div>
+          <table>
+            <thead><tr>${cfg.columns.map((c) => `<th>${c[0]}</th>`).join("")}<th>Actions</th></tr></thead>
+            <tbody id="${key}Body">${rows.length ? rows.map((r) => `<tr>${cfg.columns.map((c) => `<td>${cell(c[1](r))}</td>`).join("")}
+              <td class="action-buttons"><button class="action-btn edit-btn" onclick="openCrudForm('${key}','${r._id}')"><i class="fas fa-edit"></i> Edit</button>
+              <button class="action-btn delete-btn" onclick="deleteCrud('${key}','${r._id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`).join("")
+              : `<tr><td colspan="${cfg.columns.length + 1}" class="empty-state">Nothing here yet. Click "Add ${cfg.singular}".</td></tr>`}</tbody>
+          </table>`;
+      } catch (error) {
+        mount.innerHTML = `<p class="ov-muted">${esc(error.message)}</p>`;
+      }
+    }
+
+    function filterCrud(key, q) {
+      q = q.toLowerCase();
+      document.querySelectorAll(`#${key}Body tr`).forEach((tr) => { tr.style.display = !q || tr.textContent.toLowerCase().includes(q) ? "" : "none"; });
+    }
+
+    let subjectsCache = null;
+    async function getSubjects() {
+      if (!subjectsCache) subjectsCache = await api("/api/subjects");
+      return subjectsCache;
+    }
+
+    async function openCrudForm(key, id) {
+      const cfg = CRUD[key];
+      const record = id ? (crudData[key] || []).find((r) => r._id === id) : null;
+      crudEditing = { key, id: id || null };
+      const subjects = cfg.fields.some((f) => f.type === "subject") ? await getSubjects() : [];
+      const value = (f) => {
+        const v = record ? record[f.name] : f.default;
+        if (v === undefined || v === null) return "";
+        return f.type === "date" ? String(v).slice(0, 10) : v;
+      };
+      const input = (f) => {
+        const v = value(f);
+        const req = f.required ? "required" : "";
+        if (f.type === "select") return `<select id="cf_${f.name}" ${req}>${f.options.map((o) => `<option value="${esc(o.value)}" ${String(v) === String(o.value) ? "selected" : ""}>${esc(o.label)}</option>`).join("")}</select>`;
+        if (f.type === "department") return `<select id="cf_${f.name}"><option value="">${f.allLabel || "Select"}</option>${departments.map((d) => `<option value="${esc(d.name)}" ${v === d.name ? "selected" : ""}>${esc(d.name)}</option>`).join("")}</select>`;
+        if (f.type === "course") return `<select id="cf_${f.name}"><option value="">Select course</option>${courses.map((c) => `<option value="${esc(c.name)}" ${v === c.name ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>`;
+        if (f.type === "subject") return `<select id="cf_${f.name}" ${req} onchange="onCrudSubject(this)"><option value="">Select subject</option>${subjects.map((s) => `<option value="${esc(s.code)}" data-sem="${s.semester}" ${v === s.code ? "selected" : ""}>${esc(s.code)} - ${esc(s.name)} (Sem ${s.semester})</option>`).join("")}</select>`;
+        if (f.type === "textarea") return `<textarea id="cf_${f.name}" rows="3" ${req}>${esc(v)}</textarea>`;
+        return `<input id="cf_${f.name}" type="${f.type || "text"}" value="${esc(v)}" ${req} ${f.min !== undefined ? `min="${f.min}"` : ""} ${f.max !== undefined ? `max="${f.max}"` : ""} ${f.placeholder ? `placeholder="${esc(f.placeholder)}"` : ""}>`;
+      };
+      byId("crudModalTitle").textContent = `${record ? "Edit" : "Add"} ${cfg.singular}`;
+      byId("crudFields").innerHTML = cfg.fields.map((f) => `<div class="form-group"><label for="cf_${f.name}">${f.label}${f.required ? " *" : ""}</label>${input(f)}</div>`).join("");
+      byId("crudModal").classList.add("show");
+    }
+
+    function onCrudSubject(select) {
+      const sem = select.selectedOptions[0] && select.selectedOptions[0].dataset.sem;
+      const semInput = byId("cf_semester");
+      if (sem && semInput && !semInput.value) semInput.value = sem;
+    }
+
+    function closeCrudModal() {
+      byId("crudModal").classList.remove("show");
+      crudEditing = null;
+    }
+
+    async function saveCrud(event) {
+      event.preventDefault();
+      const { key, id } = crudEditing;
+      const cfg = CRUD[key];
+      const body = {};
+      cfg.fields.forEach((f) => {
+        let v = byId(`cf_${f.name}`).value.trim();
+        if (f.type === "number") v = v === "" ? null : Number(v);
+        if ((f.type === "date" || f.type === "time") && v === "") v = null;
+        body[f.name] = v;
+      });
+      try {
+        await api(id ? `${cfg.api}/${id}` : cfg.api, { method: id ? "PUT" : "POST", body });
+        showNotification(`${cfg.singular} ${id ? "updated" : "added"}`, "success");
+        closeCrudModal();
+        if (key === "subjects") subjectsCache = null;
+        if (cfg.onSaved) cfg.onSaved();
+        else loadCrud(key);
+        if (["events", "notices"].includes(key)) loadOverview();
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    async function deleteCrud(key, id) {
+      const cfg = CRUD[key];
+      if (!confirm(`Delete this ${cfg.singular.toLowerCase()}?`)) return;
+      try {
+        await api(`${cfg.api}/${id}`, { method: "DELETE" });
+        showNotification(`${cfg.singular} deleted`, "success");
+        if (key === "subjects") subjectsCache = null;
+        loadCrud(key);
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    // ===================== FEES & PAYMENTS =====================
+    let allFees = [];
+    let feeStatus = "";
+
+    async function loadFeesSection() {
+      try {
+        const [summary, fees, payments] = await Promise.all([api("/api/fees/summary"), api("/api/fees"), api("/api/payments")]);
+        byId("feeCollected").textContent = money(summary.collected);
+        byId("feeOutstanding").textContent = money(summary.outstanding);
+        byId("feePercent").textContent = `${summary.percentCollected}%`;
+        byId("feeDueStudents").innerHTML = `${summary.studentsWithDues}`;
+        allFees = fees;
+        renderFees();
+        const methods = { upi: "UPI", card: "Card", netbanking: "Net Banking", cash: "Cash" };
+        byId("paymentTableBody").innerHTML = payments.length
+          ? payments.map((p) => `<tr><td>${esc(p.receiptNo)}</td><td>${fmt(p.paidAt)}</td><td>${esc(p.student ? `${p.student.name} (${p.student.studentId || ""})` : "—")}</td>
+              <td>${esc(p.description)}</td><td>${methods[p.method] || esc(p.method)}</td><td>${money(p.amount)}</td>
+              <td><button class="action-btn edit-btn" onclick="ErpAuth.openReceipt('${p._id}')"><i class="fas fa-receipt"></i> Receipt</button></td></tr>`).join("")
+          : '<tr><td colspan="7" class="empty-state">No payments yet.</td></tr>';
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    function setFeeFilter(btn) {
+      btn.parentElement.querySelectorAll(".filter-btn").forEach((b) => b.classList.toggle("active", b === btn));
+      feeStatus = btn.dataset.status;
+      renderFees();
+    }
+
+    function renderFees() {
+      const q = byId("feeSearch").value.trim().toLowerCase();
+      const today = new Date(new Date().toDateString());
+      const rows = allFees.filter((f) => (!feeStatus || f.status === feeStatus) &&
+        (!q || [f.title, f.student && f.student.name, f.student && f.student.studentId].some((v) => String(v || "").toLowerCase().includes(q))));
+      byId("feeTableBody").innerHTML = rows.length
+        ? rows.slice(0, 300).map((f) => {
+          const overdue = f.status === "pending" && f.dueDate && new Date(f.dueDate) < today;
+          return `<tr><td>${esc(f.student ? `${f.student.name} (${f.student.studentId || ""})` : "Deleted student")}</td>
+            <td>${esc(f.student ? f.student.department : "")}</td><td>${esc(f.title)}</td><td>${money(f.amount)}</td><td>${fmt(f.dueDate)}</td>
+            <td><span class="status-badge ${f.status === "paid" ? "status-active" : "status-inactive"}">${f.status === "paid" ? "Paid" : overdue ? "Overdue" : "Pending"}</span></td>
+            <td>${f.status === "pending" ? `<button class="action-btn delete-btn" onclick="deleteFee('${f._id}')"><i class="fas fa-trash"></i> Remove</button>` : fmt(f.paidAt)}</td></tr>`;
+        }).join("")
+        : '<tr><td colspan="7" class="empty-state">No fees match.</td></tr>';
+    }
+
+    async function deleteFee(id) {
+      if (!confirm("Remove this unpaid fee from the student?")) return;
+      try {
+        await api(`/api/fees/${id}`, { method: "DELETE" });
+        loadFeesSection();
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    async function remindFees() {
+      try {
+        const res = await api("/api/fees/remind", { method: "POST" });
+        showNotification(res.message, "success");
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    // ===================== LEAVE REQUESTS =====================
+    let leaveStatus = "pending";
+
+    function setLeaveFilter(btn) {
+      btn.parentElement.querySelectorAll(".filter-btn").forEach((b) => b.classList.toggle("active", b === btn));
+      leaveStatus = btn.dataset.status;
+      loadLeaves();
+    }
+
+    async function loadLeaves() {
+      try {
+        const list = await api(`/api/leaves${leaveStatus ? `?status=${leaveStatus}` : ""}`);
+        const canReview = ERP_SESSION.role === "admin";
+        byId("leaveTableBody").innerHTML = list.length
+          ? list.map((l) => `<tr><td>${esc(l.applicantName)}</td><td>${esc(l.applicantTitle || l.applicantKind)}</td><td>${esc(l.department || "—")}</td>
+              <td>${esc(l.type)}</td><td>${fmt(l.from)} - ${fmt(l.to)}</td><td>${l.days}</td><td>${esc(l.reason)}</td>
+              <td><span class="status-badge ${l.status === "approved" ? "status-active" : l.status === "rejected" ? "status-inactive" : ""}">${l.status}</span>${l.reviewerName ? `<br><small>${esc(l.reviewerName)}</small>` : ""}</td>
+              <td>${l.status === "pending" && canReview ? `<button class="action-btn edit-btn" onclick="reviewLeave('${l._id}','approved')">Approve</button> <button class="action-btn delete-btn" onclick="reviewLeave('${l._id}','rejected')">Reject</button>` : ""}</td></tr>`).join("")
+          : '<tr><td colspan="9" class="empty-state">No leave requests.</td></tr>';
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    async function reviewLeave(id, status) {
+      const note = status === "rejected" ? prompt("Reason for rejecting (optional):", "") : "";
+      if (note === null) return;
+      try {
+        await api(`/api/leaves/${id}/review`, { method: "PATCH", body: { status, note } });
+        showNotification(`Leave ${status}`, "success");
+        loadLeaves();
+        loadOverview();
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    // ===================== ADMISSIONS =====================
+    let admissionStatus = "pending";
+
+    function setAdmissionFilter(btn) {
+      btn.parentElement.querySelectorAll(".filter-btn").forEach((b) => b.classList.toggle("active", b === btn));
+      admissionStatus = btn.dataset.status;
+      loadAdmissions();
+    }
+
+    async function loadAdmissions() {
+      try {
+        const list = await api(`/api/admissions${admissionStatus ? `?status=${admissionStatus}` : ""}`);
+        const canReview = ERP_SESSION.role === "admin";
+        byId("admissionTableBody").innerHTML = list.length
+          ? list.map((a) => `<tr><td>${fmt(a.createdAt)}</td><td>${esc(a.name)}</td><td>${esc(a.email)}</td><td>${esc(a.department || "—")}</td>
+              <td>${esc(a.program || "—")}</td><td>${a.score ?? "—"}</td>
+              <td><span class="status-badge ${a.status === "approved" ? "status-active" : a.status === "rejected" ? "status-inactive" : ""}">${a.status}</span></td>
+              <td>${a.status === "pending" && canReview ? `<button class="action-btn edit-btn" onclick="reviewAdmission('${a._id}','approved')">Approve & Enroll</button> <button class="action-btn delete-btn" onclick="reviewAdmission('${a._id}','rejected')">Reject</button>` : esc(a.reviewedByName || "")}</td></tr>`).join("")
+          : '<tr><td colspan="8" class="empty-state">No applications.</td></tr>';
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    async function reviewAdmission(id, status) {
+      if (!confirm(status === "approved" ? "Approve and enroll this applicant as a student?" : "Reject this application?")) return;
+      try {
+        const res = await api(`/api/admissions/${id}/review`, { method: "PATCH", body: { status } });
+        showNotification(res.message, "success");
+        loadAdmissions();
+        if (status === "approved") loadStudents();
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    // ===================== REPORTS =====================
+    async function downloadReport(type) {
+      const dept = byId("reportDepartment").value;
+      try {
+        await ErpAuth.download(`/api/reports/${type}${dept ? `?department=${encodeURIComponent(dept)}` : ""}`, `${type}.csv`);
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    // ===================== SETTINGS =====================
+    async function loadSettings() {
+      try {
+        const { user } = await api("/api/auth/me");
+        byId("setName").value = user.name || "";
+        byId("setUsername").value = user.username || "";
+        byId("setEmail").value = user.email || "";
+        byId("setUsernameGroup").style.display = user.username !== undefined ? "" : "none";
+      } catch (error) {
+        showNotification(error.message, "error");
+      }
+    }
+
+    function initializeExtraModules() {
+      byId("crudForm").addEventListener("submit", saveCrud);
+
+      byId("assignFeeForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          const res = await api("/api/fees/assign", {
+            method: "POST",
+            body: {
+              title: byId("afTitle").value.trim(), category: byId("afCategory").value, amount: Number(byId("afAmount").value),
+              dueDate: byId("afDue").value || null, department: byId("afDepartment").value, semester: byId("afSemester").value, section: byId("afSection").value,
+            },
+          });
+          showNotification(res.message, "success");
+          e.target.reset();
+          loadFeesSection();
+        } catch (error) {
+          showNotification(error.message, "error");
+        }
+      });
+
+      byId("profileForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          const body = { name: byId("setName").value.trim(), email: byId("setEmail").value.trim() };
+          if (byId("setUsernameGroup").style.display !== "none") body.username = byId("setUsername").value.trim();
+          const { user } = await api("/api/auth/me", { method: "PATCH", body });
+          ErpAuth.updateSessionUser(user);
+          byId("loggedInUserName").textContent = user.name || user.username;
+          showNotification("Profile saved", "success");
+        } catch (error) {
+          showNotification(error.message, "error");
+        }
+      });
+
+      byId("passwordForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (byId("setPwNew").value !== byId("setPwConfirm").value) return showNotification("New passwords do not match", "error");
+        try {
+          await api("/api/auth/change-password", { method: "POST", body: { currentPassword: byId("setPwCurrent").value, newPassword: byId("setPwNew").value } });
+          e.target.reset();
+          showNotification("Password changed", "success");
+        } catch (error) {
+          showNotification(error.message, "error");
+        }
+      });
+    }
+
+    function fillDepartmentFilters() {
+      ["afDepartment", "reportDepartment"].forEach((id) => {
+        const sel = byId(id);
+        const current = sel.value;
+        sel.innerHTML = `<option value="">All departments</option>${departments.map((d) => `<option value="${esc(d.name)}">${esc(d.name)}</option>`).join("")}`;
+        sel.value = current;
+      });
+    }
+
+    // ===== HOD & PRINCIPAL ACCOUNTS (one module, two account types) =====
+    function initializeLeaderModule() {
+      const TYPES = {
+        hod: { api: `${API_BASE_URL}/api/hod`, label: "HOD", idField: "hodId", tbody: "hodTableBody", btnPrefix: "hod", defaultPassword: "hod123", hasDepartment: true },
+        principal: { api: `${API_BASE_URL}/api/principal`, label: "Principal", idField: "principalId", tbody: "principalTableBody", btnPrefix: "principal", defaultPassword: "principal123", hasDepartment: false }
+      };
+      const modal = document.getElementById("leaderModal");
+      const form = document.getElementById("leaderForm");
+      let currentType = "hod";
+      let editingId = null;
+
+      async function readJson(res) {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || "Request failed");
+        return data;
+      }
+
+      window.loadLeaders = async function (type, status = "active") {
+        const cfg = TYPES[type];
+        document.getElementById(`${cfg.btnPrefix}ActiveBtn`).classList.toggle("active", status === "active");
+        document.getElementById(`${cfg.btnPrefix}InactiveBtn`).classList.toggle("active", status === "inactive");
+        const tbody = document.getElementById(cfg.tbody);
+        const cols = cfg.hasDepartment ? 8 : 7;
+
+        try {
+          const list = await readJson(await fetch(`${cfg.api}/${status}`));
+          if (!list.length) {
+            tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;">No ${status} ${cfg.label} accounts found</td></tr>`;
+            return;
+          }
+          tbody.innerHTML = list.map((p) => `
+            <tr>
+              <td>${escapeHtml(p.name)}</td>
+              <td>${escapeHtml(p.email)}</td>
+              <td>${escapeHtml(p[cfg.idField] || "")}</td>
+              ${cfg.hasDepartment ? `<td>${escapeHtml(p.department || "")}</td>` : ""}
+              <td>${escapeHtml(p.collegeType || "")}</td>
+              <td>${formatDate(p.appointedDate)}</td>
+              <td>${escapeHtml(p.status || "active")}</td>
+              <td>${status === "active"
+                ? `<button class="icon-btn edit-btn" onclick="editLeader('${type}', '${p._id}')"><i class="fa-solid fa-pen"></i></button>
+                   <button class="icon-btn delete-btn" onclick="setLeaderActive('${type}', '${p._id}', false)"><i class="fa-solid fa-trash"></i></button>`
+                : `<button class="add-student-btn" onclick="setLeaderActive('${type}', '${p._id}', true)">Reactivate</button>`}</td>
+            </tr>`).join("");
+        } catch (error) {
+          tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;">${escapeHtml(error.message)}</td></tr>`;
+        }
+      };
+
+      function prepareModal(type, isEdit) {
+        const cfg = TYPES[type];
+        currentType = type;
+        form.reset();
+        document.getElementById("leaderModalTitle").innerText = `${isEdit ? "Edit" : "Add"} ${cfg.label}`;
+        document.getElementById("leaderSubmitBtn").innerText = isEdit ? `Update ${cfg.label}` : `Add ${cfg.label}`;
+        document.getElementById("leaderCodeLabel").innerText = `${cfg.label} ID`;
+        document.getElementById("leaderDepartmentGroup").style.display = cfg.hasDepartment ? "" : "none";
+        document.getElementById("leaderDepartment").required = cfg.hasDepartment;
+        const pw = document.getElementById("leaderPassword");
+        pw.value = isEdit ? "" : cfg.defaultPassword;
+        pw.required = !isEdit;
+        pw.placeholder = isEdit ? "Leave blank to keep current password" : "";
+        document.getElementById("leaderPasswordHint").innerText = isEdit
+          ? "Only fill the password to reset it."
+          : `They log in from the login page as "${cfg.label}" using their email or ${cfg.label} ID.`;
+      }
+
+      window.openLeaderModal = function (type) {
+        editingId = null;
+        prepareModal(type, false);
+        modal.classList.add("show");
+      };
+
+      window.closeLeaderModal = function () {
+        editingId = null;
+        form.reset();
+        modal.classList.remove("show");
+      };
+
+      window.editLeader = async function (type, id) {
+        try {
+          const p = await readJson(await fetch(`${TYPES[type].api}/${id}`));
+          editingId = id;
+          prepareModal(type, true);
+          document.getElementById("leaderName").value = p.name || "";
+          document.getElementById("leaderEmail").value = p.email || "";
+          document.getElementById("leaderCode").value = p[TYPES[type].idField] || "";
+          document.getElementById("leaderDepartment").value = p.department || "";
+          document.getElementById("leaderCollegeType").value = p.collegeType || "";
+          document.getElementById("leaderPhone").value = p.phone || "";
+          document.getElementById("leaderAppointedDate").value = formatDateForInput(p.appointedDate);
+          modal.classList.add("show");
+        } catch (error) {
+          showNotification(error.message, "error");
+        }
+      };
+
+      window.setLeaderActive = async function (type, id, active) {
+        const cfg = TYPES[type];
+        if (!confirm(`Are you sure you want to ${active ? "reactivate" : "deactivate"} this ${cfg.label}?`)) return;
+        try {
+          await readJson(await fetch(`${cfg.api}/${active ? "reactivate" : "inactive"}/${id}`, { method: "PATCH" }));
+          showNotification(`${cfg.label} ${active ? "reactivated" : "deactivated"} successfully`, "success");
+          loadLeaders(type, active ? "inactive" : "active");
+        } catch (error) {
+          showNotification(error.message, "error");
+        }
+      };
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const cfg = TYPES[currentType];
+        const payload = {
+          name: document.getElementById("leaderName").value.trim(),
+          email: document.getElementById("leaderEmail").value.trim(),
+          [cfg.idField]: document.getElementById("leaderCode").value.trim(),
+          collegeType: document.getElementById("leaderCollegeType").value,
+          phone: document.getElementById("leaderPhone").value.trim(),
+          appointedDate: document.getElementById("leaderAppointedDate").value || null
+        };
+        if (cfg.hasDepartment) payload.department = document.getElementById("leaderDepartment").value;
+        const password = document.getElementById("leaderPassword").value.trim();
+        if (password) payload.password = password;
+
+        try {
+          await readJson(await fetch(editingId ? `${cfg.api}/${editingId}` : cfg.api, {
+            method: editingId ? "PATCH" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          }));
+          showNotification(`${cfg.label} ${editingId ? "updated" : "added"} successfully`, "success");
+          closeLeaderModal();
+          loadLeaders(currentType, "active");
+        } catch (error) {
+          showNotification(error.message, "error");
+        }
+      });
     }
 
     // Todo checkbox toggle

@@ -662,10 +662,12 @@
               <label class="form-label">Login As</label>
 
               <select class="form-select" id="role" required>
+                <option value="student">Student</option>
                 <option value="faculty">Faculty</option>
+                <option value="hod">HOD</option>
+                <option value="principal">Principal</option>
                 <option value="staff">Staff</option>
                 <option value="admin">Admin</option>
-                <option value="student">Student</option>
               </select>
             </div>
 
@@ -724,6 +726,8 @@
 
           </form>
 
+          <p class="text-center small mt-3 mb-0">New applicant? <a href="apply.html">Apply for admission</a></p>
+
           <!-- ADMIN OPTIONS -->
 
           <div
@@ -736,7 +740,7 @@
             </div>
 
             <div class="admin-note">
-              Create new admin account for ERP management.
+              First-time setup only: creates the first admin account. After that, admins are added from the Admins section of the dashboard.
             </div>
 
             <button
@@ -763,7 +767,7 @@
         <div class="login-right">
 
           <img
-            src="../Frontend/Drive/IMAGES/AMCEC223.png"
+            src="Drive/IMAGES/AMCEC223.png"
             class="college-image"
             alt="College"
           />
@@ -786,30 +790,25 @@
     </div>
   </div>
 
+  <script src="auth.js"></script>
   <script>
-    const API_BASE_URL = "http://localhost:3000";
-    const SESSION_STORAGE_KEY = "collegeErpLoggedInUser";
+    const API_BASE_URL = ErpAuth.API_BASE_URL;
+
+    const LOGIN_ENDPOINTS = {
+      student: "/api/students/login",
+      faculty: "/api/faculty/login",
+      hod: "/api/hod/login",
+      principal: "/api/principal/login",
+      staff: "/api/staff/login",
+      admin: "/api/admin/login"
+    };
 
     function getEndpoints(role) {
-      if (role === "staff") return [`${API_BASE_URL}/api/staff/login`];
-      if (role === "admin") return [`${API_BASE_URL}/api/admin/login`];
-
-      if (role === "student") {
-        return [
-          `${API_BASE_URL}/api/students/login`,
-          `${API_BASE_URL}/api/student/login`
-        ];
-      }
-
-      return [`${API_BASE_URL}/api/faculty/login`];
+      return [`${API_BASE_URL}${LOGIN_ENDPOINTS[role] || LOGIN_ENDPOINTS.student}`];
     }
 
     function getDashboardForRole(role) {
-      if (role === "student") return "Student dashboard.html";
-      if (role === "faculty") return "faculty dashboard.html";
-      if (role === "staff") return "dashboard.html";
-
-      return "dashboard.html";
+      return ErpAuth.DASHBOARDS[role] || "login.html";
     }
 
     function normalizeUserData(rawUser, role, loginId, responseData) {
@@ -833,39 +832,16 @@
         fullName: user.fullName || displayName,
         username: user.username || displayName,
         email: user.email || loginId || "",
-        role: user.role || user.accountType || role,
-        loginType: role,
-        token: responseData?.token || user.token || "",
+        role: responseData?.role || role,
+        accountType: user.accountType || "",
+        loginType: responseData?.kind || role,
+        token: responseData?.token || "",
         isLoggedIn: true
       };
     }
 
     function saveLoggedInUser(data, rememberMe) {
-
-      const storage =
-        rememberMe ? localStorage : sessionStorage;
-
-      localStorage.removeItem(SESSION_STORAGE_KEY);
-      sessionStorage.removeItem(SESSION_STORAGE_KEY);
-
-      storage.setItem(
-        SESSION_STORAGE_KEY,
-        JSON.stringify(data)
-      );
-    }
-
-    function getStoredUser() {
-      try {
-
-        return JSON.parse(
-          localStorage.getItem(SESSION_STORAGE_KEY) ||
-          sessionStorage.getItem(SESSION_STORAGE_KEY) ||
-          "null"
-        );
-
-      } catch (error) {
-        return null;
-      }
+      ErpAuth.saveSession(data, rememberMe);
     }
 
     function showError(message) {
@@ -990,15 +966,13 @@
       throw new Error(lastError);
     }
 
-    const storedUser = getStoredUser();
+    // Already logged in with a valid token? Go straight to the right dashboard.
+    const storedUser = ErpAuth.getValidSession();
 
-    if (storedUser && storedUser.isLoggedIn) {
-
-      window.location.href =
-        getDashboardForRole(
-          storedUser.loginType ||
-          storedUser.role
-        );
+    if (storedUser) {
+      window.location.href = getDashboardForRole(storedUser.role);
+    } else {
+      ErpAuth.clearSession(); // drop sessions saved before login tokens existed
     }
 
     document
@@ -1075,7 +1049,7 @@
           saveLoggedInUser(user, rememberMe);
 
           window.location.href =
-            getDashboardForRole(role);
+            getDashboardForRole(user.role);
 
         } catch (error) {
 

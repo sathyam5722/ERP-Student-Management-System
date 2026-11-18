@@ -538,11 +538,13 @@
                 <li><a href="#" data-section="curriculum" onclick="showSection('curriculum', this)"><i class="fas fa-book"></i> <span>Curriculum</span></a></li>
                 <li><a href="#" data-section="internal-marks" onclick="showSection('internal-marks', this)"><i class="fas fa-chart-bar"></i> <span>Internal Marks</span></a></li>
                 <li><a href="#" data-section="attendance" onclick="showSection('attendance', this)"><i class="fas fa-calendar-check"></i> <span>Attendance</span></a></li>
+                <li><a href="#" data-section="assignments" onclick="showSection('assignments', this)"><i class="fas fa-tasks"></i> <span>Assignments</span></a></li>
                 <li><a href="#" data-section="exam-schedule" onclick="showSection('exam-schedule', this)"><i class="fas fa-calendar-alt"></i> <span>Exam Schedule</span></a></li>
                 <li><a href="#" data-section="fee-payment" onclick="showSection('fee-payment', this)"><i class="fas fa-credit-card"></i> <span>Fee Payment</span></a></li>
                 <li><a href="#" data-section="payment-history" onclick="showSection('payment-history', this)"><i class="fas fa-history"></i> <span>Payment History</span></a></li>
                 <li><a href="#" data-section="library" onclick="showSection('library', this)"><i class="fas fa-book-open"></i> <span>Library</span></a></li>
                 <li><a href="#" data-section="events" onclick="showSection('events', this)"><i class="fas fa-calendar"></i> <span>College Events</span></a></li>
+                <li><a href="#" data-section="notices" onclick="showSection('notices', this)"><i class="fas fa-bullhorn"></i> <span>Notices</span></a></li>
                 <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
             </ul>
         </div>
@@ -593,40 +595,40 @@
                 <div class="col-md-3">
                     <div class="stats-card attendance">
                         <i class="fas fa-percentage"></i>
-                        <h3>87.5%</h3>
+                        <h3 id="statAttendance">—</h3>
                         <p>Attendance</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar" style="width: 87.5%"></div>
+                            <div class="progress-bar" id="statAttendanceBar" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card cgpa">
                         <i class="fas fa-graduation-cap"></i>
-                        <h3>8.2</h3>
-                        <p>CGPA</p>
+                        <h3 id="statMarks">—</h3>
+                        <p>Internal Marks Average</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar" style="width: 82%"></div>
+                            <div class="progress-bar" id="statMarksBar" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card assignments">
                         <i class="fas fa-clipboard-check"></i>
-                        <h3>12/15</h3>
-                        <p>Assignments</p>
+                        <h3 id="statAssignments" role="button" onclick="showSection('assignments')">—</h3>
+                        <p>Assignments Submitted</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar" style="width: 80%"></div>
+                            <div class="progress-bar" id="statAssignmentsBar" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card fees">
                         <i class="fas fa-wallet"></i>
-                        <h3>₹12,500</h3>
+                        <h3 id="statFees" role="button" onclick="showSection('fee-payment')">—</h3>
                         <p>Pending Fees</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar" style="width: 65%"></div>
+                            <div class="progress-bar" id="statFeesBar" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
@@ -640,56 +642,7 @@
                             <h5 class="mb-0">Recent Activity</h5>
                         </div>
                         <div class="card-body">
-                            <div class="timeline">
-                                <div class="timeline-item mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="timeline-icon bg-success text-white rounded-circle p-2 me-3">
-                                            <i class="fas fa-check"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">Assignment Submitted</h6>
-                                            <p class="text-muted mb-0">Data Structures - Binary Search Tree</p>
-                                            <small class="text-muted">Today, 10:30 AM</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timeline-item mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="timeline-icon bg-primary text-white rounded-circle p-2 me-3">
-                                            <i class="fas fa-chart-line"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">Internal Marks Updated</h6>
-                                            <p class="text-muted mb-0">Database Systems - Test 1 (22/25)</p>
-                                            <small class="text-muted">Yesterday, 3:45 PM</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timeline-item mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="timeline-icon bg-info text-white rounded-circle p-2 me-3">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">Fee Payment Received</h6>
-                                            <p class="text-muted mb-0">Library Fee - ₹1,500</p>
-                                            <small class="text-muted">2 days ago</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="timeline-item">
-                                    <div class="d-flex align-items-center">
-                                        <div class="timeline-icon bg-warning text-white rounded-circle p-2 me-3">
-                                            <i class="fas fa-calendar-check"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">Attendance Marked</h6>
-                                            <p class="text-muted mb-0">Operating Systems - 95%</p>
-                                            <small class="text-muted">3 days ago</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="timeline" id="recentActivity"><p class="text-muted mb-0">Loading...</p></div>
                         </div>
                     </div>
                 </div>
@@ -699,32 +652,7 @@
                         <div class="card-header">
                             <h5 class="mb-0">Upcoming Deadlines</h5>
                         </div>
-                        <div class="card-body">
-                            <div class="deadline-item mb-3">
-                                <h6 class="mb-1">SQL Queries Assignment</h6>
-                                <p class="text-muted mb-2">Database Systems</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-warning">Due in 2 days</span>
-                                    <button class="btn btn-sm btn-primary">Submit</button>
-                                </div>
-                            </div>
-                            <div class="deadline-item mb-3">
-                                <h6 class="mb-1">Process Scheduling Report</h6>
-                                <p class="text-muted mb-2">Operating Systems</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-danger">Due tomorrow</span>
-                                    <button class="btn btn-sm btn-primary">Submit</button>
-                                </div>
-                            </div>
-                            <div class="deadline-item">
-                                <h6 class="mb-1">Tuition Fee Payment</h6>
-                                <p class="text-muted mb-2">Semester 3</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-info">Due in 5 days</span>
-                                    <button class="btn btn-sm btn-primary" data-section="fee-payment" onclick="showSection('fee-payment', this)">Pay Now</button>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="card-body" id="deadlineList"><p class="text-muted mb-0">Loading...</p></div>
                     </div>
                 </div>
             </div>
@@ -750,7 +678,7 @@
 
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            <img src="https://ui-avatars.com/api/?name=Rahul+Sharma&background=3498db&color=fff&size=150" 
+                            <img id="profileAvatar" src="https://ui-avatars.com/api/?name=Student&background=3498db&color=fff&size=150"
                                  alt="Profile" class="profile-avatar">
                             <div class="mt-3">
                                 <button class="btn btn-outline-primary" disabled>
@@ -759,10 +687,10 @@
                                 <small class="d-block text-muted mt-2">Contact admin to change photo</small>
                             </div>
                             <div class="mt-4">
-                                <h6><i class="fas fa-id-card me-2"></i>AM24M0101</h6>
-                                <h6><i class="fas fa-graduation-cap me-2"></i>Computer Science</h6>
-                                <h6><i class="fas fa-calendar me-2"></i>2nd Year, Section A</h6>
-                                <h6><i class="fas fa-envelope me-2"></i>rahul.sharma@amc.edu</h6>
+                                <h6><i class="fas fa-id-card me-2"></i><span id="profileStudentId">—</span></h6>
+                                <h6><i class="fas fa-graduation-cap me-2"></i><span id="profileDepartment">—</span></h6>
+                                <h6><i class="fas fa-calendar me-2"></i><span id="profileYear">—</span></h6>
+                                <h6><i class="fas fa-envelope me-2"></i><span id="profileEmailText">—</span></h6>
                             </div>
                         </div>
                         <div class="col-md-8">
@@ -770,41 +698,41 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">First Name *</label>
-                                        <input type="text" class="form-control" value="Rahul">
+                                        <input type="text" class="form-control" id="pfFirstName">
                                         <small class="text-muted">Editable</small>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Last Name *</label>
-                                        <input type="text" class="form-control" value="Sharma">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" id="pfLastName">
                                         <small class="text-muted">Editable</small>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Email *</label>
-                                        <input type="email" class="form-control" value="rahul.sharma@amc.edu">
-                                        <small class="text-muted">Editable</small>
+                                        <input type="email" class="form-control" id="pfEmail">
+                                        <small class="text-muted">Editable (this is also your login)</small>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Phone Number *</label>
-                                        <input type="tel" class="form-control" value="+91 9876543210">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="pfPhone">
                                         <small class="text-muted">Editable</small>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Address *</label>
-                                    <textarea class="form-control" rows="3">123, MG Road, Bangalore, Karnataka - 560001</textarea>
+                                    <label class="form-label">Address</label>
+                                    <textarea class="form-control" rows="3" id="pfAddress"></textarea>
                                     <small class="text-muted">Editable</small>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Date of Birth</label>
-                                        <input type="date" class="form-control" value="2003-05-15" disabled>
+                                        <input type="date" class="form-control" id="pfDob" disabled>
                                         <small class="text-muted">Contact admin to change</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Blood Group</label>
-                                        <input type="text" class="form-control" value="O+" disabled>
+                                        <input type="text" class="form-control" id="pfBloodGroup" disabled>
                                         <small class="text-muted">Contact admin to change</small>
                                     </div>
                                 </div>
@@ -812,24 +740,24 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Father's Name</label>
-                                        <input type="text" class="form-control" value="Rajesh Sharma" disabled>
+                                        <input type="text" class="form-control" id="pfFatherName" disabled>
                                         <small class="text-muted">Contact admin to change</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Father's Phone</label>
-                                        <input type="tel" class="form-control" value="+91 9876543211">
+                                        <input type="tel" class="form-control" id="pfFatherPhone">
                                         <small class="text-muted">Editable</small>
                                     </div>
                                 </div>
                                 <div class="row mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label">Mother's Name</label>
-                                        <input type="text" class="form-control" value="Sunita Sharma" disabled>
+                                        <input type="text" class="form-control" id="pfMotherName" disabled>
                                         <small class="text-muted">Contact admin to change</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Mother's Phone</label>
-                                        <input type="tel" class="form-control" value="+91 9876543212">
+                                        <input type="tel" class="form-control" id="pfMotherPhone">
                                         <small class="text-muted">Editable</small>
                                     </div>
                                 </div>
@@ -848,113 +776,14 @@
         <!-- Curriculum Section -->
         <div id="curriculum" class="section" style="display: none;">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Academic Curriculum - 2nd Year Computer Science</h5>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Academic Curriculum<span class="js-semester-label"></span></h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="showSection('library')"><i class="fas fa-book-open me-1"></i>Open Library</button>
                 </div>
                 <div class="card-body">
-                    <!-- Semester 3 -->
-                    <div class="semester-card animate-pop">
-                        <h4 class="mb-3 text-primary">Semester 3</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="subject-item">
-                                    <h6 class="mb-1">Discrete Mathematics</h6>
-                                    <p class="text-muted mb-2">Code: MATH201 | Credits: 4</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-primary">Theory</span>
-                                        <div>
-                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="downloadResource('math-syllabus.pdf')">
-                                                <i class="fas fa-download"></i> Syllabus
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-success" onclick="downloadResource('math-notes.pdf')">
-                                                <i class="fas fa-download"></i> Notes
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="subject-item">
-                                    <h6 class="mb-1">Object Oriented Programming</h6>
-                                    <p class="text-muted mb-2">Code: CSE201 | Credits: 4</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-primary">Theory + Lab</span>
-                                        <div>
-                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="downloadResource('oop-syllabus.pdf')">
-                                                <i class="fas fa-download"></i> Syllabus
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-success" onclick="downloadResource('oop-lab.pdf')">
-                                                <i class="fas fa-download"></i> Lab Manual
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="subject-item">
-                                    <h6 class="mb-1">Computer Organization</h6>
-                                    <p class="text-muted mb-2">Code: CSE202 | Credits: 3</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-primary">Theory</span>
-                                        <div>
-                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="downloadResource('co-syllabus.pdf')">
-                                                <i class="fas fa-download"></i> Syllabus
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-success" onclick="downloadResource('co-notes.pdf')">
-                                                <i class="fas fa-download"></i> Notes
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="subject-item">
-                                    <h6 class="mb-1">Database Management Systems</h6>
-                                    <p class="text-muted mb-2">Code: CSE203 | Credits: 3</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-primary">Theory + Lab</span>
-                                        <div>
-                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="downloadResource('dbms-syllabus.pdf')">
-                                                <i class="fas fa-download"></i> Syllabus
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-success" onclick="downloadResource('dbms-lab.pdf')">
-                                                <i class="fas fa-download"></i> Lab Manual
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Semester 4 -->
-                    <div class="semester-card animate-pop" style="animation-delay: 0.1s">
-                        <h4 class="mb-3 text-primary">Semester 4 (Upcoming)</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="subject-item">
-                                    <h6 class="mb-1">Design and Analysis of Algorithms</h6>
-                                    <p class="text-muted mb-2">Code: CSE205 | Credits: 4</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-info">Coming Soon</span>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>
-                                            <i class="fas fa-lock"></i> Locked
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="subject-item">
-                                    <h6 class="mb-1">Software Engineering</h6>
-                                    <p class="text-muted mb-2">Code: CSE206 | Credits: 4</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-info">Coming Soon</span>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>
-                                            <i class="fas fa-lock"></i> Locked
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="semester-card">
+                        <div class="row" id="curriculumBody">
+                            <div class="col-12 text-muted">Loading subjects...</div>
                         </div>
                     </div>
                 </div>
@@ -965,7 +794,7 @@
         <div id="internal-marks" class="section" style="display: none;">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Internal Marks - Semester 3</h5>
+                    <h5 class="mb-0">Internal Marks<span class="js-semester-label"></span></h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -982,47 +811,8 @@
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Discrete Mathematics</td>
-                                    <td>22</td>
-                                    <td>20</td>
-                                    <td>17</td>
-                                    <td>-</td>
-                                    <td>59</td>
-                                    <td><span class="badge bg-success">A</span></td>
-                                    <td><span class="badge bg-success">Pass</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Object Oriented Programming</td>
-                                    <td>18</td>
-                                    <td>21</td>
-                                    <td>19</td>
-                                    <td>28</td>
-                                    <td>86</td>
-                                    <td><span class="badge bg-success">A</span></td>
-                                    <td><span class="badge bg-success">Pass</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Computer Organization</td>
-                                    <td>16</td>
-                                    <td>19</td>
-                                    <td>15</td>
-                                    <td>-</td>
-                                    <td>50</td>
-                                    <td><span class="badge bg-info">B</span></td>
-                                    <td><span class="badge bg-success">Pass</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Database Management Systems</td>
-                                    <td>20</td>
-                                    <td>22</td>
-                                    <td>19</td>
-                                    <td>27</td>
-                                    <td>88</td>
-                                    <td><span class="badge bg-success">A</span></td>
-                                    <td><span class="badge bg-success">Pass</span></td>
-                                </tr>
+                            <tbody id="marksTableBody">
+                                <tr><td colspan="8" class="text-center text-muted">Loading marks...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1044,7 +834,7 @@
         <div id="attendance" class="section" style="display: none;">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Attendance Tracking - Semester 3</h5>
+                    <h5 class="mb-0">Attendance Tracking<span class="js-semester-label"></span></h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -1059,39 +849,8 @@
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Discrete Mathematics</td>
-                                    <td>40</td>
-                                    <td>35</td>
-                                    <td>5</td>
-                                    <td>87.5%</td>
-                                    <td><span class="badge bg-success">Good</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Object Oriented Programming</td>
-                                    <td>45</td>
-                                    <td>40</td>
-                                    <td>5</td>
-                                    <td>88.9%</td>
-                                    <td><span class="badge bg-success">Good</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Computer Organization</td>
-                                    <td>38</td>
-                                    <td>32</td>
-                                    <td>6</td>
-                                    <td>84.2%</td>
-                                    <td><span class="badge bg-warning">Warning</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Database Management Systems</td>
-                                    <td>42</td>
-                                    <td>38</td>
-                                    <td>4</td>
-                                    <td>90.5%</td>
-                                    <td><span class="badge bg-success">Excellent</span></td>
-                                </tr>
+                            <tbody id="attendanceTableBody">
+                                <tr><td colspan="6" class="text-center text-muted">Loading attendance...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1113,83 +872,31 @@
         <div id="exam-schedule" class="section" style="display: none;">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Exam Schedule - Semester 3</h5>
+                    <h5 class="mb-0">Exam Schedule<span class="js-semester-label"></span></h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Subject</th>
-                                    <th>Time</th>
-                                    <th>Duration</th>
-                                    <th>Venue</th>
-                                    <th>Seat Number</th>
-                                </tr>
+                                <tr><th>Date</th><th>Subject</th><th>Type</th><th>Time</th><th>Venue</th><th>Status</th></tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>15 Jan 2024</td>
-                                    <td>Discrete Mathematics</td>
-                                    <td>9:00 AM - 12:00 PM</td>
-                                    <td>3 Hours</td>
-                                    <td>Hall A-101</td>
-                                    <td>AM24M0101</td>
-                                </tr>
-                                <tr>
-                                    <td>17 Jan 2024</td>
-                                    <td>Object Oriented Programming</td>
-                                    <td>9:00 AM - 12:00 PM</td>
-                                    <td>3 Hours</td>
-                                    <td>Hall A-102</td>
-                                    <td>AM24M0101</td>
-                                </tr>
-                                <tr>
-                                    <td>19 Jan 2024</td>
-                                    <td>Computer Organization</td>
-                                    <td>2:00 PM - 5:00 PM</td>
-                                    <td>3 Hours</td>
-                                    <td>Hall B-201</td>
-                                    <td>AM24M0101</td>
-                                </tr>
-                                <tr>
-                                    <td>22 Jan 2024</td>
-                                    <td>Database Management Systems</td>
-                                    <td>9:00 AM - 12:00 PM</td>
-                                    <td>3 Hours</td>
-                                    <td>Hall A-103</td>
-                                    <td>AM24M0101</td>
-                                </tr>
+                            <tbody id="examTableBody">
+                                <tr><td colspan="6" class="text-center text-muted">Loading exams...</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    
-                    <!-- Countdown Timer -->
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">Next Exam Countdown</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row text-center" id="countdownTimer">
-                                <div class="col">
-                                    <div class="display-4 text-primary" id="countdownDays">00</div>
-                                    <p>Days</p>
-                                </div>
-                                <div class="col">
-                                    <div class="display-4 text-primary" id="countdownHours">00</div>
-                                    <p>Hours</p>
-                                </div>
-                                <div class="col">
-                                    <div class="display-4 text-primary" id="countdownMinutes">00</div>
-                                    <p>Minutes</p>
-                                </div>
-                                <div class="col">
-                                    <div class="display-4 text-primary" id="countdownSeconds">00</div>
-                                    <p>Seconds</p>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+            <div class="card mt-4 countdown-card">
+                <div class="card-header">
+                    <h5 class="mb-0">Next Exam Countdown <small class="text-muted" id="nextExamName"></small></h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col"><div class="display-4 text-primary" id="countdownDays">--</div><p>Days</p></div>
+                        <div class="col"><div class="display-4 text-primary" id="countdownHours">--</div><p>Hours</p></div>
+                        <div class="col"><div class="display-4 text-primary" id="countdownMinutes">--</div><p>Minutes</p></div>
+                        <div class="col"><div class="display-4 text-primary" id="countdownSeconds">--</div><p>Seconds</p></div>
                     </div>
                 </div>
             </div>
@@ -1197,151 +904,44 @@
 
         <!-- Fee Payment Section -->
         <div id="fee-payment" class="section" style="display: none;">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Fee Payment</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Fee Payment</h5></div>
+                        <div class="card-body">
                             <h5 class="mb-3">Select Fees to Pay</h5>
-                            
-                            <div class="fee-item" onclick="toggleFeeSelection('tuition')" id="fee-tuition">
-                                <div class="form-check d-flex align-items-center">
-                                    <input class="form-check-input me-3" type="checkbox" id="checkTuition">
-                                    <div class="flex-grow-1">
-                                        <h5 class="mb-1">Tuition Fee - Semester 3</h5>
-                                        <p class="text-muted mb-1">Due Date: 25 Dec 2023</p>
-                                        <p class="mb-0">Computer Science - 2nd Year</p>
-                                    </div>
-                                    <div class="text-end">
-                                        <h4 class="text-warning mb-1">₹25,000</h4>
-                                        <span class="badge bg-warning">Pending</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="fee-item" onclick="toggleFeeSelection('exam')" id="fee-exam">
-                                <div class="form-check d-flex align-items-center">
-                                    <input class="form-check-input me-3" type="checkbox" id="checkExam">
-                                    <div class="flex-grow-1">
-                                        <h5 class="mb-1">Examination Fee</h5>
-                                        <p class="text-muted mb-1">Due Date: 10 Jan 2024</p>
-                                        <p class="mb-0">Semester 3 Examinations</p>
-                                    </div>
-                                    <div class="text-end">
-                                        <h4 class="text-warning mb-1">₹2,500</h4>
-                                        <span class="badge bg-warning">Pending</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="fee-item" onclick="toggleFeeSelection('library')" id="fee-library">
-                                <div class="form-check d-flex align-items-center">
-                                    <input class="form-check-input me-3" type="checkbox" id="checkLibrary">
-                                    <div class="flex-grow-1">
-                                        <h5 class="mb-1">Library Fee</h5>
-                                        <p class="text-muted mb-1">Due Date: 5 Jan 2024</p>
-                                        <p class="mb-0">Annual Library Subscription</p>
-                                    </div>
-                                    <div class="text-end">
-                                        <h4 class="text-warning mb-1">₹1,500</h4>
-                                        <span class="badge bg-warning">Pending</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="fee-item" onclick="toggleFeeSelection('hostel')" id="fee-hostel">
-                                <div class="form-check d-flex align-items-center">
-                                    <input class="form-check-input me-3" type="checkbox" id="checkHostel">
-                                    <div class="flex-grow-1">
-                                        <h5 class="mb-1">Hostel Fee</h5>
-                                        <p class="text-muted mb-1">Due Date: 30 Dec 2023</p>
-                                        <p class="mb-0">Boys Hostel - Semester 3</p>
-                                    </div>
-                                    <div class="text-end">
-                                        <h4 class="text-warning mb-1">₹15,000</h4>
-                                        <span class="badge bg-warning">Pending</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Select All -->
-                            <div class="form-check mt-3 mb-4">
+                            <div id="feeList"><p class="text-muted">Loading fees...</p></div>
+                            <div class="form-check mt-3" id="selectAllWrap">
                                 <input class="form-check-input" type="checkbox" id="selectAllFees" onclick="selectAllFees()">
-                                <label class="form-check-label fw-bold" for="selectAllFees">
-                                    Select All Fees
-                                </label>
-                            </div>
-
-                            <!-- Payment Options -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0">Payment Method</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" checked>
-                                                <label class="form-check-label" for="creditCard">
-                                                    <i class="fas fa-credit-card me-2"></i>Credit/Debit Card
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="paymentMethod" id="netBanking">
-                                                <label class="form-check-label" for="netBanking">
-                                                    <i class="fas fa-university me-2"></i>Net Banking
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="paymentMethod" id="upi">
-                                                <label class="form-check-label" for="upi">
-                                                    <i class="fas fa-mobile-alt me-2"></i>UPI
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <label class="form-check-label fw-bold" for="selectAllFees">Select all pending fees</label>
                             </div>
                         </div>
-                        
-                        <div class="col-md-4">
-                            <div class="total-amount">
-                                <h3 class="mb-3">Total Amount</h3>
-                                <div class="display-4 mb-3" id="totalAmount">₹0</div>
-                                <button class="btn btn-light btn-lg w-100" onclick="processPayment()">
-                                    <i class="fas fa-lock me-2"></i>Proceed to Pay
-                                </button>
-                            </div>
-                            
-                            <div class="card mt-4">
-                                <div class="card-header">
-                                    <h6 class="mb-0">Fee Summary</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span>Total Fees:</span>
-                                        <strong>₹44,000</strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span>Paid Amount:</span>
-                                        <strong class="text-success">₹0</strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-3">
-                                        <span>Pending Amount:</span>
-                                        <strong class="text-danger">₹44,000</strong>
-                                    </div>
-                                    <div class="progress mb-3">
-                                        <div class="progress-bar" style="width: 0%"></div>
-                                    </div>
-                                    <small class="text-muted">0% fees paid</small>
-                                </div>
-                            </div>
+                    </div>
+                    <div class="card mt-4">
+                        <div class="card-header"><h6 class="mb-0">Payment Method</h6></div>
+                        <div class="card-body">
+                            <div class="form-check mb-2"><input class="form-check-input" type="radio" name="paymentMethod" id="upi" value="upi" checked><label class="form-check-label" for="upi"><i class="fas fa-mobile-alt me-2"></i>UPI</label></div>
+                            <div class="form-check mb-2"><input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" value="card"><label class="form-check-label" for="creditCard"><i class="fas fa-credit-card me-2"></i>Credit/Debit Card</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="paymentMethod" id="netBanking" value="netbanking"><label class="form-check-label" for="netBanking"><i class="fas fa-university me-2"></i>Net Banking</label></div>
+                            <p class="small text-muted mt-3 mb-0"><i class="fas fa-info-circle me-1"></i>Test environment: payments are simulated and no money is charged.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="total-amount text-center">
+                        <h3 class="mb-3">Total Amount</h3>
+                        <div class="display-4 mb-3" id="totalAmount">₹0</div>
+                        <button class="btn btn-light btn-lg w-100" id="payBtn" onclick="processPayment()"><i class="fas fa-lock me-2"></i>Proceed to Pay</button>
+                    </div>
+                    <div class="card mt-4">
+                        <div class="card-header"><h6 class="mb-0">Fee Summary</h6></div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2"><span>Total Fees:</span><strong id="feeTotal">₹0</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Paid Amount:</span><strong class="text-success" id="feePaid">₹0</strong></div>
+                            <div class="d-flex justify-content-between mb-3"><span>Pending Amount:</span><strong class="text-danger" id="feePending">₹0</strong></div>
+                            <div class="progress"><div class="progress-bar bg-success" id="feeProgress" style="width: 0%"></div></div>
+                            <small class="text-muted" id="feeProgressText">0% fees paid</small>
+                            <button class="btn btn-sm btn-outline-primary w-100 mt-3" onclick="showSection('payment-history')"><i class="fas fa-history me-1"></i>View payment history</button>
                         </div>
                     </div>
                 </div>
@@ -1351,76 +951,15 @@
         <!-- Payment History Section -->
         <div id="payment-history" class="section" style="display: none;">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Payment History</h5>
-                </div>
+                <div class="card-header"><h5 class="mb-0">Payment History</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <tr>
-                                    <th>Receipt No.</th>
-                                    <th>Date</th>
-                                    <th>Description</th>
-                                    <th>Amount</th>
-                                    <th>Payment Method</th>
-                                    <th>Status</th>
-                                    <th>Receipt</th>
-                                </tr>
+                                <tr><th>Receipt No.</th><th>Date</th><th>Description</th><th>Amount</th><th>Payment Method</th><th>Status</th><th>Receipt</th></tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#PAY-2023-001</td>
-                                    <td>15 Nov 2023</td>
-                                    <td>Library Fee - Annual Subscription</td>
-                                    <td>₹1,500</td>
-                                    <td>Credit Card</td>
-                                    <td><span class="badge bg-success">Success</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary" onclick="downloadReceipt('PAY-2023-001')">
-                                            <i class="fas fa-download me-1"></i>Download
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#PAY-2023-078</td>
-                                    <td>10 Aug 2023</td>
-                                    <td>Tuition Fee - Semester 2</td>
-                                    <td>₹25,000</td>
-                                    <td>Net Banking</td>
-                                    <td><span class="badge bg-success">Success</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary" onclick="downloadReceipt('PAY-2023-078')">
-                                            <i class="fas fa-download me-1"></i>Download
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#PAY-2023-045</td>
-                                    <td>05 May 2023</td>
-                                    <td>Examination Fee - Semester 2</td>
-                                    <td>₹2,500</td>
-                                    <td>UPI</td>
-                                    <td><span class="badge bg-success">Success</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary" onclick="downloadReceipt('PAY-2023-045')">
-                                            <i class="fas fa-download me-1"></i>Download
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#PAY-2023-012</td>
-                                    <td>20 Jan 2023</td>
-                                    <td>Hostel Fee - Semester 1</td>
-                                    <td>₹15,000</td>
-                                    <td>Credit Card</td>
-                                    <td><span class="badge bg-success">Success</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary" onclick="downloadReceipt('PAY-2023-012')">
-                                            <i class="fas fa-download me-1"></i>Download
-                                        </button>
-                                    </td>
-                                </tr>
+                            <tbody id="paymentTableBody">
+                                <tr><td colspan="7" class="text-center text-muted">Loading payments...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1431,126 +970,115 @@
         <!-- Library Section -->
         <div id="library" class="section" style="display: none;">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Digital Library</h5>
-                </div>
+                <div class="card-header"><h5 class="mb-0">Digital Library</h5></div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4 mb-4">
-                            <div class="library-category" onclick="showLibraryCategory('textbooks')">
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <div class="library-category text-center" role="button" onclick="showLibraryCategory('textbook')">
                                 <i class="fas fa-book fa-3x"></i>
                                 <h4 class="my-3">Textbooks</h4>
-                                <p class="text-muted">Access all course textbooks and reference materials</p>
-                                <span class="badge bg-primary">45 Books Available</span>
+                                <p class="text-muted">Course textbooks and reference books</p>
+                                <span class="badge bg-primary" id="libCount-textbook">0</span>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-4">
-                            <div class="library-category" onclick="showLibraryCategory('research')">
+                        <div class="col-md-4 mb-3">
+                            <div class="library-category text-center" role="button" onclick="showLibraryCategory('research-paper')">
                                 <i class="fas fa-file-alt fa-3x"></i>
                                 <h4 class="my-3">Research Papers</h4>
-                                <p class="text-muted">Browse academic research papers and journals</p>
-                                <span class="badge bg-primary">120+ Papers</span>
+                                <p class="text-muted">Academic research papers and journals</p>
+                                <span class="badge bg-primary" id="libCount-research-paper">0</span>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-4">
-                            <div class="library-category" onclick="showLibraryCategory('papers')">
+                        <div class="col-md-4 mb-3">
+                            <div class="library-category text-center" role="button" onclick="showLibraryCategory('question-paper')">
                                 <i class="fas fa-file-pdf fa-3x"></i>
                                 <h4 class="my-3">Previous Year Papers</h4>
-                                <p class="text-muted">Download previous year question papers</p>
-                                <span class="badge bg-primary">5 Years Available</span>
+                                <p class="text-muted">Previous year question papers</p>
+                                <span class="badge bg-primary" id="libCount-question-paper">0</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Textbook Resources -->
-                    <div id="textbooks-section" class="mt-4">
-                        <h4 class="mb-3">Recommended Textbooks</h4>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Introduction to Algorithms</h6>
-                                        <p class="card-text text-muted">Thomas H. Cormen</p>
-                                        <button class="btn btn-outline-primary btn-sm" onclick="downloadResource('algorithms-book.pdf')">
-                                            <i class="fas fa-download me-1"></i>Download
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Database System Concepts</h6>
-                                        <p class="card-text text-muted">Abraham Silberschatz</p>
-                                        <button class="btn btn-outline-primary btn-sm" onclick="downloadResource('dbms-book.pdf')">
-                                            <i class="fas fa-download me-1"></i>Download
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Computer Organization</h6>
-                                        <p class="card-text text-muted">Carl Hamacher</p>
-                                        <button class="btn btn-outline-primary btn-sm" onclick="downloadResource('co-book.pdf')">
-                                            <i class="fas fa-download me-1"></i>Download
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-center mb-3" id="textbooks-section">
+                        <h4 class="mb-0 me-auto" id="libraryTitle">All Resources</h4>
+                        <select class="form-select form-select-sm" style="width:auto" id="libraryCategory" onchange="renderLibrary()">
+                            <option value="">All categories</option>
+                            <option value="textbook">Textbooks</option>
+                            <option value="notes">Notes</option>
+                            <option value="syllabus">Syllabus</option>
+                            <option value="lab-manual">Lab manuals</option>
+                            <option value="research-paper">Research papers</option>
+                            <option value="question-paper">Question papers</option>
+                        </select>
+                        <input type="search" class="form-control form-control-sm" style="width:220px" id="librarySearch" placeholder="Search title, author, subject..." oninput="renderLibrary()">
                     </div>
+                    <div class="row" id="libraryList"><div class="col-12 text-muted">Loading...</div></div>
                 </div>
             </div>
         </div>
 
         <!-- College Events Section -->
         <div id="events" class="section" style="display: none;">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">College Events Calendar</h5></div>
+                        <div class="card-body"><div id="calendar"></div></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Upcoming Events</h5></div>
+                        <div class="card-body" id="eventsList"><p class="text-muted">Loading...</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments Section -->
+        <div id="assignments" class="section" style="display: none;">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">College Events Calendar 2024</h5>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">My Assignments</h5>
+                    <select class="form-select form-select-sm" style="width:auto" id="assignmentFilter" onchange="renderAssignments()">
+                        <option value="">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="graded">Graded</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
                 </div>
                 <div class="card-body">
-                    <div id="calendar"></div>
-                    
-                    <!-- Upcoming Events List -->
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">Upcoming Events</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="list-group">
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">Annual Tech Fest - "Technovation"</h6>
-                                        <small class="text-muted">20-22 December 2023</small>
-                                    </div>
-                                    <span class="badge bg-primary">Tech</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">Sports Day</h6>
-                                        <small class="text-muted">15 December 2023</small>
-                                    </div>
-                                    <span class="badge bg-success">Sports</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">Cultural Fest - "Utsav"</h6>
-                                        <small class="text-muted">28-30 December 2023</small>
-                                    </div>
-                                    <span class="badge bg-warning">Cultural</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">Semester 3 Examinations</h6>
-                                        <small class="text-muted">15-25 January 2024</small>
-                                    </div>
-                                    <span class="badge bg-danger">Academic</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="row" id="assignmentList"><div class="col-12 text-muted">Loading...</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notices Section -->
+        <div id="notices" class="section" style="display: none;">
+            <div class="card">
+                <div class="card-header"><h5 class="mb-0">Notice Board</h5></div>
+                <div class="card-body" id="noticeList"><p class="text-muted">Loading...</p></div>
+            </div>
+        </div>
+
+        <!-- Submit assignment modal -->
+        <div class="modal fade" id="submitModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="submitModalTitle">Submit Assignment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted small mb-2" id="submitModalInfo"></p>
+                        <div class="p-3 bg-light rounded mb-3 small" id="submitModalInstructions"></div>
+                        <label class="form-label">Your answer or a link to your work (Google Drive, GitHub, etc.)</label>
+                        <textarea class="form-control" rows="6" id="submitContent"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitAssignment()">Submit</button>
                     </div>
                 </div>
             </div>
@@ -1562,15 +1090,9 @@
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     
+    <script src="auth.js"></script>
     <script>
-        // Global Variables
-        let selectedFees = [];
-        const feePrices = {
-            'tuition': 25000,
-            'exam': 2500,
-            'library': 1500,
-            'hostel': 15000
-        };
+        const ERP_SESSION = ErpAuth.requireRole(["student"]);
 
         // Show/Hide Sections
         function showSection(sectionId, clickedLink = null) {
@@ -1604,7 +1126,9 @@
                 'fee-payment': 'Fee Payment',
                 'payment-history': 'Payment History',
                 'library': 'Digital Library',
-                'events': 'College Events'
+                'events': 'College Events',
+                'assignments': 'My Assignments',
+                'notices': 'Notice Board'
             };
             document.getElementById('page-title').textContent = titles[sectionId];
             
@@ -1616,9 +1140,18 @@
             } else if (sectionId === 'exam-schedule') {
                 initializeCountdown();
             } else if (sectionId === 'fee-payment') {
-                updateTotalAmount();
+                loadFees();
+            } else if (sectionId === 'payment-history') {
+                loadPayments();
             } else if (sectionId === 'events') {
                 initializeCalendar();
+            } else if (sectionId === 'assignments') {
+                loadAssignments();
+            } else if (sectionId === 'notices') {
+                loadNotices();
+            } else if (sectionId === 'dashboard') {
+                loadOverview();
+                loadActivity();
             }
             
             // Add animation
@@ -1629,54 +1162,175 @@
             }, 300);
         }
 
-        // Update Profile
-        function updateProfile() {
-            // Get editable fields
-            const firstName = document.querySelector('#profileForm input[type="text"]').value;
-            const lastName = document.querySelector('#profileForm input[type="text"]:nth-child(2)').value;
-            const email = document.querySelector('#profileForm input[type="email"]').value;
-            const phone = document.querySelector('#profileForm input[type="tel"]').value;
-            const address = document.querySelector('#profileForm textarea').value;
-            const fatherPhone = document.querySelectorAll('#profileForm input[type="tel"]')[1].value;
-            const motherPhone = document.querySelectorAll('#profileForm input[type="tel"]')[2].value;
-            
-            // Validate required fields
-            if (!firstName || !lastName || !email || !phone) {
-                alert('Please fill all required fields');
-                return;
-            }
-            
-            // In real application, send data to server
-            console.log('Profile updated:', {
-                firstName, lastName, email, phone, address, fatherPhone, motherPhone
-            });
-            
-            // Show success message
-            showNotification('Profile updated successfully!', 'success');
-            
-            // Update user info in header
-            document.querySelector('.user-info h6').textContent = `${firstName} ${lastName}`;
+        // ===== Real data from the backend =====
+        const charts = {};
+        let attendanceData = null;
+        let marksData = null;
+
+        const escapeHtml = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
+        const val = (id) => document.getElementById(id).value.trim();
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v ?? ""; };
+        const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+        function renderChart(key, canvasId, config) {
+            if (charts[key]) charts[key].destroy();
+            charts[key] = new Chart(document.getElementById(canvasId).getContext('2d'), config);
         }
 
-        // Download Resource
-        function downloadResource(filename) {
-            showNotification(`Downloading ${filename}...`, 'info');
-            // In real application, this would initiate file download
-            setTimeout(() => {
-                showNotification(`${filename} downloaded successfully!`, 'success');
-            }, 1500);
+        function gradeFor(percent) {
+            if (percent >= 85) return { grade: 'A+', cls: 'bg-success' };
+            if (percent >= 70) return { grade: 'A', cls: 'bg-success' };
+            if (percent >= 60) return { grade: 'B', cls: 'bg-info' };
+            if (percent >= 50) return { grade: 'C', cls: 'bg-warning' };
+            if (percent >= 40) return { grade: 'D', cls: 'bg-warning' };
+            return { grade: 'F', cls: 'bg-danger' };
+        }
+
+        function attendanceStatus(percent) {
+            if (percent >= 90) return '<span class="badge bg-success">Excellent</span>';
+            if (percent >= 85) return '<span class="badge bg-success">Good</span>';
+            if (percent >= 75) return '<span class="badge bg-warning">Warning</span>';
+            return '<span class="badge bg-danger">Shortage</span>';
+        }
+
+        function setStat(id, percent) {
+            setText(id, percent === null || percent === undefined ? '—' : `${percent}%`);
+            const bar = document.getElementById(`${id}Bar`);
+            if (bar) bar.style.width = `${percent || 0}%`;
+        }
+
+        function fillProfile(user) {
+            const name = user.name || 'Student';
+            const [first, ...rest] = name.split(/\s+/);
+            setVal('pfFirstName', first);
+            setVal('pfLastName', rest.join(' '));
+            setVal('pfEmail', user.email);
+            setVal('pfPhone', user.phone);
+            setVal('pfAddress', user.address);
+            setVal('pfDob', user.dob ? String(user.dob).slice(0, 10) : '');
+            setVal('pfBloodGroup', user.bloodGroup);
+            setVal('pfFatherName', user.fatherName);
+            setVal('pfFatherPhone', user.fatherPhone);
+            setVal('pfMotherName', user.motherName);
+            setVal('pfMotherPhone', user.motherPhone);
+
+            setText('profileStudentId', user.studentId || '—');
+            setText('profileDepartment', [user.department, user.courseName].filter(Boolean).join(' · ') || '—');
+            setText('profileYear', user.semester
+                ? `Year ${Math.ceil(user.semester / 2)}, Semester ${user.semester}${user.section ? `, Section ${user.section}` : ''}`
+                : 'Semester not set');
+            setText('profileEmailText', user.email || '—');
+            document.getElementById('profileAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3498db&color=fff&size=150`;
+            document.querySelectorAll('.js-semester-label').forEach((el) => {
+                el.textContent = user.semester ? ` - Semester ${user.semester}` : '';
+            });
+        }
+
+        async function loadProfile() {
+            try {
+                const { user } = await ErpAuth.api('/api/auth/me');
+                ErpAuth.updateSessionUser(user);
+                applyLoggedInStudent();
+                fillProfile(user);
+            } catch (error) {
+                showNotification(error.message, 'warning');
+            }
+        }
+
+        // Update Profile
+        async function updateProfile() {
+            const name = `${val('pfFirstName')} ${val('pfLastName')}`.trim();
+            const email = val('pfEmail');
+            if (!val('pfFirstName') || !email) {
+                showNotification('First name and email are required', 'warning');
+                return;
+            }
+            try {
+                const { user } = await ErpAuth.api('/api/auth/me', {
+                    method: 'PATCH',
+                    body: {
+                        name,
+                        email,
+                        phone: val('pfPhone'),
+                        address: val('pfAddress'),
+                        fatherPhone: val('pfFatherPhone'),
+                        motherPhone: val('pfMotherPhone')
+                    }
+                });
+                ErpAuth.updateSessionUser(user);
+                applyLoggedInStudent();
+                fillProfile(user);
+                showNotification('Profile updated successfully!', 'success');
+            } catch (error) {
+                showNotification(error.message, 'warning');
+            }
+        }
+
+        async function loadAttendance() {
+            const tbody = document.getElementById('attendanceTableBody');
+            try {
+                attendanceData = await ErpAuth.api('/api/student-portal/attendance');
+                setStat('statAttendance', attendanceData.overall.total ? attendanceData.overall.percentage : null);
+
+                if (!attendanceData.subjects.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No attendance has been recorded for you yet.</td></tr>';
+                } else {
+                    tbody.innerHTML = attendanceData.subjects.map((s) => `
+                        <tr>
+                            <td>${escapeHtml(s.subjectName)} <small class="text-muted">(${escapeHtml(s.subjectCode)})</small></td>
+                            <td>${s.total}</td>
+                            <td>${s.present}</td>
+                            <td>${s.absent}</td>
+                            <td>${s.percentage}%</td>
+                            <td>${attendanceStatus(s.percentage)}</td>
+                        </tr>`).join('');
+                }
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">${escapeHtml(error.message)}</td></tr>`;
+            }
+        }
+
+        async function loadMarks() {
+            const tbody = document.getElementById('marksTableBody');
+            const cell = (v) => (v === undefined || v === null ? '-' : v);
+            try {
+                marksData = await ErpAuth.api('/api/student-portal/marks');
+                setStat('statMarks', marksData.averagePercentage);
+
+                if (!marksData.subjects.length) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No internal marks have been entered for you yet.</td></tr>';
+                } else {
+                    tbody.innerHTML = marksData.subjects.map((s) => {
+                        const g = gradeFor(s.percentage);
+                        const pass = s.percentage >= 40;
+                        return `
+                        <tr>
+                            <td>${escapeHtml(s.subjectName)} <small class="text-muted">(${escapeHtml(s.subjectCode)})</small></td>
+                            <td>${cell(s.test1)}</td>
+                            <td>${cell(s.test2)}</td>
+                            <td>${cell(s.assignment)}</td>
+                            <td>${cell(s.lab)}</td>
+                            <td>${s.total} / ${s.maxTotal}</td>
+                            <td><span class="badge ${g.cls}">${g.grade}</span></td>
+                            <td><span class="badge ${pass ? 'bg-success' : 'bg-danger'}">${pass ? 'Pass' : 'Fail'}</span></td>
+                        </tr>`;
+                    }).join('');
+                }
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">${escapeHtml(error.message)}</td></tr>`;
+            }
         }
 
         // Initialize Marks Chart
         function initializeMarksChart() {
-            const ctx = document.getElementById('marksChart').getContext('2d');
-            new Chart(ctx, {
+            const subjects = marksData ? marksData.subjects : [];
+            renderChart('marks', 'marksChart', {
                 type: 'bar',
                 data: {
-                    labels: ['Discrete Math', 'OOP', 'Computer Org', 'DBMS'],
+                    labels: subjects.map((s) => s.subjectCode),
                     datasets: [{
-                        label: 'Your Marks',
-                        data: [59, 86, 50, 88],
+                        label: 'Your Marks (%)',
+                        data: subjects.map((s) => s.percentage),
                         backgroundColor: '#3498db',
                         borderColor: '#2980b9',
                         borderWidth: 1
@@ -1700,14 +1354,15 @@
 
         // Initialize Attendance Chart
         function initializeAttendanceChart() {
-            const ctx = document.getElementById('attendanceChart').getContext('2d');
-            new Chart(ctx, {
+            const weekly = attendanceData ? attendanceData.weekly : [];
+            renderChart('attendance', 'attendanceChart', {
                 type: 'line',
                 data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                    labels: weekly.map((w) => w.label),
                     datasets: [{
                         label: 'Attendance %',
-                        data: [85, 88, 82, 90, 87, 85],
+                        data: weekly.map((w) => w.percentage),
+                        spanGaps: true,
                         borderColor: '#27ae60',
                         backgroundColor: 'rgba(39, 174, 96, 0.1)',
                         fill: true,
@@ -1730,185 +1385,433 @@
             });
         }
 
-        // Initialize Countdown Timer
-        function initializeCountdown() {
-            // Set exam date to 15 Jan 2024
-            const examDate = new Date('2024-01-15T09:00:00').getTime();
-            
-            function updateCountdown() {
-                const now = new Date().getTime();
-                const distance = examDate - now;
-                
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                
-                document.getElementById('countdownDays').textContent = days.toString().padStart(2, '0');
-                document.getElementById('countdownHours').textContent = hours.toString().padStart(2, '0');
-                document.getElementById('countdownMinutes').textContent = minutes.toString().padStart(2, '0');
-                document.getElementById('countdownSeconds').textContent = seconds.toString().padStart(2, '0');
+        // ===== Dashboard overview, activity & deadlines =====
+        const fmtDate = (d) => ErpAuth.formatDate(d);
+        const rupees = (n) => ErpAuth.rupees(n);
+
+        async function loadOverview() {
+            try {
+                const ov = await ErpAuth.api('/api/student-portal/overview');
+                const a = ov.assignments;
+                setText('statAssignments', a.total ? `${a.submitted}/${a.total}` : '0');
+                document.getElementById('statAssignmentsBar').style.width = `${a.total ? Math.round((a.submitted / a.total) * 100) : 0}%`;
+                setText('statFees', rupees(ov.fees.pending));
+                document.getElementById('statFeesBar').style.width = `${ov.fees.percentPaid}%`;
+
+                const icons = { assignment: 'fa-tasks text-white bg-primary', fee: 'fa-wallet text-white bg-warning', exam: 'fa-file-alt text-white bg-danger' };
+                const list = document.getElementById('deadlineList');
+                list.innerHTML = ov.deadlines.length
+                    ? ov.deadlines.map((d) => {
+                        const days = Math.ceil((new Date(d.date) - new Date()) / 864e5);
+                        const badge = days < 0 ? '<span class="badge bg-danger">Overdue</span>' : days === 0 ? '<span class="badge bg-danger">Today</span>' : days === 1 ? '<span class="badge bg-danger">Tomorrow</span>' : `<span class="badge ${days <= 3 ? 'bg-warning' : 'bg-info'}">In ${days} days</span>`;
+                        const action = { assignment: 'Submit', fee: 'Pay Now', exam: 'View' }[d.kind];
+                        return `<div class="deadline-item mb-3">
+                            <h6 class="mb-1"><i class="fas ${icons[d.kind].split(' ')[0]} me-1"></i>${escapeHtml(d.title)}</h6>
+                            <p class="text-muted mb-2">${escapeHtml(d.subtitle || '')} · ${fmtDate(d.date)}</p>
+                            <div class="d-flex justify-content-between align-items-center">${badge}
+                                <button class="btn btn-sm btn-primary" onclick="showSection('${d.section}')">${action}</button>
+                            </div></div>`;
+                    }).join('')
+                    : '<p class="text-muted mb-0">Nothing due. You are all caught up!</p>';
+            } catch (error) {
+                showNotification(error.message, 'warning');
             }
-            
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
         }
 
-        // Fee Selection Functions
-        function toggleFeeSelection(feeType) {
-            const feeItem = document.getElementById(`fee-${feeType}`);
-            const checkbox = document.getElementById(`check${feeType.charAt(0).toUpperCase() + feeType.slice(1)}`);
-            
-            // Toggle selection
-            checkbox.checked = !checkbox.checked;
-            
-            if (checkbox.checked) {
-                feeItem.classList.add('selected');
-                if (!selectedFees.includes(feeType)) {
-                    selectedFees.push(feeType);
-                }
-            } else {
-                feeItem.classList.remove('selected');
-                selectedFees = selectedFees.filter(f => f !== feeType);
+        async function loadActivity() {
+            const el = document.getElementById('recentActivity');
+            try {
+                const items = await ErpAuth.api('/api/notifications');
+                const style = { notice: ['bg-info', 'fa-bullhorn'], fee: ['bg-warning', 'fa-wallet'], assignment: ['bg-primary', 'fa-tasks'], grade: ['bg-success', 'fa-check'], exam: ['bg-danger', 'fa-file-alt'], marks: ['bg-success', 'fa-chart-line'] };
+                el.innerHTML = items.length
+                    ? items.slice(0, 6).map((n) => {
+                        const [bg, icon] = style[n.type] || ['bg-secondary', 'fa-bell'];
+                        return `<div class="timeline-item mb-3" role="button" onclick="showSection('${n.section}')">
+                            <div class="d-flex align-items-center">
+                                <div class="timeline-icon ${bg} text-white rounded-circle p-2 me-3"><i class="fas ${icon}"></i></div>
+                                <div class="flex-grow-1"><h6 class="mb-1">${escapeHtml(n.message)}</h6><small class="text-muted">${ErpAuth.timeAgo(n.at)}</small></div>
+                            </div></div>`;
+                    }).join('')
+                    : '<p class="text-muted mb-0">No recent activity.</p>';
+            } catch (error) {
+                el.innerHTML = `<p class="text-danger mb-0">${escapeHtml(error.message)}</p>`;
             }
-            
+        }
+
+        // ===== Curriculum =====
+        const RESOURCE_LABEL = { syllabus: 'Syllabus', notes: 'Notes', 'lab-manual': 'Lab Manual', textbook: 'Textbook', 'research-paper': 'Paper', 'question-paper': 'Question Paper' };
+
+        async function loadCurriculum() {
+            const el = document.getElementById('curriculumBody');
+            try {
+                const data = await ErpAuth.api('/api/student-portal/curriculum');
+                if (!data.semester) {
+                    el.innerHTML = '<div class="col-12 text-muted">Your semester is not set yet. Please contact the admin.</div>';
+                    return;
+                }
+                el.innerHTML = data.subjects.length
+                    ? `<div class="col-12"><h4 class="mb-3 text-primary">Semester ${data.semester}</h4></div>` + data.subjects.map((s) => `
+                        <div class="col-md-6 mb-3">
+                            <div class="subject-item">
+                                <h6 class="mb-1">${escapeHtml(s.name)}</h6>
+                                <p class="text-muted mb-2">Code: ${escapeHtml(s.code)} | Credits: ${s.credits} | Faculty: ${escapeHtml(s.faculty || 'Not assigned yet')}</p>
+                                <div class="d-flex flex-wrap gap-1">
+                                    ${s.resources.length
+                                        ? s.resources.map((r) => `<a class="btn btn-sm btn-outline-primary" href="${escapeHtml(r.url)}" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> ${RESOURCE_LABEL[r.category] || 'Resource'}</a>`).join('')
+                                        : '<span class="text-muted small">No study material uploaded yet</span>'}
+                                </div>
+                            </div>
+                        </div>`).join('')
+                    : '<div class="col-12 text-muted">No subjects are set up for your semester yet.</div>';
+            } catch (error) {
+                el.innerHTML = `<div class="col-12 text-danger">${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        // ===== Exams & countdown =====
+        let exams = [];
+        let countdownTimer = null;
+
+        async function loadExams() {
+            const tbody = document.getElementById('examTableBody');
+            try {
+                exams = await ErpAuth.api('/api/exams');
+                const now = new Date();
+                const typeLabel = { internal: 'Internal', semester: 'Semester End', practical: 'Practical' };
+                tbody.innerHTML = exams.length
+                    ? exams.map((e) => {
+                        const done = new Date(e.date) < new Date(now.toDateString());
+                        return `<tr class="${done ? 'text-muted' : ''}">
+                            <td>${fmtDate(e.date)}</td>
+                            <td>${escapeHtml(e.subjectName || e.subjectCode)} <small class="text-muted">(${escapeHtml(e.subjectCode)})</small></td>
+                            <td>${typeLabel[e.examType] || ''}</td>
+                            <td>${escapeHtml([e.startTime, e.endTime].filter(Boolean).join(' - ') || '—')}</td>
+                            <td>${escapeHtml(e.venue || '—')}</td>
+                            <td>${done ? '<span class="badge bg-secondary">Completed</span>' : '<span class="badge bg-primary">Upcoming</span>'}</td>
+                        </tr>`;
+                    }).join('')
+                    : '<tr><td colspan="6" class="text-center text-muted">No exams scheduled for your semester yet.</td></tr>';
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">${escapeHtml(error.message)}</td></tr>`;
+            }
+        }
+
+        function initializeCountdown() {
+            if (countdownTimer) clearInterval(countdownTimer);
+            const startOf = (e) => new Date(`${String(e.date).slice(0, 10)}T${e.startTime || '09:00'}:00`);
+            const next = exams.map((e) => ({ e, at: startOf(e) })).filter((x) => x.at > new Date()).sort((a, b) => a.at - b.at)[0];
+            const ids = ['countdownDays', 'countdownHours', 'countdownMinutes', 'countdownSeconds'];
+            if (!next) {
+                ids.forEach((id) => setText(id, '--'));
+                setText('nextExamName', '(no upcoming exams)');
+                return;
+            }
+            setText('nextExamName', `— ${next.e.subjectName || next.e.subjectCode}, ${fmtDate(next.at)}`);
+            const tick = () => {
+                const ms = Math.max(0, next.at - new Date());
+                const parts = [Math.floor(ms / 864e5), Math.floor((ms % 864e5) / 36e5), Math.floor((ms % 36e5) / 6e4), Math.floor((ms % 6e4) / 1000)];
+                ids.forEach((id, i) => setText(id, String(parts[i]).padStart(2, '0')));
+            };
+            tick();
+            countdownTimer = setInterval(tick, 1000);
+        }
+
+        // ===== Fees =====
+        let fees = [];
+        let selectedFees = new Set();
+
+        async function loadFees() {
+            const list = document.getElementById('feeList');
+            try {
+                const data = await ErpAuth.api('/api/student-portal/fees');
+                fees = data.fees;
+                selectedFees = new Set([...selectedFees].filter((id) => fees.some((f) => f._id === id && f.status === 'pending')));
+                const s = data.summary;
+                setText('feeTotal', rupees(s.total));
+                setText('feePaid', rupees(s.paid));
+                setText('feePending', rupees(s.pending));
+                document.getElementById('feeProgress').style.width = `${s.percentPaid}%`;
+                setText('feeProgressText', `${s.percentPaid}% fees paid`);
+
+                const pending = fees.filter((f) => f.status === 'pending');
+                document.getElementById('selectAllWrap').style.display = pending.length ? '' : 'none';
+                list.innerHTML = fees.length
+                    ? fees.map((f) => {
+                        const paid = f.status === 'paid';
+                        const overdue = !paid && f.dueDate && new Date(f.dueDate) < new Date(new Date().toDateString());
+                        return `<div class="fee-item ${selectedFees.has(f._id) ? 'selected' : ''}" id="fee-${f._id}" ${paid ? '' : `onclick="toggleFeeSelection('${f._id}')" role="button"`}>
+                            <div class="d-flex align-items-center">
+                                ${paid ? '<i class="fas fa-check-circle text-success me-3 fs-4"></i>' : `<input class="form-check-input me-3" type="checkbox" id="check-${f._id}" ${selectedFees.has(f._id) ? 'checked' : ''} onclick="event.stopPropagation(); toggleFeeSelection('${f._id}')">`}
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1">${escapeHtml(f.title)}</h5>
+                                    <p class="text-muted mb-1">${f.dueDate ? `Due Date: ${fmtDate(f.dueDate)}` : 'No due date'}${paid ? ` · Paid on ${fmtDate(f.paidAt)}` : ''}</p>
+                                </div>
+                                <div class="text-end">
+                                    <h4 class="${paid ? 'text-success' : 'text-warning'} mb-1">${rupees(f.amount)}</h4>
+                                    <span class="badge ${paid ? 'bg-success' : overdue ? 'bg-danger' : 'bg-warning'}">${paid ? 'Paid' : overdue ? 'Overdue' : 'Pending'}</span>
+                                </div>
+                            </div></div>`;
+                    }).join('')
+                    : '<p class="text-muted">No fees have been assigned to you.</p>';
+                updateTotalAmount();
+                updateSelectAllCheckbox();
+            } catch (error) {
+                list.innerHTML = `<p class="text-danger">${escapeHtml(error.message)}</p>`;
+            }
+        }
+
+        function toggleFeeSelection(feeId) {
+            if (selectedFees.has(feeId)) selectedFees.delete(feeId);
+            else selectedFees.add(feeId);
+            const box = document.getElementById(`check-${feeId}`);
+            if (box) box.checked = selectedFees.has(feeId);
+            document.getElementById(`fee-${feeId}`).classList.toggle('selected', selectedFees.has(feeId));
             updateTotalAmount();
             updateSelectAllCheckbox();
         }
 
         function selectAllFees() {
-            const selectAll = document.getElementById('selectAllFees');
-            const checkboxes = ['tuition', 'exam', 'library', 'hostel'];
-            
-            checkboxes.forEach(feeType => {
-                const checkbox = document.getElementById(`check${feeType.charAt(0).toUpperCase() + feeType.slice(1)}`);
-                const feeItem = document.getElementById(`fee-${feeType}`);
-                
-                if (selectAll.checked) {
-                    checkbox.checked = true;
-                    feeItem.classList.add('selected');
-                    if (!selectedFees.includes(feeType)) {
-                        selectedFees.push(feeType);
-                    }
-                } else {
-                    checkbox.checked = false;
-                    feeItem.classList.remove('selected');
-                    selectedFees = selectedFees.filter(f => f !== feeType);
-                }
+            const all = document.getElementById('selectAllFees').checked;
+            selectedFees = new Set(all ? fees.filter((f) => f.status === 'pending').map((f) => f._id) : []);
+            fees.filter((f) => f.status === 'pending').forEach((f) => {
+                document.getElementById(`check-${f._id}`).checked = all;
+                document.getElementById(`fee-${f._id}`).classList.toggle('selected', all);
             });
-            
             updateTotalAmount();
         }
 
         function updateSelectAllCheckbox() {
-            const checkboxes = ['tuition', 'exam', 'library', 'hostel'];
-            const allChecked = checkboxes.every(feeType => {
-                const checkbox = document.getElementById(`check${feeType.charAt(0).toUpperCase() + feeType.slice(1)}`);
-                return checkbox.checked;
-            });
-            
-            document.getElementById('selectAllFees').checked = allChecked;
+            const pending = fees.filter((f) => f.status === 'pending');
+            const box = document.getElementById('selectAllFees');
+            if (box) box.checked = pending.length > 0 && pending.every((f) => selectedFees.has(f._id));
         }
 
         function updateTotalAmount() {
-            let total = 0;
-            selectedFees.forEach(feeType => {
-                total += feePrices[feeType];
-            });
-            
-            document.getElementById('totalAmount').textContent = `₹${total.toLocaleString()}`;
+            const total = fees.filter((f) => selectedFees.has(f._id)).reduce((s, f) => s + f.amount, 0);
+            setText('totalAmount', rupees(total));
         }
 
-        // Process Payment
-        function processPayment() {
-            if (selectedFees.length === 0) {
+        async function processPayment() {
+            if (!selectedFees.size) {
                 showNotification('Please select at least one fee to pay', 'warning');
                 return;
             }
-            
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').id;
-            let total = 0;
-            selectedFees.forEach(feeType => {
-                total += feePrices[feeType];
-            });
-            
-            // Show confirmation
-            if (confirm(`Proceed with payment of ₹${total} via ${paymentMethod}?`)) {
-                // Simulate payment processing
-                showNotification('Processing payment...', 'info');
-                
-                setTimeout(() => {
-                    showNotification('Payment successful! Receipt will be available in Payment History.', 'success');
-                    
-                    // Reset selections
-                    selectedFees = [];
-                    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-                    document.querySelectorAll('.fee-item').forEach(item => item.classList.remove('selected'));
-                    updateTotalAmount();
-                    
-                    // Show payment history
-                    setTimeout(() => {
-                        showSection('payment-history');
-                    }, 2000);
-                }, 2000);
+            const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+            const total = fees.filter((f) => selectedFees.has(f._id)).reduce((s, f) => s + f.amount, 0);
+            const label = { upi: 'UPI', card: 'Card', netbanking: 'Net Banking' }[method];
+            if (!confirm(`Pay ${rupees(total)} via ${label}?\n\n(Test mode: this is a simulated payment.)`)) return;
+
+            const btn = document.getElementById('payBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            try {
+                const res = await ErpAuth.api('/api/student-portal/pay', { method: 'POST', body: { feeIds: [...selectedFees], method } });
+                showNotification(`${res.message}. Receipt ${res.payment.receiptNo}`, 'success');
+                selectedFees.clear();
+                await Promise.all([loadFees(), loadPayments(), loadOverview(), loadActivity()]);
+                setTimeout(() => showSection('payment-history'), 1200);
+            } catch (error) {
+                showNotification(error.message, 'warning');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock me-2"></i>Proceed to Pay';
             }
         }
 
-        // Download Receipt
-        function downloadReceipt(receiptNo) {
-            showNotification(`Downloading receipt ${receiptNo}...`, 'info');
-            // In real application, this would download PDF
-            setTimeout(() => {
-                showNotification('Receipt downloaded successfully!', 'success');
-            }, 1500);
+        async function loadPayments() {
+            const tbody = document.getElementById('paymentTableBody');
+            const methods = { upi: 'UPI', card: 'Credit/Debit Card', netbanking: 'Net Banking', cash: 'Cash' };
+            try {
+                const payments = await ErpAuth.api('/api/student-portal/payments');
+                tbody.innerHTML = payments.length
+                    ? payments.map((p) => `
+                        <tr>
+                            <td>#${escapeHtml(p.receiptNo)}</td>
+                            <td>${fmtDate(p.paidAt)}</td>
+                            <td>${escapeHtml(p.description)}</td>
+                            <td>${rupees(p.amount)}</td>
+                            <td>${methods[p.method] || escapeHtml(p.method)}</td>
+                            <td><span class="badge bg-success">Success</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary" onclick="ErpAuth.openReceipt('${p._id}')"><i class="fas fa-download me-1"></i>Receipt</button></td>
+                        </tr>`).join('')
+                    : '<tr><td colspan="7" class="text-center text-muted">No payments yet.</td></tr>';
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">${escapeHtml(error.message)}</td></tr>`;
+            }
         }
 
-        // Library Functions
+        // ===== Library =====
+        let resources = [];
+
+        async function loadLibrary() {
+            try {
+                resources = await ErpAuth.api('/api/resources');
+                ['textbook', 'research-paper', 'question-paper'].forEach((c) => {
+                    const n = resources.filter((r) => r.category === c).length;
+                    setText(`libCount-${c}`, `${n} available`);
+                });
+                renderLibrary();
+            } catch (error) {
+                document.getElementById('libraryList').innerHTML = `<div class="col-12 text-danger">${escapeHtml(error.message)}</div>`;
+            }
+        }
+
         function showLibraryCategory(category) {
-            // Scroll to section and highlight
-            const section = document.getElementById('textbooks-section');
-            section.scrollIntoView({ behavior: 'smooth' });
-            
-            showNotification(`Showing ${category} resources`, 'info');
+            document.getElementById('libraryCategory').value = category;
+            renderLibrary();
+            document.getElementById('textbooks-section').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Initialize Calendar
+        function renderLibrary() {
+            const cat = document.getElementById('libraryCategory').value;
+            const q = document.getElementById('librarySearch').value.trim().toLowerCase();
+            setText('libraryTitle', cat ? document.querySelector(`#libraryCategory option[value="${cat}"]`).textContent : 'All Resources');
+            const list = resources.filter((r) =>
+                (!cat || r.category === cat) &&
+                (!q || [r.title, r.author, r.subjectCode, r.description].some((v) => String(v || '').toLowerCase().includes(q))));
+            document.getElementById('libraryList').innerHTML = list.length
+                ? list.map((r) => `
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <span class="badge bg-light text-dark mb-2">${RESOURCE_LABEL[r.category] || r.category}${r.subjectCode ? ` · ${escapeHtml(r.subjectCode)}` : ''}</span>
+                                <h6 class="card-title">${escapeHtml(r.title)}</h6>
+                                <p class="card-text text-muted small">${escapeHtml(r.author || r.description || '')}</p>
+                                <a class="btn btn-outline-primary btn-sm" href="${escapeHtml(r.url)}" target="_blank" rel="noopener"><i class="fas fa-external-link-alt me-1"></i>Open</a>
+                            </div>
+                        </div>
+                    </div>`).join('')
+                : '<div class="col-12 text-muted">No resources match your search.</div>';
+        }
+
+        // ===== Events =====
+        let events = [];
+        let calendar = null;
+        const EVENT_COLORS = { academic: '#e74c3c', exam: '#e74c3c', cultural: '#f39c12', sports: '#27ae60', tech: '#3498db', meeting: '#8e44ad', workshop: '#16a085', holiday: '#7f8c8d', other: '#34495e' };
+
+        async function loadEvents() {
+            try {
+                events = await ErpAuth.api('/api/events');
+                const upcoming = events.filter((e) => new Date(e.endDate || e.date) >= new Date(new Date().toDateString()));
+                document.getElementById('eventsList').innerHTML = upcoming.length
+                    ? upcoming.slice(0, 8).map((e) => `
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="mb-1">${escapeHtml(e.title)}</h6>
+                                <small class="text-muted">${fmtDate(e.date)}${e.endDate ? ` - ${fmtDate(e.endDate)}` : ''}${e.time ? ` · ${escapeHtml(e.time)}` : ''}${e.location ? ` · ${escapeHtml(e.location)}` : ''}</small>
+                            </div>
+                            <span class="badge" style="background:${EVENT_COLORS[e.type] || '#34495e'}">${escapeHtml(e.type)}</span>
+                        </div>`).join('')
+                    : '<p class="text-muted mb-0">No upcoming events.</p>';
+                if (calendar) initializeCalendar();
+            } catch (error) {
+                document.getElementById('eventsList').innerHTML = `<p class="text-danger mb-0">${escapeHtml(error.message)}</p>`;
+            }
+        }
+
         function initializeCalendar() {
-            const calendarEl = document.getElementById('calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
+            if (calendar) calendar.destroy();
+            const addDay = (d) => new Date(new Date(d).getTime() + 864e5).toISOString().slice(0, 10);
+            calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
                 initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,listMonth' },
                 events: [
-                    {
-                        title: 'Tech Fest',
-                        start: '2023-12-20',
-                        end: '2023-12-22',
-                        color: '#3498db'
-                    },
-                    {
-                        title: 'Sports Day',
-                        start: '2023-12-15',
-                        color: '#27ae60'
-                    },
-                    {
-                        title: 'Cultural Fest',
-                        start: '2023-12-28',
-                        end: '2023-12-30',
-                        color: '#e74c3c'
-                    },
-                    {
-                        title: 'Semester Exams',
-                        start: '2024-01-15',
-                        end: '2024-01-25',
-                        color: '#f39c12'
-                    }
-                ]
+                    ...events.map((e) => ({
+                        title: e.title,
+                        start: String(e.date).slice(0, 10),
+                        end: e.endDate ? addDay(e.endDate) : undefined, // FullCalendar end date is exclusive
+                        color: EVENT_COLORS[e.type] || '#34495e',
+                        extendedProps: { description: e.description, location: e.location, time: e.time }
+                    })),
+                    ...exams.map((x) => ({ title: `Exam: ${x.subjectName || x.subjectCode}`, start: String(x.date).slice(0, 10), color: '#c0392b' }))
+                ],
+                eventClick: (info) => {
+                    const p = info.event.extendedProps;
+                    alert([info.event.title, p.time, p.location, p.description].filter(Boolean).join('\n'));
+                }
             });
             calendar.render();
+        }
+
+        // ===== Assignments =====
+        let assignments = [];
+        let currentAssignment = null;
+
+        async function loadAssignments() {
+            try {
+                assignments = await ErpAuth.api('/api/student-portal/assignments');
+                renderAssignments();
+            } catch (error) {
+                document.getElementById('assignmentList').innerHTML = `<div class="col-12 text-danger">${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        function renderAssignments() {
+            const filter = document.getElementById('assignmentFilter').value;
+            const badge = { pending: 'bg-warning', submitted: 'bg-info', graded: 'bg-success', overdue: 'bg-danger' };
+            const list = assignments.filter((a) => !filter || a.status === filter);
+            document.getElementById('assignmentList').innerHTML = list.length
+                ? list.map((a) => {
+                    const sub = a.submission;
+                    const canSubmit = a.status !== 'graded' && (a.status !== 'overdue');
+                    return `<div class="col-md-6 mb-3"><div class="card h-100"><div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0">${escapeHtml(a.title)}</h6>
+                            <span class="badge ${badge[a.status]}">${a.status}</span>
+                        </div>
+                        <p class="text-muted small mb-2">${escapeHtml(a.subjectName)} · ${escapeHtml(a.facultyName || '')} · Due ${fmtDate(a.dueDate)} · Max ${a.maxMarks} marks</p>
+                        ${a.instructions ? `<p class="small mb-2">${escapeHtml(a.instructions)}</p>` : ''}
+                        ${sub ? `<div class="small p-2 bg-light rounded mb-2"><strong>Your submission</strong> (${fmtDate(sub.submittedAt)}): ${escapeHtml(sub.content)}</div>` : ''}
+                        ${sub && sub.status === 'graded' ? `<div class="small p-2 rounded mb-2" style="background:#e8f8f0"><strong>Marks: ${sub.marks}/${a.maxMarks}</strong>${sub.feedback ? ` · ${escapeHtml(sub.feedback)}` : ''}</div>` : ''}
+                        ${canSubmit ? `<button class="btn btn-sm btn-primary" onclick="openSubmit('${a._id}')">${sub ? 'Update submission' : 'Submit'}</button>` : ''}
+                    </div></div></div>`;
+                }).join('')
+                : '<div class="col-12 text-muted">No assignments here.</div>';
+        }
+
+        function openSubmit(id) {
+            currentAssignment = assignments.find((a) => a._id === id);
+            setText('submitModalTitle', currentAssignment.title);
+            setText('submitModalInfo', `${currentAssignment.subjectName} · Due ${fmtDate(currentAssignment.dueDate)} · Max ${currentAssignment.maxMarks} marks`);
+            setText('submitModalInstructions', currentAssignment.instructions || 'No extra instructions.');
+            document.getElementById('submitContent').value = currentAssignment.submission ? currentAssignment.submission.content : '';
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('submitModal')).show();
+        }
+
+        async function submitAssignment() {
+            const content = document.getElementById('submitContent').value.trim();
+            if (!content) return showNotification('Write your answer or paste a link first', 'warning');
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            try {
+                const res = await ErpAuth.api(`/api/student-portal/assignments/${currentAssignment._id}/submit`, { method: 'POST', body: { content } });
+                bootstrap.Modal.getInstance(document.getElementById('submitModal')).hide();
+                showNotification(res.message, 'success');
+                await Promise.all([loadAssignments(), loadOverview()]);
+            } catch (error) {
+                showNotification(error.message, 'warning');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // ===== Notices =====
+        async function loadNotices() {
+            const el = document.getElementById('noticeList');
+            try {
+                const items = await ErpAuth.api('/api/announcements');
+                const prio = { high: 'danger', medium: 'warning', low: 'secondary' };
+                el.innerHTML = items.length
+                    ? items.map((n) => `
+                        <div class="border-start border-4 border-${prio[n.priority]} ps-3 mb-3">
+                            <div class="d-flex justify-content-between"><h6 class="mb-1">${escapeHtml(n.title)}</h6><span class="badge bg-light text-dark">${escapeHtml(n.category)}</span></div>
+                            ${n.message ? `<p class="mb-1 small">${escapeHtml(n.message)}</p>` : ''}
+                            <small class="text-muted">${escapeHtml(n.createdByName || '')} · ${fmtDate(n.createdAt)}</small>
+                        </div>`).join('')
+                    : '<p class="text-muted mb-0">No notices.</p>';
+            } catch (error) {
+                el.innerHTML = `<p class="text-danger mb-0">${escapeHtml(error.message)}</p>`;
+            }
         }
 
         // Show Notification
@@ -1918,7 +1821,7 @@
             notification.className = `alert alert-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} alert-dismissible fade show position-fixed`;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
             notification.innerHTML = `
-                ${message}
+                ${escapeHtml(message)}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             `;
             
@@ -1930,22 +1833,7 @@
             }, 3000);
         }
 
-        // Logout
-        const SESSION_STORAGE_KEY = "collegeErpLoggedInUser";
-
-        function getLoggedInUser() {
-            try {
-                return JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || sessionStorage.getItem(SESSION_STORAGE_KEY) || "null");
-            } catch (error) {
-                return null;
-            }
-        }
-
-        function clearLoggedInUser() {
-            localStorage.removeItem(SESSION_STORAGE_KEY);
-            sessionStorage.removeItem(SESSION_STORAGE_KEY);
-        }
-
+        // Logged-in user
         function resolveDisplayName(user) {
             return user?.name || user?.fullName || user?.username || user?.email || "Student";
         }
@@ -1957,11 +1845,8 @@
         }
 
         function applyLoggedInStudent() {
-            const user = getLoggedInUser();
-            if (!user) {
-                window.location.href = "login.html";
-                return;
-            }
+            const user = ErpAuth.getSession();
+            if (!user) return;
 
             const name = resolveDisplayName(user);
             const meta = resolveMeta(user);
@@ -1984,16 +1869,27 @@
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 showNotification('Logging out...', 'info');
-                setTimeout(() => {
-                    clearLoggedInUser();
-                    window.location.href = 'login.html';
-                }, 700);
+                setTimeout(() => ErpAuth.logout(), 700);
             }
         }
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            if (!ERP_SESSION) return; // redirecting to login
             applyLoggedInStudent();
+            loadProfile();
+            loadAttendance();
+            loadMarks();
+            loadOverview();
+            loadActivity();
+            loadCurriculum();
+            loadExams();
+            loadFees();
+            loadPayments();
+            loadLibrary();
+            loadEvents();
+            loadAssignments();
+            loadNotices();
             setTimeout(() => {
                 document.querySelectorAll('.animate-pop').forEach((card, index) => {
                     card.style.animationDelay = `${index * 0.1}s`;
