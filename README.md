@@ -19,16 +19,18 @@ Open **http://localhost:3000** (the landing page) or **http://localhost:3000/log
 
 ## Demo accounts
 
-After `npm run seed -- --demo`, or on a hosted copy with `SEED_ON_START=demo`, every account uses the password **`Demo@123`**:
+These accounts exist after `npm run seed -- --demo`, or on a hosted copy with `SEED_ON_START=demo`. Each role has its own password: the role name followed by `123`.
 
-| Role | Login (choose this role on the login page) |
-|---|---|
-| Admin | `admin@demo.amc.edu` |
-| Staff | `staff@demo.amc.edu` |
-| Principal | `principal@demo.amc.edu` |
-| HOD | `hod.cse@demo.amc.edu` (Computer Science), `hod.ece@demo.amc.edu` |
-| Faculty | `faculty1@demo.amc.edu` … `faculty4@demo.amc.edu` |
-| Student | `student1@demo.amc.edu` … `student15@demo.amc.edu` (1–6 = CSE, semester 3, section A) |
+| Role (choose on the login page) | Login | Password |
+|---|---|---|
+| Admin | `admin@demo.amc.edu` | `admin123` |
+| Staff | `staff@demo.amc.edu` | `staff123` |
+| Principal | `principal@demo.amc.edu` | `principal123` |
+| HOD | `hod.cse@demo.amc.edu` (Computer Science), `hod.ece@demo.amc.edu` | `hod123` |
+| Faculty | `faculty1@demo.amc.edu` … `faculty4@demo.amc.edu` | `faculty123` |
+| Student | `student1@demo.amc.edu` … `student15@demo.amc.edu` (1–6 = CSE, semester 3, section A) | `student123` |
+
+New accounts created from the dashboards get the same defaults. A one-time migration (`Backend/migrations.js`) set every existing account to these role passwords. It does not run again, so passwords users change later are kept.
 
 Students and faculty can also log in with their ID, for example `1AM24CS001`.
 

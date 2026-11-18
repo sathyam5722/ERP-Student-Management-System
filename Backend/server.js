@@ -875,6 +875,11 @@ mongoose
         logger.error({ message: "Demo seed failed", error: err.message });
       }
     }
+    try {
+      await require("./migrations").runMigrations((msg) => logger.info(msg));
+    } catch (err) {
+      logger.error({ message: "Migration failed", error: err.message });
+    }
     app.listen(PORT, () => logger.info(`Server running on http://localhost:${PORT}`));
   })
   .catch((err) => {

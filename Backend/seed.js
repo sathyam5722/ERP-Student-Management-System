@@ -2,7 +2,7 @@
  * One-off setup script.
  *
  *   npm run seed                    -> adds the subject catalogue and a first SuperAdmin (only if no admin exists)
- *   npm run seed -- --demo           -> adds a complete demo college (accounts for every role, password Demo@123)
+ *   npm run seed -- --demo           -> adds a complete demo college (role-based passwords, e.g. student123)
  *   npm run seed -- --hash-passwords -> also converts every remaining plain-text password to bcrypt
  *
  * Safe to run more than once: subjects are upserted, existing admins are never touched.
@@ -52,7 +52,7 @@ async function seedFirstAdmin() {
     return;
   }
   const email = process.env.SEED_ADMIN_EMAIL || "admin@amc.edu";
-  const password = process.env.SEED_ADMIN_PASSWORD || "Admin@123";
+  const password = process.env.SEED_ADMIN_PASSWORD || "admin123";
   await Admin.create({ accountType: "SuperAdmin", username: "superadmin", name: "Super Admin", email, password });
   console.log(`Admins: created SuperAdmin ${email} / ${password}  <- change this password after logging in`);
 }
@@ -75,9 +75,9 @@ async function hashAllPasswords() {
 
 // ---------------------------------------------------------------------------
 // DEMO DATA (npm run seed -- --demo): a small, realistic college for testers.
-// Every demo account uses the password DEMO_PASSWORD.
+// Demo accounts use the role-based passwords from migrations.js (e.g. student123).
 // ---------------------------------------------------------------------------
-const DEMO_PASSWORD = "Demo@123";
+const { ROLE_PASSWORDS } = require("./migrations");
 const DEMO_DOMAIN = "demo.amc.edu";
 
 async function seedDemo() {
@@ -94,7 +94,7 @@ async function seedDemo() {
   let seed = 7;
   const rand = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280); // deterministic
   const mail = (local) => `${local}@${DEMO_DOMAIN}`;
-  const pw = { password: DEMO_PASSWORD };
+  const pw = (role) => ({ password: ROLE_PASSWORDS[role] });
 
   // Departments & courses
   await M.Department.insertMany([
@@ -107,11 +107,11 @@ async function seedDemo() {
   ]);
 
   // People (created one by one so passwords get hashed)
-  await M.Admin.create({ accountType: "SuperAdmin", username: "demoadmin", name: "Demo Admin", email: mail("admin"), ...pw });
-  await M.Staff.create({ name: "Ravi Kumar", username: "ravi", email: mail("staff"), staffId: "ST001", department: "Computer Science", collegeType: "AMCEC", ...pw });
-  await M.Principal.create({ name: "Dr. Kavitha Rao", email: mail("principal"), principalId: "P001", collegeType: "AMCEC", appointedDate: day(-900), phone: "+91 98450 00001", ...pw });
-  await M.Hod.create({ name: "Dr. Suresh Menon", email: mail("hod.cse"), hodId: "H-CSE", department: "Computer Science", collegeType: "AMCEC", appointedDate: day(-600), ...pw });
-  await M.Hod.create({ name: "Dr. Lakshmi Narayan", email: mail("hod.ece"), hodId: "H-ECE", department: "Electronics", collegeType: "AMCEC", appointedDate: day(-500), ...pw });
+  await M.Admin.create({ accountType: "SuperAdmin", username: "demoadmin", name: "Demo Admin", email: mail("admin"), ...pw("admin") });
+  await M.Staff.create({ name: "Ravi Kumar", username: "ravi", email: mail("staff"), staffId: "ST001", department: "Computer Science", collegeType: "AMCEC", ...pw("staff") });
+  await M.Principal.create({ name: "Dr. Kavitha Rao", email: mail("principal"), principalId: "P001", collegeType: "AMCEC", appointedDate: day(-900), phone: "+91 98450 00001", ...pw("principal") });
+  await M.Hod.create({ name: "Dr. Suresh Menon", email: mail("hod.cse"), hodId: "H-CSE", department: "Computer Science", collegeType: "AMCEC", appointedDate: day(-600), ...pw("hod") });
+  await M.Hod.create({ name: "Dr. Lakshmi Narayan", email: mail("hod.ece"), hodId: "H-ECE", department: "Electronics", collegeType: "AMCEC", appointedDate: day(-500), ...pw("hod") });
 
   const facultySpecs = [
     ["faculty1", "Prof. Anita Desai", "F101", "Computer Science", "Assistant Professor"],
@@ -121,7 +121,7 @@ async function seedDemo() {
   ];
   const fac = {};
   for (const [local, name, id, dept, designation] of facultySpecs) {
-    fac[local] = await M.Faculty.create({ name, email: mail(local), facultyId: id, department: dept, designation, collegeType: "AMCEC", enrollmentDate: day(-400), phone: "+91 98450 1" + id.slice(1), ...pw });
+    fac[local] = await M.Faculty.create({ name, email: mail(local), facultyId: id, department: dept, designation, collegeType: "AMCEC", enrollmentDate: day(-400), phone: "+91 98450 1" + id.slice(1), ...pw("faculty") });
   }
 
   const firstNames = ["Aarav", "Diya", "Rohan", "Sneha", "Kiran", "Priya", "Vikram", "Ananya", "Nikhil", "Pooja", "Arjun", "Isha", "Manoj", "Divya", "Rahul"];
@@ -152,7 +152,7 @@ async function seedDemo() {
         bloodGroup: ["O+", "A+", "B+", "AB+"][i % 4],
         fatherName: `Mr. ${["Sharma", "Patel", "Reddy", "Nair", "Gowda"][i % 5]}`,
         motherName: `Mrs. ${["Sharma", "Patel", "Reddy", "Nair", "Gowda"][i % 5]}`,
-        ...pw,
+        ...pw("student"),
       }),
     );
   }
@@ -283,7 +283,7 @@ async function seedDemo() {
     { title: "Blockchain for academic records", lead: "Prof. Rahul Verma", department: "Computer Science", funding: 5, status: "proposed", progress: 0 },
   ]);
 
-  console.log(`Demo: data created. All demo accounts use the password ${DEMO_PASSWORD}`);
+  console.log("Demo: data created. Passwords: admin123, staff123, principal123, hod123, faculty123, student123");
   console.log(`  Admin      admin@${DEMO_DOMAIN}`);
   console.log(`  Staff      staff@${DEMO_DOMAIN}`);
   console.log(`  Principal  principal@${DEMO_DOMAIN}`);
